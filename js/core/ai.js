@@ -1,0 +1,387 @@
+/* ============================================
+   STATIA GO — js/core/ai.js
+   Conexión con Claude API e interpretación IA
+   by Jose Rodas
+   ============================================ */
+
+const AI = {
+
+  MODEL: 'claude-sonnet-4-20250514',
+  MAX_TOKENS: 2500,
+
+  async call(prompt) {
+    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${CONFIG.GEMINI_KEY}`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { maxOutputTokens: 2500 }
+      })
+    });
+    const d = await res.json();
+    console.log('Gemini response:', JSON.stringify(d));
+    return d.candidates?.[0]?.content?.parts?.[0]?.text || 'No se pudo generar la interpretación.';
+  },
+
+  // ===== RENDERIZAR RESPUESTA EN DOM =====
+  async render(prompt, blockId) {
+    const el = document.getElementById(blockId);
+    if (typeof App !== 'undefined' && App.state?.modoExamen) {
+      if (el) el.innerHTML = `
+        <div class="ai-block">
+          <div class="ai-tag" style="color:#f87171"><div class="ai-dot" style="background:#f87171"></div> 🔒 IA desactivada — Modo Examen</div>
+          <div class="ai-text" style="color:var(--muted)">La interpretación con IA está desactivada durante el modo examen. Analiza los resultados estadísticos con tus propios conocimientos: interpreta la media, mediana, dispersión, forma de la distribución y valores atípicos según lo aprendido en clase.</div>
+        </div>`;
+      return;
+    }
+    try {
+      const text = await this.call(prompt);
+      if (el) {
+        el.innerHTML = `
+          <div class="ai-tag"><div class="ai-dot"></div> Interpretación con IA</div>
+          <div class="ai-text">${this.format(text)}</div>`;
+        Object.values(Chart.instances || {}).forEach(c => c.resize());
+      }
+    } catch (e) {
+      if (el) el.innerHTML = `<div class="err">Error IA: ${e.message}</div>`;
+    }
+  },
+
+  // ===== FORMATEAR TEXTO =====
+  format(text) {
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/###\s*(.*)/g, '<div class="ai-section-title">$1</div>')
+      .replace(/\n\n/g, '<br><br>')
+      .replace(/\n/g, '<br>');
+  },
+
+  // ===== BLOQUE LOADING =====
+  loadingBlock(id) {
+    return `<div class="ai-block" id="${id}">
+      <div class="ai-tag"><div class="ai-dot"></div> IA analizando...</div>
+      <div class="ld"><span></span><span></span><span></span></div>
+    </div>`;
+  },
+
+  // ===== PROMPTS POR MÓDULO =====
+
+  // ----- NOMINAL -----
+  promptNominal(varName, varDesc, n, moda, keys, freq) {
+    const pcts = keys.map(k => `${k}: fi=${freq[k]}, ${((freq[k] / n) * 100).toFixed(1)}%`).join(' | ');
+    return `Eres StatIA, asistente estadístico educativo para universidades de Perú y Ecuador.
+Realiza una interpretación completa y académica de esta variable cualitativa NOMINAL.
+
+Variable: "${varName}"${varDesc ? ` — ${varDesc}` : ''}
+N total = ${n} observaciones
+Categorías: ${pcts}
+Moda: ${moda.join(', ')}
+
+Responde en español con estas secciones. Sé detallado y usa los valores reales en tu interpretación:
+
+**1. Descripción general del conjunto de datos**
+Describe qué tipo de variable es, cuántas categorías tiene y qué representa cada una en el contexto.
+
+**2. Análisis de la moda**
+Explica por qué "${moda[0]}" es la categoría modal con fi=${freq[moda[0]]} (${((freq[moda[0]] / n) * 100).toFixed(1)}%). ¿Qué significa que esta categoría predomine? ¿Es una diferencia marcada respecto a las demás?
+
+**3. Distribución y concentración**
+Analiza si la distribución es equilibrada o hay concentración en pocas categorías. Compara las proporciones entre categorías. Menciona cuáles son las categorías minoritarias y qué representan.
+
+**4. Análisis de proporciones**
+Interpreta las frecuencias relativas. Si alguna categoría supera el 50%, menciona que es mayoritaria. Si ninguna supera el 33%, la distribución es relativamente uniforme.
+
+**5. Implicaciones para la investigación**
+¿Qué conclusiones estadísticas se pueden extraer? ¿Qué decisiones o recomendaciones se derivan de esta distribución? ¿Hay algún sesgo de selección o representatividad que considerar?
+
+**6. Recomendaciones metodológicas**
+¿Qué análisis complementarios se recomiendan? (tablas cruzadas, prueba Chi-cuadrado de bondad de ajuste, etc.)
+
+Mínimo 300 palabras. Usa **negritas** para valores numéricos clave. Sin saludos ni despedidas.`;
+  },
+
+  // ----- ORDINAL -----
+  promptOrdinal(varName, varDesc, n, moda, mediana, keys, freq) {
+    const pcts = keys.map(k => `${k}: fi=${freq[k] || 0}, ${(((freq[k] || 0) / n) * 100).toFixed(1)}%`).join(' | ');
+    return `Eres StatIA, asistente estadístico educativo universitario.
+Realiza una interpretación completa de esta variable cualitativa ORDINAL.
+
+Variable: "${varName}"${varDesc ? ` — ${varDesc}` : ''}
+Escala ordenada de menor a mayor: ${keys.join(' < ')}
+N = ${n} observaciones
+Frecuencias: ${pcts}
+Moda: ${moda.join(', ')} | Mediana: ${mediana}
+
+Responde en español con estas secciones detalladas:
+
+**1. Descripción de la escala**
+Describe la naturaleza ordinal de la variable, los niveles de la escala y qué representa cada categoría.
+
+**2. Tendencia central**
+Interpreta la moda (${moda[0]}) y la mediana (${mediana}). ¿Coinciden? Si son diferentes, ¿qué nos dice eso sobre la distribución? ¿Hacia qué extremo de la escala tiende la muestra?
+
+**3. Distribución por categorías**
+Analiza detalladamente cada categoría. ¿Hay polarización (concentración en extremos)? ¿O centralización (concentración en categorías medias)? Describe el patrón de respuesta.
+
+**4. Frecuencias acumuladas**
+Interpreta las frecuencias acumuladas. ¿Qué porcentaje de la muestra está en la categoría mediana o por debajo? ¿Cuántos están en las categorías favorables vs desfavorables?
+
+**5. Sesgo de la distribución**
+¿La distribución está sesgada hacia valores altos (positivo) o bajos (negativo)? ¿O es aproximadamente simétrica? Justifica con los datos.
+
+**6. Implicaciones prácticas**
+¿Qué conclusiones se derivan para la investigación, la toma de decisiones o la intervención? Si es una encuesta de satisfacción, ¿qué se recomienda?
+
+**7. Recomendaciones metodológicas**
+¿Qué pruebas no paramétricas u otros análisis complementarios se recomiendan con este tipo de variable?
+
+Mínimo 320 palabras. **negritas** para valores clave. Sin saludos.`;
+  },
+
+  // ----- DISCRETA SIMPLE -----
+  promptDiscreta(varName, varDesc, s, medianaDesc) {
+    const f2 = v => Utils.fmt(v, 2);
+    const difMedMed = f2(Math.abs(s.mean - s.median));
+    const tukeyInf = f2(s.q1 - 1.5 * s.iqr);
+    const tukeySup = f2(s.q3 + 1.5 * s.iqr);
+    const g1tipo = Math.abs(s.g1) < 0.1 ? 'distribución simétrica' : s.g1 > 0 ? 'sesgo positivo (cola derecha)' : 'sesgo negativo (cola izquierda)';
+    const g2tipo = Math.abs(s.g2) < 0.5 ? 'mesocúrtica (similar a la normal)' : s.g2 > 0 ? 'leptocúrtica (puntiaguda, colas pesadas)' : 'platicúrtica (plana, colas ligeras)';
+    return `Eres StatIA, asistente estadístico educativo universitario.
+Interpreta esta variable cuantitativa DISCRETA usando exactamente los valores proporcionados.
+
+Variable: "${varName}"${varDesc ? ` — ${varDesc}` : ''}
+
+DATOS CALCULADOS:
+n = ${s.n} (${s.n % 2 === 0 ? 'par' : 'impar'}) | Mín = ${f2(s.min)} | Máx = ${f2(s.max)} | Rango = ${f2(s.range)}
+Media (x̄) = ${f2(s.mean)} | Mediana = ${f2(s.median)} (${medianaDesc}) | Moda = ${s.moda.join(', ')}
+Diferencia |media − mediana| = ${difMedMed}
+S = ${f2(s.sd)} | S² = ${f2(s.variance)} | CV = ${f2(s.cv)}%
+Q1 = ${f2(s.q1)} | Q3 = ${f2(s.q3)} | IQR = ${f2(s.iqr)}
+Límites de Tukey: inferior = ${tukeyInf} | superior = ${tukeySup}
+Asimetría de Fisher g1 = ${f2(s.g1)} → ${g1tipo}
+Curtosis de Fisher g2 = ${f2(s.g2)} → ${g2tipo}
+
+Responde en español con estas 6 secciones. Cita los valores exactos de arriba en cada sección:
+
+### Descripción general
+Indica que se analizan n = ${s.n} observaciones de la variable "${varName}". Describe el rango de valores observados: de ${f2(s.min)} a ${f2(s.max)}, con un rango total de ${f2(s.range)}.
+
+### Tendencia central
+Compara media (${f2(s.mean)}) y mediana (${f2(s.median)}). La diferencia exacta es ${difMedMed}. Si la diferencia es pequeña → distribución aproximadamente simétrica. Si media > mediana → sesgo positivo. Si media < mediana → sesgo negativo. Menciona también la moda (${s.moda.join(', ')}).
+
+### Dispersión
+Explica que los datos varían ±${f2(s.sd)} respecto a la media. Interpreta CV = ${f2(s.cv)}% con este criterio: CV < 15% → homogéneo, 15–30% → moderadamente variable, > 30% → heterogéneo.
+
+### Cuartiles
+El 50% central de los datos se encuentra entre Q1 = ${f2(s.q1)} y Q3 = ${f2(s.q3)}, con IQR = ${f2(s.iqr)}. Interpreta qué tan concentrado o disperso es ese intervalo respecto al rango total.
+
+### Outliers
+Los límites de Tukey son: inferior = ${tukeyInf} y superior = ${tukeySup}. Compara con el mínimo real (${f2(s.min)}) y el máximo real (${f2(s.max)}). Indica si hay o no valores atípicos.
+
+### Deformación
+Interpreta g1 = ${f2(s.g1)}: criterio |g1| < 0.1 → simétrica; g1 > 0 → sesgo positivo; g1 < 0 → sesgo negativo. El resultado es: ${g1tipo}.
+Interpreta g2 = ${f2(s.g2)}: criterio |g2| < 0.5 → mesocúrtica; g2 > 0 → leptocúrtica; g2 < 0 → platicúrtica. El resultado es: ${g2tipo}.
+Concluye si la distribución se aproxima a la normalidad.
+
+Mínimo 300 palabras. Usa máximo 2 decimales en todos los valores numéricos. **negritas** para valores. Sin saludos.`;
+  },
+
+  // ----- DISCRETA AGRUPADA -----
+  promptDiscretaAgrupada(varName, varDesc, g) {
+    const claseModal = g.classes.reduce((a, b) => a.fi > b.fi ? a : b);
+    const clase50 = g.classes.find(c => c.Hi >= 0.5) || g.classes[g.classes.length - 1];
+    const clase75 = g.classes.find(c => c.Hi >= 0.75) || g.classes[g.classes.length - 1];
+    const f2 = v => Utils.fmt(v, 2);
+    const difMedMed = f2(Math.abs(g.mean - g.median));
+    const liMin = g.classes[0].li;
+    const lsMax = g.classes[g.classes.length - 1].ls;
+    const g1tipo = Math.abs(g.g1) < 0.1 ? 'distribución simétrica' : g.g1 > 0 ? 'sesgo positivo (cola derecha)' : 'sesgo negativo (cola izquierda)';
+    const g2tipo = Math.abs(g.g2) < 0.5 ? 'mesocúrtica (similar a la normal)' : g.g2 > 0 ? 'leptocúrtica (puntiaguda, colas pesadas)' : 'platicúrtica (plana, colas ligeras)';
+    return `Eres StatIA, asistente estadístico educativo universitario.
+Interpreta esta variable cuantitativa DISCRETA con datos AGRUPADOS usando exactamente los valores proporcionados.
+
+Variable: "${varName}"${varDesc ? ` — ${varDesc}` : ''}
+
+DATOS CALCULADOS:
+n = ${g.n} | k = ${g.k} clases | Amplitud A = ${f2(g.amp)} | Rango cubierto: ${liMin} a ${lsMax}
+Media = ${f2(g.mean)} | Mediana = ${f2(g.median)} | Moda de Czuber = ${f2(g.mode)}
+Diferencia |media − mediana| = ${difMedMed}
+S = ${f2(g.sd)} | CV = ${f2(g.cv)}%
+Clase modal: [${claseModal.li}–${claseModal.ls}) con fi = ${claseModal.fi} (${((claseModal.fi / g.n) * 100).toFixed(1)}%)
+50% acumulado alcanzado en clase [${clase50.li}–${clase50.ls}) | 75% en clase [${clase75.li}–${clase75.ls})
+Asimetría de Fisher g1 = ${f2(g.g1)} → ${g1tipo}
+Curtosis de Fisher g2 = ${f2(g.g2)} → ${g2tipo}
+
+TABLA DE CLASES:
+${g.classes.map(c => `[${c.li}–${c.ls}): fi=${c.fi}, hi=${c.hi}, Hi=${c.Hi}`).join('\n')}
+
+Responde en español con estas 6 secciones. Cita los valores exactos de arriba en cada sección:
+
+### Descripción general
+Indica que se agruparon n = ${g.n} observaciones de "${varName}" en k = ${g.k} clases con amplitud A = ${f2(g.amp)} (regla de Sturges). Los valores van de ${liMin} a ${lsMax}.
+
+### Tendencia central
+Compara media (${f2(g.mean)}), mediana (${f2(g.median)}) y moda de Czuber (${f2(g.mode)}). La diferencia exacta |media − mediana| = ${difMedMed}. Si es pequeña → distribución aproximadamente simétrica. Si media > mediana → sesgo positivo. Si media < mediana → sesgo negativo.
+
+### Dispersión
+Los datos varían ±${f2(g.sd)} respecto a la media. Interpreta CV = ${f2(g.cv)}%: CV < 15% → homogéneo, 15–30% → moderadamente variable, > 30% → heterogéneo.
+
+### Cuartiles — distribución acumulada
+La clase modal concentra el ${((claseModal.fi / g.n) * 100).toFixed(1)}% de los datos en [${claseModal.li}–${claseModal.ls}). El 50% acumulado se alcanza en la clase [${clase50.li}–${clase50.ls}) y el 75% en [${clase75.li}–${clase75.ls}). Interpreta la concentración de las observaciones.
+
+### Outliers — valores extremos de la tabla
+Los datos se distribuyen entre ${liMin} (límite inferior de la primera clase) y ${lsMax} (límite superior de la última clase). Analiza si las clases extremas tienen frecuencias bajas que sugieran valores alejados del centro de la distribución.
+
+### Deformación
+Interpreta g1 = ${f2(g.g1)}: criterio |g1| < 0.1 → simétrica; g1 > 0 → sesgo positivo; g1 < 0 → sesgo negativo. Resultado: ${g1tipo}.
+Interpreta g2 = ${f2(g.g2)}: criterio |g2| < 0.5 → mesocúrtica; g2 > 0 → leptocúrtica; g2 < 0 → platicúrtica. Resultado: ${g2tipo}.
+Concluye si el histograma se aproxima a la distribución normal.
+
+Mínimo 300 palabras. Usa máximo 2 decimales en todos los valores numéricos. **negritas** para valores. Sin saludos.`;
+  },
+
+  // ----- CONTINUA SIMPLE -----
+  promptContinua(varName, varDesc, s, medianaDesc) {
+    const f2 = v => Utils.fmt(v, 2);
+    const difMedMed = f2(Math.abs(s.mean - s.median));
+    const tukeyInf = f2(s.q1 - 1.5 * s.iqr);
+    const tukeySup = f2(s.q3 + 1.5 * s.iqr);
+    const g1tipo = Math.abs(s.g1) < 0.1 ? 'distribución simétrica' : s.g1 > 0 ? 'sesgo positivo (cola derecha)' : 'sesgo negativo (cola izquierda)';
+    const g2tipo = Math.abs(s.g2) < 0.5 ? 'mesocúrtica (similar a la normal)' : s.g2 > 0 ? 'leptocúrtica (puntiaguda, colas pesadas)' : 'platicúrtica (plana, colas ligeras)';
+    return `Eres StatIA, asistente estadístico educativo universitario.
+Interpreta esta variable cuantitativa CONTINUA usando exactamente los valores proporcionados.
+
+Variable: "${varName}"${varDesc ? ` — ${varDesc}` : ''}
+
+DATOS CALCULADOS:
+n = ${s.n} (${s.n % 2 === 0 ? 'par' : 'impar'}) | Mín = ${f2(s.min)} | Máx = ${f2(s.max)} | Rango = ${f2(s.range)}
+Media (x̄) = ${f2(s.mean)} | Mediana = ${f2(s.median)} (${medianaDesc}) | Moda = ${s.moda.length > 3 ? 'múltiple' : s.moda.map(v => f2(v)).join(', ')}
+Diferencia |media − mediana| = ${difMedMed}
+S = ${f2(s.sd)} | S² = ${f2(s.variance)} | CV = ${f2(s.cv)}%
+Q1 = ${f2(s.q1)} | Q3 = ${f2(s.q3)} | IQR = ${f2(s.iqr)}
+Límites de Tukey: inferior = ${tukeyInf} | superior = ${tukeySup}
+Asimetría de Fisher g1 = ${f2(s.g1)} → ${g1tipo}
+Curtosis de Fisher g2 = ${f2(s.g2)} → ${g2tipo}
+
+Responde en español con estas 6 secciones. Cita los valores exactos de arriba en cada sección:
+
+### Descripción general
+Indica que se analizan n = ${s.n} observaciones de la variable "${varName}". Describe el rango de valores observados: de ${f2(s.min)} a ${f2(s.max)}, con un rango total de ${f2(s.range)}.
+
+### Tendencia central
+Compara media (${f2(s.mean)}) y mediana (${f2(s.median)}). La diferencia exacta es ${difMedMed}. Si la diferencia es pequeña → distribución aproximadamente simétrica. Si media > mediana → sesgo positivo. Si media < mediana → sesgo negativo. Menciona también la moda.
+
+### Dispersión
+Explica que los datos varían ±${f2(s.sd)} respecto a la media. Interpreta CV = ${f2(s.cv)}% con este criterio: CV < 15% → homogéneo, 15–30% → moderadamente variable, > 30% → heterogéneo.
+
+### Cuartiles
+El 50% central de los datos se encuentra entre Q1 = ${f2(s.q1)} y Q3 = ${f2(s.q3)}, con IQR = ${f2(s.iqr)}. Interpreta qué tan concentrado o disperso es ese intervalo respecto al rango total.
+
+### Outliers
+Los límites de Tukey son: inferior = ${tukeyInf} y superior = ${tukeySup}. Compara con el mínimo real (${f2(s.min)}) y el máximo real (${f2(s.max)}). Indica si hay o no valores atípicos.
+
+### Deformación
+Interpreta g1 = ${f2(s.g1)}: criterio |g1| < 0.1 → simétrica; g1 > 0 → sesgo positivo; g1 < 0 → sesgo negativo. El resultado es: ${g1tipo}.
+Interpreta g2 = ${f2(s.g2)}: criterio |g2| < 0.5 → mesocúrtica; g2 > 0 → leptocúrtica; g2 < 0 → platicúrtica. El resultado es: ${g2tipo}.
+Concluye si la distribución se aproxima a la normalidad.
+
+Mínimo 300 palabras. Usa máximo 2 decimales en todos los valores numéricos. **negritas** para valores. Sin saludos.`;
+  },
+
+  // ----- CONTINUA AGRUPADA -----
+  promptContinuaAgrupada(varName, varDesc, g) {
+    const intS = g.intType === 'cerrado' ? ']' : ')';
+    const claseModal = g.classes.reduce((a, b) => a.fi > b.fi ? a : b);
+    const clase50 = g.classes.find(c => c.Hi >= 0.5) || g.classes[g.classes.length - 1];
+    const clase75 = g.classes.find(c => c.Hi >= 0.75) || g.classes[g.classes.length - 1];
+    const f2 = v => Utils.fmt(v, 2);
+    const difMedMed = f2(Math.abs(g.mean - g.median));
+    const liMin = g.classes[0].li;
+    const lsMax = g.classes[g.classes.length - 1].ls;
+    const g1tipo = Math.abs(g.g1) < 0.1 ? 'distribución simétrica' : g.g1 > 0 ? 'sesgo positivo (cola derecha)' : 'sesgo negativo (cola izquierda)';
+    const g2tipo = Math.abs(g.g2) < 0.5 ? 'mesocúrtica (similar a la normal)' : g.g2 > 0 ? 'leptocúrtica (puntiaguda, colas pesadas)' : 'platicúrtica (plana, colas ligeras)';
+    return `Eres StatIA, asistente estadístico educativo universitario.
+Interpreta esta variable cuantitativa CONTINUA con datos AGRUPADOS usando exactamente los valores proporcionados.
+
+Variable: "${varName}"${varDesc ? ` — ${varDesc}` : ''}
+
+DATOS CALCULADOS:
+n = ${g.n} | k = ${g.k} clases | Amplitud A = ${f2(g.amp)} | Intervalo: [a,b${intS} | Rango cubierto: ${liMin} a ${lsMax}
+Media = ${f2(g.mean)} | Mediana = ${f2(g.median)} | Moda de Czuber = ${f2(g.mode)}
+Diferencia |media − mediana| = ${difMedMed}
+S = ${f2(g.sd)} | CV = ${f2(g.cv)}%
+Clase modal: [${claseModal.li}–${claseModal.ls}${intS} con fi = ${claseModal.fi} (${((claseModal.fi / g.n) * 100).toFixed(1)}%)
+50% acumulado alcanzado en clase [${clase50.li}–${clase50.ls}${intS} | 75% en clase [${clase75.li}–${clase75.ls}${intS}
+Asimetría de Fisher g1 = ${f2(g.g1)} → ${g1tipo}
+Curtosis de Fisher g2 = ${f2(g.g2)} → ${g2tipo}
+
+TABLA DE CLASES:
+${g.classes.map(c => `[${c.li}–${c.ls}${intS}: xi=${c.xi}, fi=${c.fi}, Fi=${c.Fi}, hi=${c.hi}, Hi=${c.Hi}`).join('\n')}
+
+Responde en español con estas 6 secciones. Cita los valores exactos de arriba en cada sección:
+
+### Descripción general
+Indica que se agruparon n = ${g.n} observaciones de "${varName}" en k = ${g.k} clases con amplitud A = ${f2(g.amp)} (regla de Sturges), tipo [a,b${intS}. Los valores van de ${liMin} a ${lsMax}.
+
+### Tendencia central
+Compara media (${f2(g.mean)}), mediana (${f2(g.median)}) y moda de Czuber (${f2(g.mode)}). La diferencia exacta |media − mediana| = ${difMedMed}. Si es pequeña → distribución aproximadamente simétrica. Si media > mediana → sesgo positivo. Si media < mediana → sesgo negativo.
+
+### Dispersión
+Los datos varían ±${f2(g.sd)} respecto a la media. Interpreta CV = ${f2(g.cv)}%: CV < 15% → homogéneo, 15–30% → moderadamente variable, > 30% → heterogéneo.
+
+### Cuartiles — distribución acumulada
+La clase modal concentra el ${((claseModal.fi / g.n) * 100).toFixed(1)}% en [${claseModal.li}–${claseModal.ls}${intS}. El 50% acumulado se alcanza en [${clase50.li}–${clase50.ls}${intS} y el 75% en [${clase75.li}–${clase75.ls}${intS}. Interpreta la concentración de los datos.
+
+### Outliers — valores extremos de la tabla
+Los datos se distribuyen entre ${liMin} (límite inferior de la primera clase) y ${lsMax} (límite superior de la última). Analiza si las clases extremas tienen frecuencias bajas que sugieran valores alejados del centro.
+
+### Deformación
+Interpreta g1 = ${f2(g.g1)}: criterio |g1| < 0.1 → simétrica; g1 > 0 → sesgo positivo; g1 < 0 → sesgo negativo. Resultado: ${g1tipo}.
+Interpreta g2 = ${f2(g.g2)}: criterio |g2| < 0.5 → mesocúrtica; g2 > 0 → leptocúrtica; g2 < 0 → platicúrtica. Resultado: ${g2tipo}.
+Concluye si el histograma se aproxima a la distribución normal.
+
+Mínimo 300 palabras. Usa máximo 2 decimales en todos los valores numéricos. **negritas** para valores. Sin saludos.`;
+  },
+
+  // ----- DISTRIBUCIONES -----
+  promptDistribuciones(varName, varUnit, varDesc, distribucion, parametros, tipoProbabilidad, valorA, valorB, probabilidad, estadistico, descripcion) {
+    const f4 = v => (Math.round(v * 10000) / 10000).toFixed(4);
+    const unidad = varUnit ? ` (${varUnit})` : '';
+    return `Eres StatIA, asistente estadístico educativo universitario.
+Interpreta este cálculo de probabilidad usando exactamente los valores proporcionados.
+
+Variable: "${varName}"${unidad}${varDesc ? ` — ${varDesc}` : ''}
+Distribución: ${distribucion}
+Parámetros: ${parametros}
+Tipo de probabilidad: ${tipoProbabilidad}
+Valor a = ${valorA}${valorB !== undefined && !isNaN(valorB) ? ` | Valor b = ${valorB}` : ''}
+${estadistico ? `Estadístico calculado: ${estadistico}` : ''}
+Probabilidad calculada: ${descripcion} = ${f4(probabilidad)}
+Complemento (1 − P) = ${f4(1 - probabilidad)}
+
+Responde en español con estas 5 secciones. Usa los valores exactos de arriba:
+
+### Descripción de la variable y distribución
+Explica qué tipo de variable es "${varName}"${unidad} y por qué se usa la distribución ${distribucion} con los parámetros dados (${parametros}). Justifica la elección de la distribución en el contexto descrito.
+
+### Interpretación de la probabilidad calculada
+Explica en términos reales qué significa ${descripcion} = ${f4(probabilidad)} para la variable "${varName}"${unidad}. Usa frases como "existe un X% de probabilidad de que...". Si hay complemento relevante, interprétalo también.
+
+### Significado en el contexto
+Relaciona el resultado con el contexto "${varDesc || varName}". ¿Qué implica este valor para la investigación, la toma de decisiones o la práctica profesional? ¿Es una probabilidad alta, moderada o baja?
+
+### Comparación con valores críticos
+Compara el estadístico calculado${estadistico ? ` (${estadistico})` : ''} con los valores críticos estándar para la distribución ${distribucion}. Para la Normal: Z=±1.96 para 95%, Z=±2.576 para 99%. Para t y Chi²: menciona los valores típicos según gl. ¿El valor cae en zona de rechazo o aceptación?
+
+### Recomendaciones para la investigación
+¿Qué análisis complementarios se recomiendan? ¿Se justifica continuar con pruebas de hipótesis? ¿Qué precauciones hay que tener con los supuestos de la distribución elegida?
+
+Mínimo 300 palabras. Usa máximo 2 decimales. **negritas** para valores. Sin saludos.`;
+  },
+
+  videoBlock(tema) {
+    return `<div class="video-block"><div class="video-play-icon"></div><div class="video-info"><div class="video-title">Video tutorial — ${tema}</div><div class="video-sub">Statia Academy</div></div><a href="TU_LINK_AQUI" target="_blank" class="video-btn">Ver en YouTube</a></div>`;
+  },
+};

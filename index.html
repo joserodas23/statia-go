@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0d0f14">
+  <title>Statia Go</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+</head>
+
+<body>
+
+  <!-- OVERLAY -->
+  <div class="overlay" id="overlay" onclick="App.closeDrawer()"></div>
+
+  <!-- DRAWER -->
+  <div class="drawer" id="drawer">
+    <div class="drawer-head">
+      <div class="d-logo">S</div>
+      <div>
+        <div class="d-title">Statia <span>Go</span></div>
+        <div class="d-by">by Jose Rodas</div>
+      </div>
+    </div>
+    <div class="drawer-body" id="drawerBody">
+      <!-- Generado por app.js -->
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <button class="burger" onclick="App.openDrawer()">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="hdr-c">
+      <h1>Statia <span>Go</span></h1>
+      <p id="hdrSub">Estadística con IA</p>
+    </div>
+    <div class="hdr-by">by <strong>Jose Rodas</strong></div>
+  </div>
+
+  <!-- BANNER MODO EXAMEN -->
+  <div id="examenBanner" style="display:none;background:#7f1d1d;color:#fff;padding:9px 16px;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:900;border-bottom:2px solid #ef4444;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:0.78rem;letter-spacing:0.05em">🔒 MODO EXAMEN ACTIVO</span>
+      <span id="examenClock" style="font-family:'DM Mono',monospace;font-size:0.82rem;background:rgba(0,0,0,0.35);padding:3px 10px;border-radius:5px;letter-spacing:0.08em">02:00:00</span>
+    </div>
+    <button onclick="App.desactivarModoExamen()" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.3);color:#fff;font-family:'DM Mono',monospace;font-size:0.65rem;padding:5px 12px;border-radius:6px;cursor:pointer;white-space:nowrap">Salir con contraseña</button>
+  </div>
+
+  <!-- MODULE PILL -->
+  <div class="mpill" id="mpill">
+    <span id="pillIco"></span>
+    <span class="mpill-name" id="pillName"></span>
+    <button class="mpill-btn" onclick="App.openDrawer()">Cambiar ☰</button>
+  </div>
+
+  <!-- SCROLL -->
+  <div class="scroll" id="scroll">
+
+    <!-- HOME -->
+    <div id="homeScreen">
+      <div class="home-hero">
+        <div class="home-logo-wrap">S</div>
+        <div class="home-title">Statia <span>Go</span></div>
+        <div class="home-subtitle">by Jose Rodas · Estadística con IA</div>
+        <div class="home-phrase">Aprende, calcula e interpreta estadística<br><strong>de forma inteligente</strong>
+        </div>
+      </div>
+      <div class="home-grid" id="homeGrid">
+        <!-- Generado por app.js -->
+      </div>
+      <div class="home-info">
+        <div class="home-info-card">
+          <div class="home-info-title">¿Cómo funciona?</div>
+          <div class="home-info-row">
+            <div class="hir-icon">1️⃣</div>
+            <div class="hir-text"><strong>Elige el tipo</strong> de variable que vas a analizar</div>
+          </div>
+          <div class="home-info-row">
+            <div class="hir-icon">2️⃣</div>
+            <div class="hir-text"><strong>Lee la teoría</strong> con fórmulas y ejemplos</div>
+          </div>
+          <div class="home-info-row">
+            <div class="hir-icon">3️⃣</div>
+            <div class="hir-text"><strong>Ingresa tus datos</strong> y elige el modo de análisis</div>
+          </div>
+          <div class="home-info-row">
+            <div class="hir-icon">4️⃣</div>
+            <div class="hir-text"><strong>La IA interpreta</strong> los resultados en español</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANALYSIS -->
+    <div id="analysisScreen" style="display:none">
+      <div id="tutorialArea"></div>
+      <div id="formArea"></div>
+      <div id="resultsArea"></div>
+      <div style="height:10px"></div>
+    </div>
+
+    <!-- HISTORIAL -->
+    <div id="histScreen" style="display:none">
+      <div class="card" style="padding:0;overflow:hidden">
+        <div id="histContent">
+          <div class="empty">
+            <div class="ico">📭</div>
+            <p>Aún no hay cálculos guardados</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bnav">
+    <button class="nb on" id="nb-home" onclick="App.goHome()"><span class="ico">🏠</span>Inicio</button>
+    <button class="nb" id="nb-calc" onclick="App.goCalc()"><span class="ico">📊</span>Calcular</button>
+    <button class="nb" id="nb-hist" onclick="App.showHist()"><span class="ico">🕓</span>Historial</button>
+  </div>
+
+  <!-- LIBRERÍAS EXTERNAS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
+  <!-- CONFIGURACIÓN — API key y ajustes globales -->
+
+  <!-- CORE — orden importante -->
+  <script src="config.js"></script>
+  <script src="js/core/utils.js"></script>
+  <script src="js/core/stats.js"></script>
+  <script src="js/core/charts.js"></script>
+  <script src="js/core/ai.js"></script>
+  <script src="js/core/app.js"></script>
+
+  <!-- MÓDULOS DESCRIPTIVA -->
+  <script src="js/modulos/01_descriptiva/nominal.js"></script>
+  <script src="js/modulos/01_descriptiva/ordinal.js"></script>
+  <script src="js/modulos/01_descriptiva/discreta.js"></script>
+  <script src="js/modulos/01_descriptiva/continua.js"></script>
+
+  <script src="js/modulos/02_distribuciones/distribuciones.js"></script>
+
+  <!-- MÓDULOS FUTUROS — descomentar cuando estén listos -->
+  <!-- <script src="js/modulos/02_distribuciones/normal.js"></script> -->
+  <!-- <script src="js/modulos/03_hipotesis/t_test.js"></script> -->
+  <!-- <script src="js/modulos/04_no_parametrica/mann_whitney.js"></script> -->
+  <!-- <script src="js/modulos/05_regresion/lineal_simple.js"></script> -->
+  <!-- <script src="js/modulos/06_anova/anova_una_via.js"></script> -->
+
+</body>
+
+</html>

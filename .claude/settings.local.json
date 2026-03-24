@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find \"/e/Statia Go/statia-go/js\" -type f -name \"*.js\" -exec wc -l {} +)",
+      "Bash(python -m http.server 5500 --bind 127.0.0.1)",
+      "Bash(node --check \"e:/Statia Go/statia-go/js/modulos/01_descriptiva/nominal.js\")",
+      "Bash(node --check \"e:/Statia Go/statia-go/js/modulos/01_descriptiva/ordinal.js\")",
+      "Bash(node --check \"e:/Statia Go/statia-go/js/modulos/01_descriptiva/discreta.js\")",
+      "Bash(node --check \"e:/Statia Go/statia-go/js/core/ai.js\")",
+      "Bash(node --check \"e:/Statia Go/statia-go/js/core/stats.js\")",
+      "Bash(node --check \"e:/Statia Go/statia-go/js/core/utils.js\")",
+      "Bash(node --check \"e:/Statia Go/statia-go/js/modulos/02_distribuciones/distribuciones.js\")",
+      "Bash(node --check \"e:/Statia Go/statia-go/js/core/app.js\")"
+    ]
+  }
+}
