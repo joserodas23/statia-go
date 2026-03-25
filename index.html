@@ -5,8 +5,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Statia Go">
   <meta name="theme-color" content="#0d0f14">
   <title>Statia Go</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
   <link
     href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap"
     rel="stylesheet">
@@ -159,6 +163,15 @@
   <!-- <script src="js/modulos/04_no_parametrica/mann_whitney.js"></script> -->
   <!-- <script src="js/modulos/05_regresion/lineal_simple.js"></script> -->
   <!-- <script src="js/modulos/06_anova/anova_una_via.js"></script> -->
+
+  <!-- SERVICE WORKER — PWA -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+  </script>
 
 </body>
 
