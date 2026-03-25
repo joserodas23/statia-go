@@ -413,6 +413,40 @@ const ModDistribuciones = {
     return html + '</tbody></table></div>';
   },
 
+  renderTableBinomial() {
+    const nVals = [5, 8, 10, 12, 15, 20];
+    const pVals = [0.10, 0.20, 0.25, 0.30, 0.40, 0.50, 0.60, 0.70, 0.75, 0.80, 0.90];
+    let html = '<div style="font-family:\'DM Mono\',monospace;font-size:0.6rem;color:var(--muted);padding:6px 2px 10px">P(X ≤ k) — Función de distribución acumulada Binomial B(n, p)</div>';
+    for (const n of nVals) {
+      html += `<div class="tbl-label">n = ${n}</div>`;
+      html += '<div class="tbl-scroll"><table class="freq-table"><thead><tr><th>k</th>';
+      pVals.forEach(p => { html += `<th>p=${p}</th>`; });
+      html += '</tr></thead><tbody>';
+      for (let k = 0; k <= n; k++) {
+        html += `<tr><td><strong>${k}</strong></td>`;
+        pVals.forEach(p => { html += `<td>${this._binomCDF(k, n, p).toFixed(4)}</td>`; });
+        html += '</tr>';
+      }
+      html += '</tbody></table></div>';
+    }
+    return html;
+  },
+
+  renderTablePoisson() {
+    const lambdas = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0];
+    const maxK = 18;
+    let html = '<div style="font-family:\'DM Mono\',monospace;font-size:0.6rem;color:var(--muted);padding:6px 2px 10px">P(X ≤ k) — Función de distribución acumulada Poisson P(λ)</div>';
+    html += '<div class="tbl-scroll"><table class="freq-table"><thead><tr><th>k</th>';
+    lambdas.forEach(lam => { html += `<th>λ=${lam}</th>`; });
+    html += '</tr></thead><tbody>';
+    for (let k = 0; k <= maxK; k++) {
+      html += `<tr><td><strong>${k}</strong></td>`;
+      lambdas.forEach(lam => { html += `<td>${this._poissonCDF(k, lam).toFixed(4)}</td>`; });
+      html += '</tr>';
+    }
+    return html + '</tbody></table></div>';
+  },
+
   // ============================================
   // TUTORIAL
   // ============================================
@@ -507,11 +541,13 @@ const ModDistribuciones = {
         <div id="panel-tablas" style="display:none">
           <div class="card-title">Tablas de valores críticos</div>
           <div class="card-sub">Referencias para pruebas de hipótesis</div>
-          <div class="mode-tabs" style="margin-bottom:12px">
+          <div class="mode-tabs sc" style="margin-bottom:12px">
             <button class="mode-tab on" id="stab-z" onclick="ModDistribuciones.showStaticTable('z')">Tabla Z</button>
-            <button class="mode-tab" id="stab-t" onclick="ModDistribuciones.showStaticTable('t')">Tabla t</button>
-            <button class="mode-tab" id="stab-chi" onclick="ModDistribuciones.showStaticTable('chi')">Tabla χ²</button>
-            <button class="mode-tab" id="stab-f" onclick="ModDistribuciones.showStaticTable('f')">Tabla F (α=0.05)</button>
+            <button class="mode-tab" id="stab-t" onclick="ModDistribuciones.showStaticTable('t')">t Student</button>
+            <button class="mode-tab" id="stab-chi" onclick="ModDistribuciones.showStaticTable('chi')">Chi²</button>
+            <button class="mode-tab" id="stab-f" onclick="ModDistribuciones.showStaticTable('f')">F (α=0.05)</button>
+            <button class="mode-tab" id="stab-binom" onclick="ModDistribuciones.showStaticTable('binom')">Binomial</button>
+            <button class="mode-tab" id="stab-pois" onclick="ModDistribuciones.showStaticTable('pois')">Poisson</button>
           </div>
           <div id="staticTableContent"><div class="ld"><span></span><span></span><span></span></div></div>
           <div style="height:8px"></div>
@@ -519,6 +555,16 @@ const ModDistribuciones = {
         </div>
 
       </div>`;
+  },
+
+  renderTablasOnly() {
+    this.renderTutorial();
+    document.getElementById('formArea').innerHTML = '';
+  },
+
+  renderCalcOnly() {
+    document.getElementById('tutorialArea').innerHTML = '';
+    this.renderForm();
   },
 
   showMainTab(tab) {
@@ -538,7 +584,7 @@ const ModDistribuciones = {
   },
 
   showStaticTable(which) {
-    ['z', 't', 'chi', 'f'].forEach(t => {
+    ['z', 't', 'chi', 'f', 'binom', 'pois'].forEach(t => {
       const el = document.getElementById('stab-' + t);
       if (el) el.className = 'mode-tab' + (t === which ? ' on' : '');
     });
@@ -548,10 +594,12 @@ const ModDistribuciones = {
     setTimeout(() => {
       try {
         switch (which) {
-          case 'z':   container.innerHTML = this.renderTableZ();   break;
-          case 't':   container.innerHTML = this.renderTableT();   break;
-          case 'chi': container.innerHTML = this.renderTableChi(); break;
-          case 'f':   container.innerHTML = this.renderTableF();   break;
+          case 'z':     container.innerHTML = this.renderTableZ();        break;
+          case 't':     container.innerHTML = this.renderTableT();        break;
+          case 'chi':   container.innerHTML = this.renderTableChi();      break;
+          case 'f':     container.innerHTML = this.renderTableF();        break;
+          case 'binom': container.innerHTML = this.renderTableBinomial(); break;
+          case 'pois':  container.innerHTML = this.renderTablePoisson();  break;
         }
       } catch (e) {
         container.innerHTML = `<div class="err">Error: ${e.message}</div>`;

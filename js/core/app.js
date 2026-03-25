@@ -29,7 +29,8 @@ const App = {
     ordinal:  { label: 'Ordinal',  icon: '📶', col: 'var(--accent2)', tb: 'tb-o', miCls: 'sel-b', section: 'descriptiva' },
     discreta: { label: 'Discreta', icon: '🔢', col: 'var(--gold)',    tb: 'tb-d', miCls: 'sel-y', section: 'descriptiva' },
     continua: { label: 'Continua', icon: '📏', col: 'var(--warn)',    tb: 'tb-c', miCls: 'sel-w', section: 'descriptiva' },
-    distribuciones: { label: 'Distribuciones', icon: '📐', col: 'var(--accent2)', tb: 'tb-dist', miCls: 'sel-b', section: 'distribuciones' },
+    dist_tablas: { label: 'Tablas estadísticas', icon: '📋', col: 'var(--accent2)', tb: 'tb-dist', miCls: 'sel-b', section: 'distribuciones', pill: 'Tablas' },
+    dist_calc:   { label: 'Probabilidades',      icon: '📐', col: 'var(--accent)',  tb: 'tb-calc', miCls: 'sel-g', section: 'distribuciones', pill: 'Probabilidades' },
     // Futuros módulos se registran aquí
   },
 
@@ -105,6 +106,7 @@ const App = {
   init() {
     this.renderDrawer();
     this.renderHomeGrid();
+    if (typeof AI !== 'undefined') AI.updateHeaderIndicator();
   },
 
   // ===== DRAWER =====
@@ -143,10 +145,14 @@ const App = {
       <div class="mdiv"></div>
 
       <div class="ms">
-        <div class="ms-title">Distribuciones</div>
-        <div class="mi" id="mi-distribuciones" onclick="App.selectType('distribuciones')">
+        <div class="ms-title">Distribuciones de Probabilidad</div>
+        <div class="mi" id="mi-dist_tablas" onclick="App.selectType('dist_tablas')">
+          <div class="mi-icon">📋</div>
+          <div><div class="mi-name" style="color:var(--accent2)">Tablas estadísticas</div><div class="mi-sub">Z, t, Chi², F, Binomial, Poisson</div></div>
+        </div>
+        <div class="mi" id="mi-dist_calc" onclick="App.selectType('dist_calc')">
           <div class="mi-icon">📐</div>
-          <div><div class="mi-name" style="color:var(--accent2)">Distribuciones</div><div class="mi-sub">Normal, t, Chi², F, Binomial, Poisson</div></div>
+          <div><div class="mi-name" style="color:var(--accent)">Cálculo de probabilidades</div><div class="mi-sub">Calcular P(X&lt;a), P(X&gt;a), P(a&lt;X&lt;b) con IA</div></div>
         </div>
       </div>
 
@@ -194,6 +200,17 @@ const App = {
             <div class="mi-sub">Bloquea la IA — 2 horas</div>
           </div>
         </div>
+      </div>
+
+      <div class="mdiv"></div>
+
+      <!-- PREMIUM CTA -->
+      <div style="padding:12px 8px 20px">
+        <div onclick="App.closeDrawer(); AI.activatePremium()" style="background:linear-gradient(135deg,rgba(79,255,176,0.12),rgba(102,153,255,0.12));border:1px solid rgba(79,255,176,0.3);border-radius:12px;padding:14px 16px;cursor:pointer;text-align:center">
+          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:0.82rem;color:var(--accent);margin-bottom:3px">⭐ Activar Premium</div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);line-height:1.5">50 interpretaciones/día<br>sin interrupciones</div>
+        </div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--muted);text-align:center;margin-top:8px">Statia Go · by Jose Rodas</div>
       </div>`;
   },
 
@@ -223,6 +240,18 @@ const App = {
         <div class="hc-name" style="color:var(--warn)">Continua</div>
         <div class="hc-sub">Mediciones y decimales</div>
         <div class="hc-tag" style="background:rgba(255,170,68,0.1);color:var(--warn);border:1px solid rgba(255,170,68,0.2)">Cuantitativa</div>
+      </div>
+      <div class="home-card" onclick="App.selectType('dist_tablas')">
+        <div class="hc-icon">📋</div>
+        <div class="hc-name" style="color:var(--accent2)">Tablas</div>
+        <div class="hc-sub">Z, t, Chi², F, Binomial, Poisson</div>
+        <div class="hc-tag" style="background:rgba(123,140,255,0.1);color:var(--accent2);border:1px solid rgba(123,140,255,0.2)">Distribuciones</div>
+      </div>
+      <div class="home-card" onclick="App.selectType('dist_calc')">
+        <div class="hc-icon">📐</div>
+        <div class="hc-name" style="color:var(--accent)">Probabilidades</div>
+        <div class="hc-sub">Calcular P(X&lt;a), P(a&lt;X&lt;b)…</div>
+        <div class="hc-tag" style="background:rgba(79,255,176,0.1);color:var(--accent);border:1px solid rgba(79,255,176,0.2)">Distribuciones</div>
       </div>`;
   },
 
@@ -279,7 +308,7 @@ const App = {
 
     // Update pill
     document.getElementById('pillIco').textContent = mod.icon;
-    document.getElementById('pillName').textContent = 'Variable ' + mod.label;
+    document.getElementById('pillName').textContent = mod.pill || ('Variable ' + mod.label);
     document.getElementById('mpill').classList.add('show');
     document.getElementById('hdrSub').textContent = mod.label;
 
@@ -295,13 +324,20 @@ const App = {
       ordinal: ModOrdinal,
       discreta: ModDiscreta,
       continua: ModContinua,
-      distribuciones: ModDistribuciones,
+      dist_tablas: ModDistribuciones,
+      dist_calc:   ModDistribuciones,
     };
 
     const mod2 = moduleMap[type];
     if (mod2) {
-      mod2.renderTutorial();
-      mod2.renderForm();
+      if (type === 'dist_tablas') {
+        mod2.renderTablasOnly();
+      } else if (type === 'dist_calc') {
+        mod2.renderCalcOnly();
+      } else {
+        mod2.renderTutorial();
+        mod2.renderForm();
+      }
     }
   },
 
