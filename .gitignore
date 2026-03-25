@@ -1,5 +1,5 @@
 # Configuración local con API keys — NUNCA subir al repositorio
-js/core/config.js
+config.js
 
 # Node (si usas vercel dev)
 node_modules/
