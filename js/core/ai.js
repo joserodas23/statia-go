@@ -9,24 +9,185 @@ const AI = {
   MODEL: 'claude-sonnet-4-20250514',
   MAX_TOKENS: 2500,
 
+  // ===== SISTEMA DE LÍMITES =====
+
+  _getDeviceId() {
+    let id = localStorage.getItem('statia_device_id');
+    if (!id) {
+      const rand = () => Math.random().toString(36).slice(2, 6).toUpperCase();
+      id = `SGO-${rand()}${rand()}`;
+      localStorage.setItem('statia_device_id', id);
+    }
+    return id;
+  },
+
+  _isPremium() {
+    const code = localStorage.getItem('statia_premium_code');
+    if (!code) return false;
+    const deviceId = this._getDeviceId();
+    return code === deviceId + '1905';
+  },
+
+  _getLimit() {
+    return this._isPremium() ? 50 : 5;
+  },
+
+  _getUsage() {
+    const today = new Date().toISOString().split('T')[0];
+    try {
+      const stored = JSON.parse(localStorage.getItem('statia_usage') || '{}');
+      if (stored.date !== today) return { date: today, count: 0 };
+      return stored;
+    } catch { return { date: today, count: 0 }; }
+  },
+
+  _saveUsage(usage) {
+    localStorage.setItem('statia_usage', JSON.stringify(usage));
+  },
+
+  _increment() {
+    const usage = this._getUsage();
+    usage.count = (usage.count || 0) + 1;
+    this._saveUsage(usage);
+    this.updateHeaderIndicator();
+  },
+
+  updateHeaderIndicator() {
+    const el = document.getElementById('aiIndicator');
+    if (!el) return;
+    const usage = this._getUsage();
+    const limit = this._getLimit();
+    const used = usage.count || 0;
+    const remaining = Math.max(0, limit - used);
+    const isPremium = this._isPremium();
+    el.style.display = 'block';
+    el.textContent = `IA: ${used}/${limit} hoy`;
+    el.className = 'ai-ind';
+    if (isPremium) el.classList.add('premium');
+    else if (remaining <= 2) el.classList.add('warn');
+  },
+
+  showUsageInfo() {
+    const usage = this._getUsage();
+    const limit = this._getLimit();
+    const used = usage.count || 0;
+    const isPremium = this._isPremium();
+    const type = isPremium ? 'Premium' : 'Gratuita';
+    alert(`📊 Uso de IA — Statia Go\n\nCuenta: ${type}\nUsadas hoy: ${used} / ${limit}\nDisponibles: ${Math.max(0, limit - used)}\n\nSe renueva automáticamente a medianoche.\n\n─ by Jose Rodas`);
+  },
+
+  activatePremium() {
+    const deviceId = this._getDeviceId();
+    const code = prompt(`Ingresa tu código de activación Premium:\n\n(Tu ID de dispositivo: ${deviceId})`);
+    if (!code) return;
+    if (code.trim() === deviceId + '1905') {
+      localStorage.setItem('statia_premium_code', code.trim());
+      this.updateHeaderIndicator();
+      alert('🎉 ¡Cuenta Premium activada!\nAhora tienes 50 interpretaciones diarias.\n\n─ Statia Go by Jose Rodas');
+    } else {
+      alert('❌ Código incorrecto. Verifica el código que te envió Jose Rodas.');
+    }
+  },
+
+  _limitCard(blockId) {
+    const el = document.getElementById(blockId);
+    if (!el) return;
+    const isPremium = this._isPremium();
+    const deviceId = this._getDeviceId();
+
+    if (isPremium) {
+      el.innerHTML = `
+        <div class="ai-block">
+          <div class="upgrade-card">
+            <div class="uc-limit">Límite diario alcanzado</div>
+            <div class="uc-sub">Has usado tus 50 interpretaciones Premium de hoy</div>
+            <div class="uc-renew">Se renueva automáticamente mañana a medianoche — by Jose Rodas</div>
+          </div>
+        </div>`;
+    } else {
+      el.innerHTML = `
+        <div class="ai-block">
+          <div class="upgrade-card">
+            <div class="uc-limit">Alcanzaste tu límite diario gratuito</div>
+            <div class="uc-sub">Has usado tus 5 interpretaciones de hoy</div>
+            <ul class="uc-perks">
+              <li>50 interpretaciones diarias</li>
+              <li>Acceso completo a todos los módulos</li>
+              <li>Sin interrupciones</li>
+            </ul>
+            <button class="uc-btn-main" onclick="AI._showPaymentInfo()">Quiero ser Premium</button>
+            <div class="uc-pay" id="ucPayBlock">
+              <div class="uc-pay-title">Instrucciones de pago</div>
+              <div class="uc-pay-text">
+                1. Paga por <strong>Yape</strong> a <strong>Jose Rodas</strong><br>
+                2. Envíame tu <strong>ID de dispositivo</strong> por WhatsApp<br>
+                3. Te envío tu código de activación en minutos
+              </div>
+              <div class="uc-device" id="ucDeviceId" onclick="AI._copyDeviceId()">${deviceId}</div>
+              <div class="uc-copied" id="ucCopied">¡Copiado!</div>
+            </div>
+            <button class="uc-btn-sec" onclick="AI._showDeviceId()">Ver mi ID de dispositivo</button>
+            <button class="uc-btn-sec" style="margin-top:4px" onclick="AI.activatePremium()">Ingresar código de activación</button>
+            <div class="uc-renew">Tu límite se renueva mañana a medianoche</div>
+          </div>
+        </div>`;
+    }
+  },
+
+  _showPaymentInfo() {
+    const pay = document.getElementById('ucPayBlock');
+    if (pay) { pay.style.display = pay.style.display === 'block' ? 'none' : 'block'; }
+  },
+
+  _showDeviceId() {
+    const deviceId = this._getDeviceId();
+    prompt('Tu ID de dispositivo (cópialo y envíalo a Jose Rodas por WhatsApp):', deviceId);
+  },
+
+  _copyDeviceId() {
+    const deviceId = this._getDeviceId();
+    navigator.clipboard?.writeText(deviceId).catch(() => {});
+    const copied = document.getElementById('ucCopied');
+    if (copied) { copied.style.display = 'block'; setTimeout(() => { copied.style.display = 'none'; }, 2000); }
+  },
+
   async call(prompt) {
-    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${CONFIG.GEMINI_KEY}`;
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { maxOutputTokens: 2500 }
-      })
-    });
-    const d = await res.json();
-    console.log('Gemini response:', JSON.stringify(d));
-    return d.candidates?.[0]?.content?.parts?.[0]?.text || 'No se pudo generar la interpretación.';
+    const isLocal = ['localhost', '127.0.0.1', ''].includes(window.location.hostname);
+
+    if (isLocal) {
+      // Desarrollo local: llama directo a Gemini con key de config.js
+      const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${CONFIG.GEMINI_KEY}`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { maxOutputTokens: 2500 }
+        })
+      });
+      const d = await res.json();
+      return d.candidates?.[0]?.content?.parts?.[0]?.text || 'No se pudo generar la interpretación.';
+    } else {
+      // Producción (Vercel): key oculta en el servidor
+      const res = await fetch('/api/ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt })
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `Error del servidor: ${res.status}`);
+      }
+      const d = await res.json();
+      return d.text || 'No se pudo generar la interpretación.';
+    }
   },
 
   // ===== RENDERIZAR RESPUESTA EN DOM =====
   async render(prompt, blockId) {
     const el = document.getElementById(blockId);
+
+    // Bloqueo por Modo Examen
     if (typeof App !== 'undefined' && App.state?.modoExamen) {
       if (el) el.innerHTML = `
         <div class="ai-block">
@@ -35,6 +196,15 @@ const AI = {
         </div>`;
       return;
     }
+
+    // Verificar límite de uso
+    const usage = this._getUsage();
+    const limit = this._getLimit();
+    if ((usage.count || 0) >= limit) {
+      this._limitCard(blockId);
+      return;
+    }
+
     try {
       const text = await this.call(prompt);
       if (el) {
@@ -43,6 +213,7 @@ const AI = {
           <div class="ai-text">${this.format(text)}</div>`;
         Object.values(Chart.instances || {}).forEach(c => c.resize());
       }
+      this._increment();
     } catch (e) {
       if (el) el.innerHTML = `<div class="err">Error IA: ${e.message}</div>`;
     }
