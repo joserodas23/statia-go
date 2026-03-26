@@ -157,7 +157,7 @@ const App = {
     setTimeout(() => {
       const splash = document.getElementById('splash');
       if (splash) { splash.style.opacity = '0'; setTimeout(() => splash.remove(), 500); }
-    }, 2000);
+    }, 3500);
   },
 
   // ===== ACERCA DE =====
