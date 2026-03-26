@@ -210,7 +210,8 @@ const AI = {
       if (el) {
         el.innerHTML = `
           <div class="ai-tag"><div class="ai-dot"></div> Interpretación con IA</div>
-          <div class="ai-text">${this.format(text)}</div>`;
+          <div class="ai-text">${this.format(text)}</div>
+          <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);font-family:'DM Mono',monospace;font-size:0.55rem;color:rgba(255,255,255,0.18);text-align:right">Interpretado por StatIA · Statia Go by Jose Rodas</div>`;
         Object.values(Chart.instances || {}).forEach(c => c.resize());
       }
       this._increment();

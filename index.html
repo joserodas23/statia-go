@@ -20,6 +20,48 @@
 
 <body>
 
+  <!-- SPLASH SCREEN -->
+  <div id="splash" style="position:fixed;inset:0;background:#0d0f14;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;transition:opacity 0.5s">
+    <div style="width:80px;height:80px;background:linear-gradient(135deg,#0d0f14,#131720);border-radius:22px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(79,255,176,0.2);box-shadow:0 0 40px rgba(79,255,176,0.15);margin-bottom:18px">
+      <span style="font-family:'Syne',sans-serif;font-size:2.8rem;font-weight:900;background:linear-gradient(135deg,#4fffb0,#6699ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent">S</span>
+    </div>
+    <div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:#fff">Statia <span style="color:#4fffb0">Go</span></div>
+    <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:rgba(255,255,255,0.4);margin-top:4px;letter-spacing:0.05em">by Jose Rodas</div>
+    <div style="margin-top:28px;display:flex;gap:5px">
+      <span style="width:6px;height:6px;border-radius:50%;background:#4fffb0;animation:bounce 1.1s infinite"></span>
+      <span style="width:6px;height:6px;border-radius:50%;background:#4fffb0;animation:bounce 1.1s 0.18s infinite"></span>
+      <span style="width:6px;height:6px;border-radius:50%;background:#4fffb0;animation:bounce 1.1s 0.36s infinite"></span>
+    </div>
+    <div style="position:absolute;bottom:24px;font-family:'DM Mono',monospace;font-size:0.55rem;color:rgba(255,255,255,0.2)">Estadística con IA · v1.0</div>
+  </div>
+
+  <!-- MODAL ACERCA DE -->
+  <div id="aboutModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:8000;align-items:flex-end;justify-content:center" onclick="if(event.target===this)App.closeAbout()">
+    <div style="background:#131720;border-radius:20px 20px 0 0;padding:24px 20px 36px;width:100%;max-width:480px;border-top:1px solid rgba(79,255,176,0.2);animation:fadeUp 0.3s ease">
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="width:64px;height:64px;background:linear-gradient(135deg,#0d0f14,#131720);border-radius:16px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(79,255,176,0.25);margin:0 auto 12px;box-shadow:0 0 30px rgba(79,255,176,0.1)">
+          <span style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:900;background:linear-gradient(135deg,#4fffb0,#6699ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent">S</span>
+        </div>
+        <div style="font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:#fff">Statia <span style="color:#4fffb0">Go</span></div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:rgba(255,255,255,0.4);margin-top:3px">Estadística universitaria con IA · v1.0</div>
+      </div>
+      <div style="background:rgba(79,255,176,0.06);border:1px solid rgba(79,255,176,0.15);border-radius:12px;padding:16px;margin-bottom:14px;text-align:center">
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:0.9rem;color:#fff;margin-bottom:4px">Jose Rodas</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:rgba(79,255,176,0.8);margin-bottom:12px">Desarrollador · Estadístico</div>
+        <div style="display:flex;gap:8px;justify-content:center">
+          <a href="https://wa.me/593000000000" target="_blank" style="background:rgba(79,255,176,0.12);border:1px solid rgba(79,255,176,0.3);border-radius:8px;padding:7px 14px;font-family:'DM Mono',monospace;font-size:0.63rem;color:#4fffb0;text-decoration:none">📱 WhatsApp</a>
+          <button onclick="App.closeAbout();AI.activatePremium()" style="background:linear-gradient(135deg,#4fffb0,#00d68f);border:none;border-radius:8px;padding:7px 14px;font-family:'Syne',sans-serif;font-size:0.63rem;font-weight:700;color:#0d0f14;cursor:pointer">⭐ Activar Premium</button>
+        </div>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:rgba(255,255,255,0.2);text-align:center;line-height:1.8">
+        Estadística Descriptiva · Distribuciones · Hipótesis · Regresión<br>
+        Hecho con ❤️ para universitarios de Perú y Ecuador<br>
+        <span style="color:rgba(79,255,176,0.4)">© 2025 Jose Rodas — Statia Go</span>
+      </div>
+      <button onclick="App.closeAbout()" style="width:100%;margin-top:16px;padding:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:rgba(255,255,255,0.5);font-family:'DM Mono',monospace;font-size:0.7rem;cursor:pointer">Cerrar</button>
+    </div>
+  </div>
+
   <!-- OVERLAY -->
   <div class="overlay" id="overlay" onclick="App.closeDrawer()"></div>
 

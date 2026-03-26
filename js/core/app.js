@@ -109,6 +109,22 @@ const App = {
     this.renderDrawer();
     this.renderHomeGrid();
     if (typeof AI !== 'undefined') AI.updateHeaderIndicator();
+    setTimeout(() => {
+      const splash = document.getElementById('splash');
+      if (splash) { splash.style.opacity = '0'; setTimeout(() => splash.remove(), 500); }
+    }, 2000);
+  },
+
+  // ===== ACERCA DE =====
+  showAbout() {
+    this.closeDrawer();
+    const m = document.getElementById('aboutModal');
+    if (m) m.style.display = 'flex';
+  },
+
+  closeAbout() {
+    const m = document.getElementById('aboutModal');
+    if (m) m.style.display = 'none';
   },
 
   // ===== DRAWER =====
@@ -202,6 +218,10 @@ const App = {
           <div class="mi-icon">🕓</div>
           <div><div class="mi-name">Historial</div><div class="mi-sub">Análisis anteriores</div></div>
         </div>
+        <div class="mi" onclick="App.showAbout()">
+          <div class="mi-icon">👤</div>
+          <div><div class="mi-name">Acerca de</div><div class="mi-sub">Jose Rodas · Statia Go v1.0</div></div>
+        </div>
         <div class="mi" onclick="App.activarModoExamen()" style="border-top:1px solid rgba(255,80,80,0.2);margin-top:4px;padding-top:8px">
           <div class="mi-icon">🔒</div>
           <div>
@@ -220,6 +240,17 @@ const App = {
           <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);line-height:1.5">50 interpretaciones/día<br>sin interrupciones</div>
         </div>
         <div style="font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--muted);text-align:center;margin-top:8px">Statia Go · by Jose Rodas</div>
+      </div>
+
+      <!-- FOOTER DRAWER -->
+      <div style="padding:0 12px 24px;text-align:center;border-top:1px solid var(--border);margin-top:8px;padding-top:16px">
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:0.85rem;color:var(--text)">Jose <span style="color:var(--accent)">Rodas</span></div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--muted);margin-top:2px">Desarrollador · Estadístico</div>
+        <div style="display:flex;justify-content:center;gap:6px;margin-top:10px">
+          <div onclick="App.showAbout()" style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:5px 12px;font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--muted);cursor:pointer">👤 Acerca de</div>
+          <div onclick="App.closeDrawer();AI.activatePremium()" style="background:rgba(79,255,176,0.1);border:1px solid rgba(79,255,176,0.25);border-radius:7px;padding:5px 12px;font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--accent);cursor:pointer">⭐ Premium</div>
+        </div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.5rem;color:rgba(255,255,255,0.12);margin-top:12px">© 2025 Statia Go · v1.0</div>
       </div>`;
   },
 
