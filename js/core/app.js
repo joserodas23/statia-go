@@ -29,6 +29,7 @@ const App = {
     ordinal:  { label: 'Ordinal',  icon: '📶', col: 'var(--accent2)', tb: 'tb-o', miCls: 'sel-b', section: 'descriptiva' },
     discreta: { label: 'Discreta', icon: '🔢', col: 'var(--gold)',    tb: 'tb-d', miCls: 'sel-y', section: 'descriptiva' },
     continua: { label: 'Continua', icon: '📏', col: 'var(--warn)',    tb: 'tb-c', miCls: 'sel-w', section: 'descriptiva' },
+    conteo:      { label: 'Técnicas de Conteo',  icon: '🎲', col: 'var(--accent3)', tb: 'tb-comb', miCls: 'sel-r', section: 'conteo' },
     dist_tablas: { label: 'Tablas estadísticas', icon: '📋', col: 'var(--accent2)', tb: 'tb-dist', miCls: 'sel-b', section: 'distribuciones', pill: 'Tablas' },
     dist_calc:   { label: 'Probabilidades',      icon: '📐', col: 'var(--accent)',  tb: 'tb-calc', miCls: 'sel-g', section: 'distribuciones', pill: 'Probabilidades' },
     hipotesis:   { label: 'Hipótesis',           icon: '🧪', col: 'var(--accent)',  tb: 'tb-hip',  miCls: 'sel-g', section: 'hipotesis' },
@@ -207,6 +208,16 @@ const App = {
       <div class="mdiv"></div>
 
       <div class="ms">
+        <div class="ms-title">Técnicas de Conteo</div>
+        <div class="mi" id="mi-conteo" onclick="App.selectType('conteo')">
+          <div class="mi-icon">🎲</div>
+          <div><div class="mi-name" style="color:var(--accent3)">Técnicas de Conteo</div><div class="mi-sub">Factorial, Permutaciones, Combinaciones</div></div>
+        </div>
+      </div>
+
+      <div class="mdiv"></div>
+
+      <div class="ms">
         <div class="ms-title">Distribuciones de Probabilidad</div>
         <div class="mi" id="mi-dist_tablas" onclick="App.selectType('dist_tablas')">
           <div class="mi-icon">📋</div>
@@ -325,6 +336,12 @@ const App = {
         <div class="hc-sub">Mediciones y decimales</div>
         <div class="hc-tag" style="background:rgba(255,170,68,0.1);color:var(--warn);border:1px solid rgba(255,170,68,0.2)">Cuantitativa</div>
       </div>
+      <div class="home-card" onclick="App.selectType('conteo')">
+        <div class="hc-icon">🎲</div>
+        <div class="hc-name" style="color:var(--accent3)">Conteo</div>
+        <div class="hc-sub">Factorial, Permut., Combinaciones</div>
+        <div class="hc-tag" style="background:rgba(255,107,107,0.1);color:var(--accent3);border:1px solid rgba(255,107,107,0.2)">Conteo</div>
+      </div>
       <div class="home-card" onclick="App.selectType('dist_tablas')">
         <div class="hc-icon">📋</div>
         <div class="hc-name" style="color:var(--accent2)">Tablas</div>
@@ -376,7 +393,7 @@ const App = {
   goHome() {
     this.showScreen('homeScreen');
     document.getElementById('mpill').classList.remove('show');
-    document.getElementById('hdrSub').textContent = 'Estadística con IA';
+    document.getElementById('hdrSub').textContent = 'Estadística · Ciencia de Datos · IA';
     this.setNav('home');
   },
 
@@ -426,6 +443,7 @@ const App = {
 
     // Módulos con render() propio (usan área completa)
     const fullRenderMap = {
+      conteo:    ModConteo,
       hipotesis: ModHipotesis,
       chi:       ModChi,
       regresion: ModRegresion,
