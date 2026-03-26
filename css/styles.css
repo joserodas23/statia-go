@@ -60,8 +60,8 @@ body { background: var(--bg); color: var(--text); font-family: 'Lora', serif; di
 .hdr-c h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem; letter-spacing: -0.3px; }
 .hdr-c h1 span { color: var(--accent); }
 .hdr-c p { font-family: 'DM Mono', monospace; font-size: 0.55rem; color: var(--muted); }
-.hdr-by { font-family: 'DM Mono', monospace; font-size: 0.55rem; color: rgba(255,255,255,0.35); white-space: nowrap; background: rgba(123,140,255,0.08); border: 1px solid rgba(123,140,255,0.15); border-radius: 6px; padding: 2px 7px; }
-.hdr-by strong { color: var(--accent2); font-weight: 700; }
+.hdr-by { font-family: 'Syne', sans-serif; font-size: 0.7rem; font-weight: 700; color: rgba(255,255,255,0.6); white-space: nowrap; background: rgba(123,140,255,0.1); border: 1px solid rgba(123,140,255,0.25); border-radius: 6px; padding: 4px 9px; }
+.hdr-by strong { color: var(--accent2); font-weight: 800; }
 
 /* ===== MODULE PILL ===== */
 .mpill { padding: 7px 14px; border-bottom: 1px solid var(--border); display: none; align-items: center; gap: 8px; flex-shrink: 0; background: var(--surface2); }
