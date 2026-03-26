@@ -31,7 +31,9 @@ const App = {
     continua: { label: 'Continua', icon: '📏', col: 'var(--warn)',    tb: 'tb-c', miCls: 'sel-w', section: 'descriptiva' },
     dist_tablas: { label: 'Tablas estadísticas', icon: '📋', col: 'var(--accent2)', tb: 'tb-dist', miCls: 'sel-b', section: 'distribuciones', pill: 'Tablas' },
     dist_calc:   { label: 'Probabilidades',      icon: '📐', col: 'var(--accent)',  tb: 'tb-calc', miCls: 'sel-g', section: 'distribuciones', pill: 'Probabilidades' },
-    // Futuros módulos se registran aquí
+    hipotesis:   { label: 'Hipótesis',           icon: '🧪', col: 'var(--accent)',  tb: 'tb-hip',  miCls: 'sel-g', section: 'hipotesis' },
+    chi:         { label: 'Chi-cuadrado',        icon: 'χ²', col: 'var(--accent2)',tb: 'tb-chi',  miCls: 'sel-b', section: 'hipotesis' },
+    regresion:   { label: 'Regresión',           icon: '📈', col: 'var(--gold)',    tb: 'tb-reg',  miCls: 'sel-y', section: 'regresion' },
   },
 
   // ===== MODO EXAMEN =====
@@ -160,17 +162,24 @@ const App = {
 
       <div class="ms">
         <div class="ms-title">Pruebas de Hipótesis</div>
-        <div class="mi off"><div class="mi-icon">🧪</div><div><div class="mi-name">Prueba t</div><div class="mi-sub">Una y dos muestras</div></div><div class="mi-badge">Pronto</div></div>
-        <div class="mi off"><div class="mi-icon">χ²</div><div><div class="mi-name">Chi-cuadrado</div><div class="mi-sub">Independencia</div></div><div class="mi-badge">Pronto</div></div>
-        <div class="mi off"><div class="mi-icon">🔬</div><div><div class="mi-name">ANOVA</div><div class="mi-sub">Comparación de grupos</div></div><div class="mi-badge">Pronto</div></div>
+        <div class="mi" id="mi-hipotesis" onclick="App.selectType('hipotesis')">
+          <div class="mi-icon">🧪</div>
+          <div><div class="mi-name" style="color:var(--accent)">Pruebas de Hipótesis</div><div class="mi-sub">Z, t, ANOVA — una y dos muestras</div></div>
+        </div>
+        <div class="mi" id="mi-chi" onclick="App.selectType('chi')">
+          <div class="mi-icon">χ²</div>
+          <div><div class="mi-name" style="color:var(--accent2)">Chi-cuadrado</div><div class="mi-sub">Independencia y bondad de ajuste</div></div>
+        </div>
       </div>
 
       <div class="mdiv"></div>
 
       <div class="ms">
         <div class="ms-title">Regresión y Correlación</div>
-        <div class="mi off"><div class="mi-icon">📈</div><div><div class="mi-name">Regresión lineal</div><div class="mi-sub">Simple</div></div><div class="mi-badge">Pronto</div></div>
-        <div class="mi off"><div class="mi-icon">🔗</div><div><div class="mi-name">Correlación</div><div class="mi-sub">Pearson y Spearman</div></div><div class="mi-badge">Pronto</div></div>
+        <div class="mi" id="mi-regresion" onclick="App.selectType('regresion')">
+          <div class="mi-icon">📈</div>
+          <div><div class="mi-name" style="color:var(--gold)">Regresión y Correlación</div><div class="mi-sub">Lineal simple, Pearson, Spearman</div></div>
+        </div>
       </div>
 
       <div class="mdiv"></div>
@@ -252,6 +261,24 @@ const App = {
         <div class="hc-name" style="color:var(--accent)">Probabilidades</div>
         <div class="hc-sub">Calcular P(X&lt;a), P(a&lt;X&lt;b)…</div>
         <div class="hc-tag" style="background:rgba(79,255,176,0.1);color:var(--accent);border:1px solid rgba(79,255,176,0.2)">Distribuciones</div>
+      </div>
+      <div class="home-card" onclick="App.selectType('hipotesis')">
+        <div class="hc-icon">🧪</div>
+        <div class="hc-name" style="color:var(--accent)">Hipótesis</div>
+        <div class="hc-sub">Z, t, ANOVA — con IA</div>
+        <div class="hc-tag" style="background:rgba(79,255,176,0.1);color:var(--accent);border:1px solid rgba(79,255,176,0.2)">Inferencia</div>
+      </div>
+      <div class="home-card" onclick="App.selectType('chi')">
+        <div class="hc-icon">χ²</div>
+        <div class="hc-name" style="color:var(--accent2)">Chi-cuadrado</div>
+        <div class="hc-sub">Independencia y bondad de ajuste</div>
+        <div class="hc-tag" style="background:rgba(123,140,255,0.1);color:var(--accent2);border:1px solid rgba(123,140,255,0.2)">Inferencia</div>
+      </div>
+      <div class="home-card" onclick="App.selectType('regresion')">
+        <div class="hc-icon">📈</div>
+        <div class="hc-name" style="color:var(--gold)">Regresión</div>
+        <div class="hc-sub">Lineal simple, Pearson, Spearman</div>
+        <div class="hc-tag" style="background:rgba(255,209,102,0.1);color:var(--gold);border:1px solid rgba(255,209,102,0.2)">Regresión</div>
       </div>`;
   },
 
@@ -319,6 +346,27 @@ const App = {
     Utils.clearResults();
 
     // Render tutorial and form via module
+    const area = document.getElementById('tutorialArea');
+    const formArea = document.getElementById('formArea');
+
+    // Módulos con render() propio (usan área completa)
+    const fullRenderMap = {
+      hipotesis: ModHipotesis,
+      chi:       ModChi,
+      regresion: ModRegresion,
+    };
+
+    if (fullRenderMap[type]) {
+      if (area) area.innerHTML = '';
+      if (formArea) formArea.innerHTML = '';
+      const container = area || formArea;
+      if (container) {
+        fullRenderMap[type].render(container);
+        if (fullRenderMap[type].init) fullRenderMap[type].init();
+      }
+      return;
+    }
+
     const moduleMap = {
       nominal: ModNominal,
       ordinal: ModOrdinal,

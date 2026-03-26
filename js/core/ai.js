@@ -555,4 +555,114 @@ Mínimo 300 palabras. Usa máximo 2 decimales. **negritas** para valores. Sin sa
   videoBlock(tema) {
     return `<div class="video-block"><div class="video-play-icon"></div><div class="video-info"><div class="video-title">Video tutorial — ${tema}</div><div class="video-sub">Statia Academy</div></div><a href="TU_LINK_AQUI" target="_blank" class="video-btn">Ver en YouTube</a></div>`;
   },
+
+  // ----- HIPÓTESIS -----
+  promptHipotesis(titulo, stat, statLabel, df, pval, alpha, cola, rechazar, detalle, grupos_info) {
+    const f4 = v => typeof v === 'number' ? Utils.fmt(v, 4) : v;
+    const dfStr = Array.isArray(df) ? `(${df[0]}, ${df[1]})` : df != null ? df : 'N/A';
+    const decisionTexto = rechazar
+      ? `Se rechaza H₀ con α = ${alpha}. Existe evidencia estadísticamente significativa.`
+      : `No se rechaza H₀ con α = ${alpha}. No hay evidencia estadística suficiente.`;
+    return `Eres StatIA, asistente estadístico educativo universitario.
+Interpreta los resultados de esta prueba de hipótesis de forma completa y académica.
+
+PRUEBA: ${titulo}
+Estadístico ${statLabel} = ${f4(stat)} | Valor p = ${f4(pval)} | α = ${alpha} | Cola: ${cola}
+${dfStr !== 'N/A' ? `Grados de libertad: ${dfStr}` : ''}
+${detalle}
+${grupos_info ? `Grupos: ${grupos_info}` : ''}
+
+Decisión: ${decisionTexto}
+
+Responde en español con estas secciones:
+
+### Planteamiento
+Describe las hipótesis H₀ y H₁ en palabras, el tipo de prueba utilizada y cuándo es apropiada usarla. Explica el nivel de significancia α = ${alpha} y qué tipo de error controla.
+
+### Estadístico y valor p
+Interpreta el estadístico ${statLabel} = ${f4(stat)}. Explica el valor p = ${f4(pval)}: la probabilidad de obtener un resultado tan extremo si H₀ fuera verdadera. Compara con α = ${alpha}.
+
+### Decisión estadística
+Explica detalladamente la decisión tomada. ¿Por qué se rechaza o no se rechaza H₀? ¿Qué implica esta decisión en términos prácticos? Menciona el nivel de confianza (${((1-alpha)*100).toFixed(0)}%).
+
+### Conclusión aplicada
+Traduce los resultados estadísticos a una conclusión comprensible en el contexto de la investigación. ${rechazar ? 'Dado que se rechaza H₀, ¿qué significa esto para la variable estudiada?' : '¿Qué significa no encontrar evidencia suficiente?'}
+
+### Consideraciones metodológicas
+Menciona supuestos de la prueba, tamaño de muestra, si el resultado es estadísticamente significativo vs. prácticamente significativo, y qué análisis complementarios se recomiendan.
+
+Mínimo 300 palabras. Usa **negritas** para valores numéricos. Sin saludos.`;
+  },
+
+  // ----- CHI-CUADRADO -----
+  promptChi(tipo, chi2, df, pval, alpha, rechazar, cramer, n) {
+    const f4 = v => Utils.fmt(v, 4);
+    const tipoNombre = tipo === 'independencia' ? 'Independencia' : 'Bondad de Ajuste';
+    const cramerStr = cramer !== null ? `V de Cramér = ${f4(cramer)} (${Math.abs(cramer) > 0.5 ? 'asociación fuerte' : Math.abs(cramer) > 0.3 ? 'asociación moderada' : 'asociación débil'})` : '';
+    return `Eres StatIA, asistente estadístico educativo universitario.
+Interpreta los resultados de esta prueba Chi-cuadrado de ${tipoNombre}.
+
+RESULTADOS:
+χ² calculado = ${f4(chi2)} | Grados de libertad = ${df} | Valor p = ${f4(pval)} | α = ${alpha}
+n total = ${n} ${cramerStr}
+Decisión: ${rechazar ? `Se rechaza H₀ (p < α)` : `No se rechaza H₀ (p ≥ α)`}
+
+Responde en español con estas secciones:
+
+### ¿Qué mide esta prueba?
+Explica qué es la prueba Chi-cuadrado de ${tipoNombre}, cuándo se usa y qué hipótesis contrasta. Describe H₀ y H₁ en palabras simples.
+
+### Estadístico χ² y valor p
+Interpreta χ² = ${f4(chi2)} con ${df} grados de libertad. Explica el valor p = ${f4(pval)}: probabilidad de observar esta discrepancia entre frecuencias si H₀ fuera verdadera. Compara con α = ${alpha}.
+
+### Decisión y conclusión
+Explica la decisión tomada y su significado. ${rechazar ? `Se rechaza H₀: existe asociación/discrepancia estadísticamente significativa.` : `No se rechaza H₀: no hay evidencia de asociación/discrepancia.`} Interpreta en términos prácticos para la investigación.
+
+${cramer !== null ? `### Fuerza de la asociación\nInterpreta la V de Cramér = ${f4(cramer)}: ${Math.abs(cramer) > 0.5 ? 'asociación fuerte' : Math.abs(cramer) > 0.3 ? 'asociación moderada' : 'asociación débil'}. Recuerda que chi-cuadrado indica si hay asociación, pero no su magnitud; para eso se usa la V de Cramér.` : ''}
+
+### Supuestos y limitaciones
+Menciona el supuesto de frecuencias esperadas ≥ 5, tamaño de muestra adecuado, cuándo usar la prueba exacta de Fisher, y qué análisis complementarios se recomiendan.
+
+Mínimo 300 palabras. Usa **negritas** para valores. Sin saludos.`;
+  },
+
+  // ----- REGRESIÓN -----
+  promptRegresion(nx, ny, n, r, rho, r2, b0, b1, se, pPearson, pSpearman, alpha) {
+    const f4 = v => Utils.fmt(v, 4);
+    const f2 = v => Utils.fmt(v, 2);
+    const rLabel = r => Math.abs(r) > 0.7 ? 'fuerte' : Math.abs(r) > 0.3 ? 'moderada' : 'débil';
+    const rDir   = r => r > 0 ? 'positiva (directa)' : 'negativa (inversa)';
+    return `Eres StatIA, asistente estadístico educativo universitario.
+Interpreta estos resultados de regresión lineal y correlación de forma completa y académica.
+
+VARIABLES: X = "${nx}" | Y = "${ny}" | n = ${n} pares
+
+CORRELACIÓN:
+Pearson r = ${f4(r)} → ${rLabel(r)} ${rDir(r)} | p = ${f4(pPearson)} | ${pPearson < alpha ? 'significativa' : 'no significativa'} (α = ${alpha})
+Spearman ρ = ${f4(rho)} → ${rLabel(rho)} ${rDir(rho)} | p = ${f4(pSpearman)} | ${pSpearman < alpha ? 'significativa' : 'no significativa'}
+
+REGRESIÓN LINEAL:
+Ecuación: Ŷ = ${f4(b0)} + ${f4(b1)} × X
+R² = ${f2(r2*100)}% de variabilidad explicada
+Error estándar Sₑ = ${f4(se)}
+
+Responde en español con estas secciones:
+
+### Correlación de Pearson
+Interpreta r = ${f4(r)}: fuerza (${rLabel(r)}), dirección (${rDir(r)}), y significancia estadística (p = ${f4(pPearson)}). ¿Qué tan confiable es este coeficiente para estos datos?
+
+### Correlación de Spearman
+Interpreta ρ = ${f4(rho)} y compáralo con Pearson. ¿Son similares? ¿Qué nos dice la diferencia entre ambos coeficientes? ¿Cuándo es preferible usar Spearman?
+
+### Modelo de regresión
+Interpreta la ecuación Ŷ = ${f4(b0)} + ${f4(b1)} × X en palabras: qué significa b₀ = ${f4(b0)} (intercepto) y b₁ = ${f4(b1)} (pendiente) en el contexto real de las variables "${nx}" y "${ny}".
+
+### Coeficiente de determinación R²
+R² = ${f2(r2*100)}% significa que el modelo explica ese porcentaje de la variabilidad de ${ny}. Evalúa si es un buen ajuste (< 25% débil, 25–64% moderado, > 64% fuerte). El error estándar Sₑ = ${f4(se)} indica la dispersión promedio de los residuos.
+
+### Conclusión y recomendaciones
+Resume los hallazgos principales. ¿Es útil el modelo para predecir? ¿Se cumple el supuesto de linealidad? ¿Qué análisis adicionales se recomiendan (análisis de residuos, regresión múltiple, etc.)? Recuerda: correlación no implica causalidad.
+
+Mínimo 300 palabras. Usa **negritas** para valores. Sin saludos.`;
+  },
 };
