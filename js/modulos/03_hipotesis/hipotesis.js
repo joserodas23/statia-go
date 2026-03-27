@@ -122,6 +122,19 @@ const ModHipotesis = {
       </div>
     </div>
 
+    <div class="fml-section">Prueba Z — Una proporción</div>
+    <div class="fml-grid">
+      <div class="fml-card g">
+        <div class="fml-name">Estadístico · H₀: p = p₀</div>
+        <div class="fml-formula"><span class="ktx" data-f="Z = \\dfrac{\\hat{p} - p_0}{\\sqrt{p_0(1-p_0)/n}}"></span></div>
+        <div class="fml-body" style="margin-top:8px">
+          <div class="fml-row"><span class="fml-label">p̂</span><span class="fml-val">Proporción muestral = x/n</span></div>
+          <div class="fml-row"><span class="fml-label">p₀</span><span class="fml-val">Proporción hipotética bajo H₀</span></div>
+          <div class="fml-row"><span class="fml-label">Ejemplo</span><span class="fml-val">¿El % de aprobados es diferente de 70%?</span></div>
+        </div>
+      </div>
+    </div>
+
     <div class="step" style="border-left-color:var(--accent2)">
       <div class="step-num">Tipos de cola</div>
       <div class="step-title">¿Cómo plantear H₁?</div>
@@ -142,6 +155,7 @@ const ModHipotesis = {
         <option value="t2">Prueba t — Dos muestras independientes</option>
         <option value="tp">Prueba t — Muestras pareadas</option>
         <option value="anova">ANOVA — Una vía</option>
+        <option value="zp">Prueba Z — Una proporción</option>
       </select>
 
       <div id="hip-params"></div>
@@ -221,6 +235,14 @@ const ModHipotesis = {
         <label class="inp-label">Grupos — un grupo por línea, valores separados por coma</label>
         <div class="ib" style="margin-bottom:8px">Ejemplo: Grupo 1: 85, 90, 78 → siguiente línea: 70, 75, 68</div>
         <textarea class="inp" id="hip-grupos" rows="6" placeholder="85, 90, 78&#10;70, 75, 68&#10;92, 88, 95"></textarea>`;
+    } else if (tipo === 'zp') {
+      p.innerHTML = `
+        <div class="row2">
+          <div><label class="inp-label">Éxitos observados (x)</label><input class="inp" id="hip-x" type="number" placeholder="Ej: 48" min="0"></div>
+          <div><label class="inp-label">Tamaño de muestra (n)</label><input class="inp" id="hip-np" type="number" placeholder="Ej: 80" min="2"></div>
+        </div>
+        <label class="inp-label">Proporción hipotética (p₀)</label>
+        <input class="inp" id="hip-p0" type="number" step="0.01" min="0.01" max="0.99" placeholder="Ej: 0.50">`;
     }
   },
 
@@ -308,8 +330,20 @@ const ModHipotesis = {
         detalle = `k=${k} grupos | N=${N} | CME=${Utils.fmt(MSB,4)} | CMD=${Utils.fmt(MSW,4)}`;
       }
 
+      if (tipo === 'zp') {
+        const x   = +document.getElementById('hip-x').value;
+        const n   = +document.getElementById('hip-np').value;
+        const p0  = +document.getElementById('hip-p0').value;
+        if ([x,n,p0].some(isNaN)||n<2||p0<=0||p0>=1||x<0||x>n) throw new Error('Verifica los datos (0 < p₀ < 1, x ≤ n).');
+        const phat = x / n;
+        stat  = (phat - p0) / Math.sqrt(p0*(1-p0)/n);
+        pval  = this._pval(stat, null, cola, 'Z');
+        titulo = 'Prueba Z — Una proporción';
+        detalle = `p̂ = ${x}/${n} = ${Utils.fmt(phat,4)} | p₀ = ${p0} | n = ${n}`;
+      }
+
       const rechazar = pval < alpha;
-      const statLabel = tipo === 'anova' ? 'F' : tipo === 'z1' ? 'Z' : 't';
+      const statLabel = tipo === 'anova' ? 'F' : (tipo === 'z1' || tipo === 'zp') ? 'Z' : 't';
       const dfLabel = Array.isArray(df) ? `(${df[0]}, ${df[1]})` : df != null ? String(df) : '—';
 
       res.innerHTML = `

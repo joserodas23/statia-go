@@ -34,6 +34,7 @@ const App = {
     dist_calc:   { label: 'Probabilidades',      icon: '📐', col: 'var(--accent)',  tb: 'tb-calc', miCls: 'sel-g', section: 'distribuciones', pill: 'Probabilidades' },
     hipotesis:   { label: 'Hipótesis',           icon: '🧪', col: 'var(--accent)',  tb: 'tb-hip',  miCls: 'sel-g', section: 'hipotesis' },
     chi:         { label: 'Chi-cuadrado',        icon: 'χ²', col: 'var(--accent2)',tb: 'tb-chi',  miCls: 'sel-b', section: 'hipotesis' },
+    intervalos:  { label: 'Intervalos de Confianza', icon: '📊', col: 'var(--accent2)', tb: 'tb-ic', miCls: 'sel-b', section: 'inferencia' },
     regresion:   { label: 'Regresión',           icon: '📈', col: 'var(--gold)',    tb: 'tb-reg',  miCls: 'sel-y', section: 'regresion' },
   },
 
@@ -306,6 +307,10 @@ const App = {
           <div class="mi-icon">χ²</div>
           <div><div class="mi-name" style="color:var(--accent2)">Chi-cuadrado</div><div class="mi-sub">Independencia y bondad de ajuste</div></div>
         </div>
+        <div class="mi" id="mi-intervalos" onclick="App.selectType('intervalos')">
+          <div class="mi-icon">📊</div>
+          <div><div class="mi-name" style="color:var(--accent2)">Intervalos de Confianza</div><div class="mi-sub">IC para μ, proporción, diferencia</div></div>
+        </div>
       </div>
 
       <div class="mdiv"></div>
@@ -377,6 +382,25 @@ const App = {
   // ===== HOME GRID =====
   renderHomeGrid() {
     document.getElementById('homeGrid').innerHTML = `
+
+      <!-- RUTAS DE APRENDIZAJE -->
+      <div style="grid-column:1/-1;background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:4px">
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:0.8rem;color:var(--text);margin-bottom:10px">🗺️ Rutas de aprendizaje</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div onclick="App.selectType('nominal')" style="cursor:pointer;background:rgba(79,255,176,0.07);border:1px solid rgba(79,255,176,0.15);border-radius:10px;padding:10px 12px">
+            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.72rem;color:var(--accent);margin-bottom:3px">🟢 Principiante</div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted)">Nominal → Ordinal → Discreta → Continua</div>
+          </div>
+          <div onclick="App.selectType('conteo')" style="cursor:pointer;background:rgba(123,140,255,0.07);border:1px solid rgba(123,140,255,0.15);border-radius:10px;padding:10px 12px">
+            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.72rem;color:var(--accent2);margin-bottom:3px">🔵 Estadística Inferencial</div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted)">Conteo → Distribuciones → Hipótesis → IC → Chi²</div>
+          </div>
+          <div onclick="App.selectType('regresion')" style="cursor:pointer;background:rgba(255,209,102,0.07);border:1px solid rgba(255,209,102,0.15);border-radius:10px;padding:10px 12px">
+            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.72rem;color:var(--gold);margin-bottom:3px">🟡 Ciencia de Datos</div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted)">Regresión → Correlación → Análisis predictivo</div>
+          </div>
+        </div>
+      </div>
       <div class="home-card" onclick="App.selectType('nominal')">
         <div class="hc-icon">🏷️</div>
         <div class="hc-name" style="color:var(--accent)">Nominal</div>
@@ -429,6 +453,12 @@ const App = {
         <div class="hc-icon">χ²</div>
         <div class="hc-name" style="color:var(--accent2)">Chi-cuadrado</div>
         <div class="hc-sub">Independencia y bondad de ajuste</div>
+        <div class="hc-tag" style="background:rgba(123,140,255,0.1);color:var(--accent2);border:1px solid rgba(123,140,255,0.2)">Inferencia</div>
+      </div>
+      <div class="home-card" onclick="App.selectType('intervalos')">
+        <div class="hc-icon">📊</div>
+        <div class="hc-name" style="color:var(--accent2)">Intervalos IC</div>
+        <div class="hc-sub">Media, proporción, diferencia</div>
         <div class="hc-tag" style="background:rgba(123,140,255,0.1);color:var(--accent2);border:1px solid rgba(123,140,255,0.2)">Inferencia</div>
       </div>
       <div class="home-card" onclick="App.selectType('regresion')">
@@ -508,10 +538,11 @@ const App = {
 
     // Módulos con render() propio (usan área completa)
     const fullRenderMap = {
-      conteo:    ModConteo,
-      hipotesis: ModHipotesis,
-      chi:       ModChi,
-      regresion: ModRegresion,
+      conteo:     ModConteo,
+      hipotesis:  ModHipotesis,
+      chi:        ModChi,
+      intervalos: ModIntervalos,
+      regresion:  ModRegresion,
     };
 
     if (fullRenderMap[type]) {

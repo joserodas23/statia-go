@@ -679,6 +679,42 @@ Resume los hallazgos. ¿Es útil el modelo para predecir? ¿Qué análisis adici
 Mínimo 350 palabras. Usa **negritas** para valores. Sin saludos.`;
   },
 
+  // ----- INTERVALOS DE CONFIANZA -----
+  promptIC(tipo, nc, alpha, li, ls, punto, margen) {
+    const f4 = v => Utils.fmt(v, 4);
+    const tipoLabel = { muz: 'IC para μ con σ conocida (Z)', mut: 'IC para μ con σ desconocida (t)', prop: 'IC para proporción p', dif: 'IC para diferencia de medias' };
+    const param = tipo === 'prop' ? 'p' : tipo === 'dif' ? 'μ₁ − μ₂' : 'μ';
+    const incluye0 = li <= 0 && ls >= 0;
+    return `Eres StatIA, asistente estadístico educativo universitario.
+Interpreta este intervalo de confianza de forma completa y pedagógica.
+
+TIPO: ${tipoLabel[tipo] || tipo}
+NIVEL DE CONFIANZA: ${nc}% (α = ${alpha})
+RESULTADO: ${f4(li)} ≤ ${param} ≤ ${f4(ls)}
+Estimación puntual: ${f4(punto)}
+Margen de error: ±${f4(margen)}
+${tipo === 'dif' || tipo === 'muz' || tipo === 'mut' ? `¿El IC incluye 0? ${incluye0 ? 'SÍ' : 'NO'}` : ''}
+
+Responde en español con estas secciones:
+
+### ¿Qué significa este intervalo?
+Explica en lenguaje claro qué significa que el parámetro ${param} esté entre ${f4(li)} y ${f4(ls)} con un ${nc}% de confianza. ¿Qué tan precisa es esta estimación? Interpreta el margen de error ±${f4(margen)}.
+
+### Interpretación correcta del nivel de confianza
+Aclara el significado del ${nc}%: NO es que el parámetro esté ahí con ${nc}% de probabilidad, sino que si repitiéramos el muestreo muchas veces, el ${nc}% de los intervalos construidos contendrían el verdadero parámetro.
+
+${tipo === 'dif' ? `### Comparación entre grupos\n¿El IC incluye 0? (${incluye0 ? 'Sí — no hay diferencia significativa' : 'No — hay diferencia significativa'}). Interpreta qué implica esto para la comparación entre los dos grupos.` : ''}
+${tipo === 'prop' ? `### Interpretación de la proporción\nInterpreta p̂ = ${f4(punto)} y su intervalo. ¿Qué nos dice sobre la verdadera proporción poblacional?` : ''}
+
+### IC vs Prueba de hipótesis
+Explica brevemente qué ventaja ofrece el IC sobre una prueba de hipótesis. ¿Por qué es más informativo reportar un IC en un estudio?
+
+### Conclusión
+Resume el hallazgo principal en 2-3 oraciones claras, como aparecería en un reporte académico.
+
+Mínimo 250 palabras. Usa **negritas** para valores importantes. Sin saludos.`;
+  },
+
   // ----- CONTEO -----
   promptConteo(contexto, formula, resultado) {
     const resFmt = resultado >= 1e15 ? resultado.toExponential(4) : resultado.toLocaleString('es');
