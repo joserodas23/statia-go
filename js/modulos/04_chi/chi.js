@@ -117,6 +117,7 @@ const ModChi = {
       </select>
 
       <button class="btn-calc" onclick="ModChi.calcular()">Calcular χ² →</button>
+      <button class="btn-s" onclick="ModChi.ejemplo()" style="width:100%;padding:9px;background:transparent;border:1px solid var(--border);border-radius:9px;color:var(--muted);font-family:'DM Mono',monospace;font-size:0.72rem;cursor:pointer;margin-top:6px">📋 Cargar ejemplo</button>
       <div id="chi-resultado"></div>`;
   },
 
@@ -236,5 +237,21 @@ const ModChi = {
     }
   },
 
-  init() { this._updateForm(); }
+  init() { this._updateForm(); },
+
+  ejemplo() {
+    // Independencia: género vs preferencia de carrera (2x3)
+    const tipo = document.getElementById('chi-tipo');
+    if (tipo) { tipo.value = 'independencia'; tipo.dispatchEvent(new Event('change')); }
+    setTimeout(() => {
+      const filas = document.getElementById('chi-filas');
+      const cols  = document.getElementById('chi-cols');
+      if (filas) { filas.value = '2'; filas.dispatchEvent(new Event('input')); }
+      if (cols)  { cols.value  = '3'; cols.dispatchEvent(new Event('input'));  }
+      setTimeout(() => {
+        const datos = document.getElementById('chi-datos');
+        if (datos) datos.value = '30, 20, 10\n15, 25, 20';
+      }, 100);
+    }, 50);
+  },
 };

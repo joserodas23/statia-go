@@ -628,43 +628,55 @@ Mínimo 300 palabras. Usa **negritas** para valores. Sin saludos.`;
   },
 
   // ----- REGRESIÓN -----
-  promptRegresion(nx, ny, n, r, rho, r2, b0, b1, se, pPearson, pSpearman, alpha) {
+  promptRegresion(nx, ny, n, r, rho, r2, b0, b1, se, pPearson, pSpearman, alpha, SSR, SSE, SST, F, pF) {
     const f4 = v => Utils.fmt(v, 4);
     const f2 = v => Utils.fmt(v, 2);
-    const rLabel = r => Math.abs(r) > 0.7 ? 'fuerte' : Math.abs(r) > 0.3 ? 'moderada' : 'débil';
-    const rDir   = r => r > 0 ? 'positiva (directa)' : 'negativa (inversa)';
+    const rLabel = v => Math.abs(v) > 0.7 ? 'fuerte' : Math.abs(v) > 0.3 ? 'moderada' : 'débil';
+    const rDir   = v => v > 0 ? 'positiva (directa)' : 'negativa (inversa)';
     return `Eres StatIA, asistente estadístico educativo universitario.
 Interpreta estos resultados de regresión lineal y correlación de forma completa y académica.
 
-VARIABLES: X = "${nx}" | Y = "${ny}" | n = ${n} pares
+VARIABLES: X = "${nx}" | Y = "${ny}" | n = ${n} pares | α = ${alpha}
 
 CORRELACIÓN:
-Pearson r = ${f4(r)} → ${rLabel(r)} ${rDir(r)} | p = ${f4(pPearson)} | ${pPearson < alpha ? 'significativa' : 'no significativa'} (α = ${alpha})
-Spearman ρ = ${f4(rho)} → ${rLabel(rho)} ${rDir(rho)} | p = ${f4(pSpearman)} | ${pSpearman < alpha ? 'significativa' : 'no significativa'}
+Pearson r = ${f4(r)} → ${rLabel(r)} ${rDir(r)} | p = ${f4(pPearson)} | ${pPearson < alpha ? 'SIGNIFICATIVA' : 'no significativa'}
+Spearman ρ = ${f4(rho)} → ${rLabel(rho)} ${rDir(rho)} | p = ${f4(pSpearman)} | ${pSpearman < alpha ? 'SIGNIFICATIVA' : 'no significativa'}
 
 REGRESIÓN LINEAL:
 Ecuación: Ŷ = ${f4(b0)} + ${f4(b1)} × X
 R² = ${f2(r2*100)}% de variabilidad explicada
 Error estándar Sₑ = ${f4(se)}
 
+ANOVA DE LA REGRESIÓN:
+SC_Regresión = ${f4(SSR)} | gl = 1 | CM = ${f4(SSR)}
+SC_Error = ${f4(SSE)} | gl = ${n-2} | CM = ${f4(SSE/(n-2))}
+SC_Total = ${f4(SST)} | gl = ${n-1}
+F(1, ${n-2}) = ${f4(F)} | p = ${f4(pF)} | ${pF < alpha ? 'Modelo SIGNIFICATIVO' : 'Modelo NO significativo'} (α = ${alpha})
+
 Responde en español con estas secciones:
 
 ### Correlación de Pearson
-Interpreta r = ${f4(r)}: fuerza (${rLabel(r)}), dirección (${rDir(r)}), y significancia estadística (p = ${f4(pPearson)}). ¿Qué tan confiable es este coeficiente para estos datos?
+Interpreta r = ${f4(r)}: fuerza (${rLabel(r)}), dirección (${rDir(r)}), y significancia (p = ${f4(pPearson)}). ¿Qué tan confiable es para estos datos?
 
 ### Correlación de Spearman
-Interpreta ρ = ${f4(rho)} y compáralo con Pearson. ¿Son similares? ¿Qué nos dice la diferencia entre ambos coeficientes? ¿Cuándo es preferible usar Spearman?
+Interpreta ρ = ${f4(rho)} y compáralo con Pearson. ¿Son similares? ¿Qué indica la diferencia? ¿Cuándo es preferible Spearman?
 
 ### Modelo de regresión
-Interpreta la ecuación Ŷ = ${f4(b0)} + ${f4(b1)} × X en palabras: qué significa b₀ = ${f4(b0)} (intercepto) y b₁ = ${f4(b1)} (pendiente) en el contexto real de las variables "${nx}" y "${ny}".
+Interpreta Ŷ = ${f4(b0)} + ${f4(b1)} × X en palabras: qué significan b₀ = ${f4(b0)} (intercepto) y b₁ = ${f4(b1)} (pendiente) en el contexto de "${nx}" y "${ny}".
 
-### Coeficiente de determinación R²
-R² = ${f2(r2*100)}% significa que el modelo explica ese porcentaje de la variabilidad de ${ny}. Evalúa si es un buen ajuste (< 25% débil, 25–64% moderado, > 64% fuerte). El error estándar Sₑ = ${f4(se)} indica la dispersión promedio de los residuos.
+### R² y error estándar
+R² = ${f2(r2*100)}%: evalúa si es buen ajuste (< 25% débil, 25–64% moderado, > 64% fuerte). Interpreta Sₑ = ${f4(se)}.
 
-### Conclusión y recomendaciones
-Resume los hallazgos principales. ¿Es útil el modelo para predecir? ¿Se cumple el supuesto de linealidad? ¿Qué análisis adicionales se recomiendan (análisis de residuos, regresión múltiple, etc.)? Recuerda: correlación no implica causalidad.
+### ANOVA de la regresión
+Interpreta la prueba F(1, ${n-2}) = ${f4(F)}, p = ${f4(pF)}. ¿Es el modelo estadísticamente significativo en su conjunto? ¿Qué concluimos sobre β₁?
 
-Mínimo 300 palabras. Usa **negritas** para valores. Sin saludos.`;
+### Supuestos del modelo
+Comenta brevemente los 4 supuestos: linealidad, independencia de errores, homocedasticidad y normalidad de residuos. Con n = ${n} pares, ¿qué precauciones se deben tomar?
+
+### Conclusión
+Resume los hallazgos. ¿Es útil el modelo para predecir? ¿Qué análisis adicionales se recomiendan? Recuerda: correlación no implica causalidad.
+
+Mínimo 350 palabras. Usa **negritas** para valores. Sin saludos.`;
   },
 
   // ----- CONTEO -----

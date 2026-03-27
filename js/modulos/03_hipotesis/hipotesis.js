@@ -166,6 +166,7 @@ const ModHipotesis = {
       </div>
 
       <button class="btn-calc" onclick="ModHipotesis.calcular()">Calcular prueba →</button>
+      <button class="btn-s" onclick="ModHipotesis.ejemplo()" style="width:100%;padding:9px;background:transparent;border:1px solid var(--border);border-radius:9px;color:var(--muted);font-family:'DM Mono',monospace;font-size:0.72rem;cursor:pointer;margin-top:6px">📋 Cargar ejemplo</button>
       <div id="hip-resultado"></div>`;
   },
 
@@ -346,5 +347,21 @@ const ModHipotesis = {
     }
   },
 
-  init() { this._updateForm(); }
+  init() { this._updateForm(); },
+
+  ejemplo() {
+    // Prueba t una muestra — ¿La media difiere de 70?
+    const tipo = document.getElementById('hip-tipo');
+    if (tipo) { tipo.value = 't1'; tipo.dispatchEvent(new Event('change')); }
+    setTimeout(() => {
+      const xbar = document.getElementById('hip-xbar');
+      const s    = document.getElementById('hip-s');
+      const n    = document.getElementById('hip-n');
+      const mu0  = document.getElementById('hip-mu0');
+      if (xbar) xbar.value = '73.5';
+      if (s)    s.value    = '8.2';
+      if (n)    n.value    = '25';
+      if (mu0)  mu0.value  = '70';
+    }, 50);
+  },
 };

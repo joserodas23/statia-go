@@ -112,4 +112,32 @@ const Utils = {
       try { katex.render(el.dataset.f, el, { throwOnError: false, displayMode: false }); } catch(e) {}
     });
   },
+
+  // Exportar texto del área de resultados al portapapeles
+  exportarResultados() {
+    const areas = ['resultsArea', 'reg-resultado', 'hip-resultado', 'chi-resultado', 'cnt-result', 'cnt-ai', 'hip-ai', 'chi-ai', 'reg-ai'];
+    let texto = '';
+    areas.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.innerText.trim()) texto += el.innerText.trim() + '\n\n';
+    });
+    if (!texto.trim()) { alert('No hay resultados para exportar.'); return; }
+    texto = `STATIA GO — Resultados del análisis\n${'─'.repeat(40)}\n${new Date().toLocaleString('es-GT')}\n\n${texto.trim()}\n\n─ Statia Go · by Jose Rodas`;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(texto).then(() => alert('✅ Resultados copiados al portapapeles.')).catch(() => this._fallbackCopy(texto));
+    } else {
+      this._fallbackCopy(texto);
+    }
+  },
+
+  _fallbackCopy(texto) {
+    const ta = document.createElement('textarea');
+    ta.value = texto;
+    ta.style.cssText = 'position:fixed;left:-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    alert('✅ Resultados copiados al portapapeles.');
+  },
 };

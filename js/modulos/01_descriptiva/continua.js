@@ -172,6 +172,7 @@ const ModContinua = {
 
         <div id="formErr" class="err" style="display:none"></div>
         <button class="btn" id="calcBtn" onclick="ModContinua.calcular()" disabled>✨ Analizar con IA</button>
+        <button class="btn btn-s" style="margin-top:6px" onclick="ModContinua.ejemplo()">📋 Cargar ejemplo</button>
         <button class="btn btn-s" style="margin-top:6px" onclick="Utils.scrollTo('tutorialArea')">← Ver teoría de nuevo</button>
       </div>`;
 
@@ -314,5 +315,13 @@ const ModContinua = {
     Charts.histograma(cId, labels, g.classes.map(c => c.fi), '#ffaa44');
     Charts.poligono(cId2, labels, g.classes.map(c => c.hi));
     await AI.render(AI.promptContinuaAgrupada(varName, varDesc, g), aiId);
+  },
+
+  ejemplo() {
+    document.getElementById('varName').value = 'Estatura de estudiantes (cm)';
+    document.getElementById('varDesc').value = '35 estudiantes universitarios, 2025';
+    const ta = document.getElementById('dataInput');
+    ta.value = '165.2, 172.5, 158.1, 180.3, 167.4, 155.9, 174.2, 169.8, 163.5, 178.1, 161.0, 170.4, 156.8, 182.5, 168.3, 175.6, 160.2, 173.1, 166.9, 179.4, 157.3, 171.8, 164.5, 176.2, 159.7, 169.3, 183.1, 162.8, 174.9, 158.6, 167.2, 177.5, 163.0, 170.7, 155.4';
+    ta.dispatchEvent(new Event('input'));
   },
 };

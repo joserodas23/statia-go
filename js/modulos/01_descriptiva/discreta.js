@@ -171,6 +171,7 @@ const ModDiscreta = {
 
         <div id="formErr" class="err" style="display:none"></div>
         <button class="btn" id="calcBtn" onclick="ModDiscreta.calcular()" disabled>✨ Analizar con IA</button>
+        <button class="btn btn-s" style="margin-top:6px" onclick="ModDiscreta.ejemplo()">📋 Cargar ejemplo</button>
         <button class="btn btn-s" style="margin-top:6px" onclick="Utils.scrollTo('tutorialArea')">← Ver teoría de nuevo</button>
       </div>`;
 
@@ -324,5 +325,13 @@ const ModDiscreta = {
     Charts.histograma(cId, labels, g.classes.map(c => c.fi), '#ffd166');
     Charts.poligono(cId2, labels, g.classes.map(c => c.hi));
     await AI.render(AI.promptDiscretaAgrupada(varName, varDesc, g), aiId);
+  },
+
+  ejemplo() {
+    document.getElementById('varName').value = 'Número de hijos por familia';
+    document.getElementById('varDesc').value = '40 familias del municipio, censo 2025';
+    const ta = document.getElementById('dataInput');
+    ta.value = '0, 1, 2, 2, 3, 1, 0, 4, 2, 1, 3, 2, 1, 0, 2, 3, 1, 2, 2, 1, 0, 1, 2, 3, 2, 1, 2, 0, 1, 2, 3, 1, 2, 2, 0, 1, 2, 3, 1, 2';
+    ta.dispatchEvent(new Event('input'));
   },
 };

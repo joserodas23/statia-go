@@ -96,6 +96,7 @@ const ModOrdinal = {
 
         <div id="formErr" class="err" style="display:none"></div>
         <button class="btn" id="calcBtn" onclick="ModOrdinal.calcular()" disabled>✨ Analizar con IA</button>
+        <button class="btn btn-s" style="margin-top:6px" onclick="ModOrdinal.ejemplo()">📋 Cargar ejemplo</button>
         <button class="btn btn-s" style="margin-top:6px" onclick="Utils.scrollTo('tutorialArea')">← Ver teoría de nuevo</button>
       </div>`;
 
@@ -218,5 +219,14 @@ const ModOrdinal = {
 
     btn.disabled = false; btn.textContent = '✨ Analizar con IA';
     setTimeout(() => Utils.scrollTo('resultsArea'), 200);
+  },
+
+  ejemplo() {
+    document.getElementById('varName').value = 'Nivel de satisfacción docente';
+    document.getElementById('varDesc').value = 'Encuesta a 25 estudiantes — escala 1 a 5';
+    document.getElementById('orderInput').value = '1, 2, 3, 4, 5';
+    const ta = document.getElementById('dataInput');
+    ta.value = '3, 4, 5, 2, 4, 3, 5, 4, 4, 3, 2, 5, 4, 3, 4, 5, 3, 4, 2, 4, 5, 3, 4, 4, 3';
+    ta.dispatchEvent(new Event('input'));
   },
 };

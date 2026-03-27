@@ -165,6 +165,7 @@ const ModConteo = {
     <div id="cnt-inputs" style="margin-top:4px"></div>
     <div id="cnt-desc" style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);margin-top:8px;line-height:1.7;padding:8px 10px;background:var(--surface2);border-radius:8px"></div>
     <button class="btn-calc" onclick="ModConteo.calcular()" style="margin-top:14px">Calcular</button>
+    <button class="btn-s" onclick="ModConteo.ejemplo()" style="width:100%;padding:9px;background:transparent;border:1px solid var(--border);border-radius:9px;color:var(--muted);font-family:'DM Mono',monospace;font-size:0.72rem;cursor:pointer;margin-top:6px">📋 Cargar ejemplo</button>
     <div id="cnt-result"></div>
     <div id="cnt-ai"></div>`;
   },
@@ -295,5 +296,17 @@ const ModConteo = {
 
   _error(msg) {
     return `<div style="background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.25);border-radius:10px;padding:12px 14px;font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--accent3);margin-top:12px">⚠️ ${msg}</div>`;
+  },
+
+  ejemplo() {
+    // Carga ejemplo: C(10, 3) — Combinaciones
+    const sel = document.getElementById('cnt-tipo');
+    if (sel) { sel.value = 'comb'; sel.dispatchEvent(new Event('change')); }
+    setTimeout(() => {
+      const n = document.getElementById('cnt-n');
+      const r = document.getElementById('cnt-r');
+      if (n) n.value = '10';
+      if (r) r.value = '3';
+    }, 50);
   },
 };

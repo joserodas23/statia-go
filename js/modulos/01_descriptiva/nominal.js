@@ -88,6 +88,7 @@ const ModNominal = {
 
         <div id="formErr" class="err" style="display:none"></div>
         <button class="btn" id="calcBtn" onclick="ModNominal.calcular()" disabled>✨ Analizar con IA</button>
+        <button class="btn btn-s" style="margin-top:6px" onclick="ModNominal.ejemplo()">📋 Cargar ejemplo</button>
         <button class="btn btn-s" style="margin-top:6px" onclick="Utils.scrollTo('tutorialArea')">← Ver teoría de nuevo</button>
       </div>`;
 
@@ -198,5 +199,13 @@ const ModNominal = {
 
     btn.disabled = false; btn.textContent = '✨ Analizar con IA';
     setTimeout(() => Utils.scrollTo('resultsArea'), 200);
+  },
+
+  ejemplo() {
+    document.getElementById('varName').value = 'Género de los estudiantes';
+    document.getElementById('varDesc').value = 'Encuesta a 30 estudiantes del ciclo 2025-I';
+    const ta = document.getElementById('dataInput');
+    ta.value = '1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1, 2, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1, 2, 1';
+    ta.dispatchEvent(new Event('input'));
   },
 };

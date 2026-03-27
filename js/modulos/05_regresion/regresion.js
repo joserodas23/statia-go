@@ -8,6 +8,7 @@
 const ModRegresion = {
 
   _tCDF: (t, df) => ModDistribuciones._tCDF(t, df),
+  _fCDF: (f, d1, d2) => ModDistribuciones._fCDF(f, d1, d2),
 
   render(area) {
     area.innerHTML = `
@@ -84,6 +85,39 @@ const ModRegresion = {
       </div>
     </div>
 
+    <div class="fml-section">Tabla ANOVA de la regresión</div>
+    <div class="fml-grid">
+      <div class="fml-card">
+        <div class="fml-name">Estadístico F — significancia global del modelo</div>
+        <div class="fml-formula"><span class="ktx" data-f="F = \\dfrac{SC_{Reg}/1}{SC_{Error}/(n-2)} = \\dfrac{CM_{Reg}}{CM_{Error}}"></span></div>
+        <div class="fml-body" style="margin-top:8px">
+          <div class="fml-row"><span class="fml-label">H₀</span><span class="fml-val">β₁ = 0 (la pendiente es cero — el modelo no sirve)</span></div>
+          <div class="fml-row"><span class="fml-label">H₁</span><span class="fml-val">β₁ ≠ 0 (hay relación lineal significativa)</span></div>
+          <div class="fml-row"><span class="fml-label">Decisión</span><span class="fml-val">Si p &lt; α → rechazar H₀ → modelo significativo</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fml-section">Supuestos del modelo de regresión</div>
+    <div class="fml-grid">
+      <div class="fml-card g">
+        <div class="fml-name">1. Linealidad</div>
+        <div class="fml-desc">La relación entre X e Y debe ser lineal. Se verifica con el diagrama de dispersión.</div>
+      </div>
+      <div class="fml-card b">
+        <div class="fml-name">2. Independencia de errores</div>
+        <div class="fml-desc">Los residuos εᵢ deben ser independientes entre sí. Se verifica con la prueba de Durbin-Watson en datos de series de tiempo.</div>
+      </div>
+      <div class="fml-card">
+        <div class="fml-name">3. Homocedasticidad</div>
+        <div class="fml-desc">La varianza de los errores debe ser constante para todos los valores de X (varianza homogénea). Se detecta graficando residuos vs valores ajustados.</div>
+      </div>
+      <div class="fml-card b">
+        <div class="fml-name">4. Normalidad de residuos</div>
+        <div class="fml-desc">Los errores εᵢ deben seguir una distribución normal N(0, σ²). Se verifica con el gráfico Q-Q o la prueba de Shapiro-Wilk.</div>
+      </div>
+    </div>
+
     <div class="step" style="border-left-color:var(--warn)">
       <div class="step-num">⚠️ Advertencia importante</div>
       <div class="step-title">Correlación ≠ causalidad</div>
@@ -127,6 +161,7 @@ const ModRegresion = {
       </select>
 
       <button class="btn-calc" onclick="ModRegresion.calcular()">Calcular →</button>
+      <button class="btn-s" onclick="ModRegresion.ejemplo()" style="width:100%;padding:9px;background:transparent;border:1px solid var(--border);border-radius:9px;color:var(--muted);font-family:'DM Mono',monospace;font-size:0.72rem;cursor:pointer;margin-top:6px">📋 Cargar ejemplo</button>
       <div id="reg-resultado"></div>`;
   },
 
@@ -148,7 +183,7 @@ const ModRegresion = {
     return ranks;
   },
 
-  calcular() {
+  async calcular() {
     const x = this._parseNums(document.getElementById('reg-x').value);
     const y = this._parseNums(document.getElementById('reg-y').value);
     const alpha = parseFloat(document.getElementById('reg-alpha').value);
@@ -185,8 +220,11 @@ const ModRegresion = {
     const SST  = syy;
     const SSR  = b1 * sxy;
     const SSE  = SST - SSR;
+    const MSR  = SSR;
     const MSE  = SSE / (n-2);
     const Se   = Math.sqrt(MSE);
+    const F    = MSR / MSE;
+    const pF   = 1 - this._fCDF(F, 1, n-2);
 
     const rLbl = v => Math.abs(v)>0.7?'fuerte':Math.abs(v)>0.3?'moderada':'débil';
     const rDir = v => v>0?'positiva':'negativa';
@@ -227,16 +265,25 @@ const ModRegresion = {
 
       <div class="section-title">Tabla ANOVA de la regresión</div>
       <div class="tbl-scroll"><table class="freq-table">
-        <thead><tr><th>Fuente</th><th>SC</th><th>gl</th><th>CM</th></tr></thead>
+        <thead><tr><th>Fuente</th><th>SC</th><th>gl</th><th>CM</th><th>F</th><th>p-valor</th></tr></thead>
         <tbody>
-          <tr><td>Regresión</td><td>${Utils.fmt(SSR,4)}</td><td>1</td><td>${Utils.fmt(SSR,4)}</td></tr>
-          <tr><td>Error</td><td>${Utils.fmt(SSE,4)}</td><td>${n-2}</td><td>${Utils.fmt(MSE,4)}</td></tr>
-          <tr><td><strong>Total</strong></td><td>${Utils.fmt(SST,4)}</td><td>${n-1}</td><td>—</td></tr>
+          <tr><td>Regresión</td><td>${Utils.fmt(SSR,4)}</td><td>1</td><td>${Utils.fmt(MSR,4)}</td><td>${Utils.fmt(F,4)}</td><td>${Utils.fmt(pF,4)}</td></tr>
+          <tr><td>Error</td><td>${Utils.fmt(SSE,4)}</td><td>${n-2}</td><td>${Utils.fmt(MSE,4)}</td><td>—</td><td>—</td></tr>
+          <tr><td><strong>Total</strong></td><td>${Utils.fmt(SST,4)}</td><td>${n-1}</td><td>—</td><td>—</td><td>—</td></tr>
         </tbody>
       </table></div>
+      <div class="ib" style="margin:8px 0">
+        <strong>ANOVA:</strong> F(1, ${n-2}) = ${Utils.fmt(F,4)}, p = ${Utils.fmt(pF,4)} → ${pF < alpha ? `<span style="color:var(--accent)">✅ Modelo significativo</span>` : `<span style="color:var(--warn)">⚠️ Modelo no significativo</span>`} (α = ${alpha})
+      </div>
 
       ${AI.loadingBlock('reg-ai')}`;
 
-    await AI.render(AI.promptRegresion(nx, ny, n, r, rho, r2, b0, b1, Se, pP, pS, alpha), 'reg-ai');
+    await AI.render(AI.promptRegresion(nx, ny, n, r, rho, r2, b0, b1, Se, pP, pS, alpha, SSR, SSE, SST, F, pF), 'reg-ai');
   }
+  ejemplo() {
+    document.getElementById('reg-nx').value = 'Horas de estudio';
+    document.getElementById('reg-ny').value = 'Calificación (puntos)';
+    document.getElementById('reg-x').value  = '2, 3, 4, 5, 6, 7, 8, 3, 5, 4, 6, 7, 2, 5, 8';
+    document.getElementById('reg-y').value  = '55, 62, 70, 75, 80, 85, 92, 60, 74, 68, 82, 88, 50, 73, 95';
+  },
 };
