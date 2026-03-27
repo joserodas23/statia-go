@@ -20,9 +20,7 @@ const ModChi = {
         <div id="chi-teoria">${this._teoria()}</div>
         <div id="chi-calc" style="display:none">${this._form()}</div>
       </div>`;
-    area.querySelectorAll('.ktx').forEach(el => {
-      try { katex.render(el.dataset.f, el, { throwOnError: false, displayMode: false }); } catch(e) {}
-    });
+    Utils.renderKaTeX(area);
   },
 
   _tab(id, btn) {
@@ -231,7 +229,7 @@ const ModChi = {
 
         ${AI.loadingBlock('chi-ai')}`;
 
-      AI.render(AI.promptChi(tipo, chi2, df, pval, alpha, rechazar, cramer, n_total), 'chi-ai');
+      await AI.render(AI.promptChi(tipo, chi2, df, pval, alpha, rechazar, cramer, n_total), 'chi-ai');
 
     } catch(e) {
       res.innerHTML = `<div class="err">${e.message}</div>`;

@@ -215,6 +215,7 @@ const App = {
 
   // ===== INIT =====
   init() {
+    this._loadHistory();
     this.renderDrawer();
     this.renderHomeGrid();
     if (typeof AI !== 'undefined') AI.updateHeaderIndicator();
@@ -575,8 +576,29 @@ const App = {
   },
 
   // ===== HISTORIAL =====
+  _loadHistory() {
+    try {
+      const saved = JSON.parse(localStorage.getItem('statia_history') || '[]');
+      this.state.history = Array.isArray(saved) ? saved.slice(0, 50) : [];
+    } catch { this.state.history = []; }
+  },
+
+  _saveHistory() {
+    try {
+      localStorage.setItem('statia_history', JSON.stringify(this.state.history.slice(0, 50)));
+    } catch {}
+  },
+
   addHistory(entry) {
-    this.state.history.unshift(entry);
+    this.state.history.unshift({ ...entry, fecha: new Date().toLocaleDateString('es-GT') });
+    this._saveHistory();
+  },
+
+  clearHistory() {
+    if (!confirm('¿Borrar todo el historial?')) return;
+    this.state.history = [];
+    localStorage.removeItem('statia_history');
+    this.renderHist();
   },
 
   renderHist() {
@@ -585,11 +607,15 @@ const App = {
       el.innerHTML = `<div class="empty"><div class="ico">📭</div><p>Aún no hay cálculos guardados</p></div>`;
       return;
     }
-    el.innerHTML = this.state.history.map(h => `
+    el.innerHTML = `
+      <div style="display:flex;justify-content:flex-end;padding:0 4px 8px">
+        <button onclick="App.clearHistory()" style="background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.2);border-radius:8px;padding:5px 12px;font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--accent3);cursor:pointer">🗑️ Limpiar historial</button>
+      </div>
+      ${this.state.history.map(h => `
       <div class="hi">
         <div class="hid">${h.preview}…</div>
-        <div class="him">${h.type} · n=${h.n} · ${h.stat}</div>
-      </div>`).join('');
+        <div class="him">${h.type} · n=${h.n} · ${h.stat}${h.fecha ? ' · ' + h.fecha : ''}</div>
+      </div>`).join('')}`;
   },
 };
 

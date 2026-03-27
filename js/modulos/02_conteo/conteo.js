@@ -32,9 +32,7 @@ const ModConteo = {
         <div id="cnt-teoria">${this._teoria()}</div>
         <div id="cnt-calc" style="display:none">${this._form()}</div>
       </div>`;
-    area.querySelectorAll('.ktx').forEach(el => {
-      try { katex.render(el.dataset.f, el, { throwOnError: false, displayMode: false }); } catch(e) {}
-    });
+    Utils.renderKaTeX(area);
   },
 
   _tab(id, btn) {
@@ -288,7 +286,7 @@ const ModConteo = {
           </div>
         </div>`;
 
-      AI.render('cnt-ai', AI.promptConteo(ctx, formula, resultado));
+      await AI.render(AI.promptConteo(ctx, formula, resultado), 'cnt-ai');
 
     } catch(e) {
       resDiv.innerHTML = this._error('Error en el cálculo: ' + e.message);

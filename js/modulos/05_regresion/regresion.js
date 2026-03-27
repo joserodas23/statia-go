@@ -20,9 +20,7 @@ const ModRegresion = {
         <div id="reg-teoria">${this._teoria()}</div>
         <div id="reg-calc" style="display:none">${this._form()}</div>
       </div>`;
-    area.querySelectorAll('.ktx').forEach(el => {
-      try { katex.render(el.dataset.f, el, { throwOnError: false, displayMode: false }); } catch(e) {}
-    });
+    Utils.renderKaTeX(area);
   },
 
   _tab(id, btn) {
@@ -239,6 +237,6 @@ const ModRegresion = {
 
       ${AI.loadingBlock('reg-ai')}`;
 
-    AI.render(AI.promptRegresion(nx, ny, n, r, rho, r2, b0, b1, Se, pP, pS, alpha), 'reg-ai');
+    await AI.render(AI.promptRegresion(nx, ny, n, r, rho, r2, b0, b1, Se, pP, pS, alpha), 'reg-ai');
   }
 };

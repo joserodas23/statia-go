@@ -36,9 +36,7 @@ const ModHipotesis = {
         <div id="hip-teoria">${this._teoria()}</div>
         <div id="hip-calc" style="display:none">${this._form()}</div>
       </div>`;
-    area.querySelectorAll('.ktx').forEach(el => {
-      try { katex.render(el.dataset.f, el, { throwOnError: false, displayMode: false }); } catch(e) {}
-    });
+    Utils.renderKaTeX(area);
   },
 
   _tab(id, btn) {
@@ -341,7 +339,7 @@ const ModHipotesis = {
 
         ${AI.loadingBlock('hip-ai')}`;
 
-      AI.render(AI.promptHipotesis(titulo, stat, statLabel, df, pval, alpha, cola, rechazar, detalle, grupos_info), 'hip-ai');
+      await AI.render(AI.promptHipotesis(titulo, stat, statLabel, df, pval, alpha, cola, rechazar, detalle, grupos_info), 'hip-ai');
 
     } catch(e) {
       res.innerHTML = `<div class="err">${e.message}</div>`;

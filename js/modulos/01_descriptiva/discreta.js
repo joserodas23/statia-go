@@ -136,7 +136,7 @@ const ModDiscreta = {
         </div>
         <div class="field">
           <span class="lbl a">Datos numéricos (enteros)</span>
-          <textarea id="dataInput" rows="3" placeholder="Ej: 0, 1, 2, 2, 3, 1, 0, 4, 2, 1, 3, 2, 1, 0, 2"></textarea>
+          <textarea id="dataInput" rows="3" placeholder="Ej: 0, 1, 2, 2, 3, 1, 0, 4, 2, 1, 3, 2, 1, 0, 2" oninput="document.getElementById('calcBtn').disabled=!this.value.trim()"></textarea>
           <div class="hint">💡 Separa con coma o espacio. Puedes pegar desde Excel.</div>
         </div>
 
@@ -170,7 +170,7 @@ const ModDiscreta = {
         </div>
 
         <div id="formErr" class="err" style="display:none"></div>
-        <button class="btn" id="calcBtn" onclick="ModDiscreta.calcular()">✨ Analizar con IA</button>
+        <button class="btn" id="calcBtn" onclick="ModDiscreta.calcular()" disabled>✨ Analizar con IA</button>
         <button class="btn btn-s" style="margin-top:6px" onclick="Utils.scrollTo('tutorialArea')">← Ver teoría de nuevo</button>
       </div>`;
 

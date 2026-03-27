@@ -75,7 +75,7 @@ const ModNominal = {
         </div>
         <div class="field">
           <span class="lbl a">Datos (categorías o códigos numéricos)</span>
-          <textarea id="dataInput" rows="3" placeholder="Ej: 1, 2, 1, 3, 2, 1  — o texto: Masculino, Femenino, Masculino"></textarea>
+          <textarea id="dataInput" rows="3" placeholder="Ej: 1, 2, 1, 3, 2, 1  — o texto: Masculino, Femenino, Masculino" oninput="document.getElementById('calcBtn').disabled=!this.value.trim()"></textarea>
           <div class="hint">💡 Si tu base de datos usa números (1, 2, 3...) ingrésalos aquí y define abajo qué significa cada uno.</div>
         </div>
 
@@ -87,7 +87,7 @@ const ModNominal = {
         </div>
 
         <div id="formErr" class="err" style="display:none"></div>
-        <button class="btn" id="calcBtn" onclick="ModNominal.calcular()">✨ Analizar con IA</button>
+        <button class="btn" id="calcBtn" onclick="ModNominal.calcular()" disabled>✨ Analizar con IA</button>
         <button class="btn btn-s" style="margin-top:6px" onclick="Utils.scrollTo('tutorialArea')">← Ver teoría de nuevo</button>
       </div>`;
 

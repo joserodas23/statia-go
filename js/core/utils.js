@@ -105,4 +105,11 @@ const Utils = {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   },
+
+  // Renderizar fórmulas KaTeX en un contenedor
+  renderKaTeX(container) {
+    (container || document).querySelectorAll('.ktx').forEach(el => {
+      try { katex.render(el.dataset.f, el, { throwOnError: false, displayMode: false }); } catch(e) {}
+    });
+  },
 };

@@ -78,7 +78,7 @@ const ModOrdinal = {
         </div>
         <div class="field">
           <span class="lbl a">Datos (categorías o códigos numéricos)</span>
-          <textarea id="dataInput" rows="3" placeholder="Ej: 1, 2, 3, 1, 2  — o texto: Nunca, A veces, Siempre, Nunca"></textarea>
+          <textarea id="dataInput" rows="3" placeholder="Ej: 1, 2, 3, 1, 2  — o texto: Nunca, A veces, Siempre, Nunca" oninput="document.getElementById('calcBtn').disabled=!this.value.trim()"></textarea>
           <div class="hint">💡 Si tu base de datos usa números (1, 2, 3...) ingrésalos aquí y define abajo qué significa cada uno.</div>
         </div>
         <div class="field">
@@ -95,7 +95,7 @@ const ModOrdinal = {
         </div>
 
         <div id="formErr" class="err" style="display:none"></div>
-        <button class="btn" id="calcBtn" onclick="ModOrdinal.calcular()">✨ Analizar con IA</button>
+        <button class="btn" id="calcBtn" onclick="ModOrdinal.calcular()" disabled>✨ Analizar con IA</button>
         <button class="btn btn-s" style="margin-top:6px" onclick="Utils.scrollTo('tutorialArea')">← Ver teoría de nuevo</button>
       </div>`;
 

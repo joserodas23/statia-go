@@ -309,6 +309,7 @@ select.inp-sel:focus, .inp-sel:focus { border-color: var(--accent); }
 textarea.inp { resize: none; }
 .btn-calc { width: 100%; padding: 13px; border-radius: 11px; border: none; background: linear-gradient(135deg, var(--accent), #00d68f); color: #0d0f14; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.87rem; cursor: pointer; margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 7px; transition: opacity 0.2s, transform 0.15s; letter-spacing: 0.02em; }
 .btn-calc:active { transform: scale(0.97); opacity: 0.9; }
+.btn-calc:disabled { opacity: 0.4; cursor: not-allowed; }
 .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
 .stat-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 11px; padding: 12px 8px; text-align: center; }
 .stat-val { font-family: 'DM Mono', monospace; font-size: 1rem; font-weight: 500; color: var(--text); display: block; margin-bottom: 3px; }

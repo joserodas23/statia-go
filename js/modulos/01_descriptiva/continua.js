@@ -130,7 +130,7 @@ const ModContinua = {
         </div>
         <div class="field">
           <span class="lbl a">Datos numéricos</span>
-          <textarea id="dataInput" rows="3" placeholder="Ej: 65.2, 72.5, 58.1, 80.3, 67.4, 55.9, 74.2..."></textarea>
+          <textarea id="dataInput" rows="3" placeholder="Ej: 65.2, 72.5, 58.1, 80.3, 67.4, 55.9, 74.2..." oninput="document.getElementById('calcBtn').disabled=!this.value.trim()"></textarea>
           <div class="hint">💡 Separa con coma o espacio. Puedes pegar desde Excel.</div>
         </div>
 
@@ -171,7 +171,7 @@ const ModContinua = {
         </div>
 
         <div id="formErr" class="err" style="display:none"></div>
-        <button class="btn" id="calcBtn" onclick="ModContinua.calcular()">✨ Analizar con IA</button>
+        <button class="btn" id="calcBtn" onclick="ModContinua.calcular()" disabled>✨ Analizar con IA</button>
         <button class="btn btn-s" style="margin-top:6px" onclick="Utils.scrollTo('tutorialArea')">← Ver teoría de nuevo</button>
       </div>`;
 
