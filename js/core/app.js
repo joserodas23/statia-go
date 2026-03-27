@@ -38,36 +38,71 @@ const App = {
   },
 
   _examenSalidas: 0,
+  _examenLog: [],
 
   // ===== MODO EXAMEN =====
   activarModoExamen() {
     if (this.state.modoExamen) { this.closeDrawer(); return; }
-    const ok = confirm('¿Activar Modo Examen?\n\n• IA desactivada por 2 horas.\n• Pantalla completa bloqueada.\n• Se registran las salidas de la app.\n• Contraseña del día para salir.\n\n¿Confirmas?');
+
+    // Elegir duración
+    const durInput = prompt('¿Duración del examen?\n\n1 → 1 hora\n2 → 1 hora 30 min\n3 → 2 horas\n4 → 2 horas 30 min\n5 → 3 horas\n6 → Personalizado (minutos)');
+    if (!durInput) return;
+    const durMap = { '1': 60, '2': 90, '3': 120, '4': 150, '5': 180 };
+    let minutos;
+    if (durMap[durInput.trim()]) {
+      minutos = durMap[durInput.trim()];
+    } else if (durInput.trim() === '6') {
+      const custom = prompt('Ingresa la duración en minutos:');
+      minutos = parseInt(custom);
+      if (!minutos || minutos < 1) { alert('Duración inválida.'); return; }
+    } else {
+      alert('Opción inválida.'); return;
+    }
+
+    const durTexto = minutos >= 60
+      ? `${Math.floor(minutos/60)}h${minutos%60 > 0 ? ' '+minutos%60+'min' : ''}`
+      : `${minutos} minutos`;
+
+    const ok = confirm(`¿Activar Modo Examen?\n\nDuración: ${durTexto}\n\n• IA desactivada.\n• Se registran salidas con hora exacta.\n• Los resultados se borran si el alumno sale.\n• Copiar/pegar bloqueado.\n• Contraseña del día para salir.\n\n¿Confirmas?`);
     if (!ok) return;
+
     this.state.modoExamen = true;
-    this._examenSegundos = 7200;
+    this._examenSegundos = minutos * 60;
     this._examenSalidas = 0;
+    this._examenLog = [];
     this.closeDrawer();
+
+    // Bloquear copiar/pegar/seleccionar/clic derecho
+    document.addEventListener('copy',        this._handleCopy);
+    document.addEventListener('cut',         this._handleCopy);
+    document.addEventListener('contextmenu', this._handleCopy);
+    document.addEventListener('selectstart', this._handleCopy);
+    document.body.style.userSelect = 'none';
+    document.body.style.webkitUserSelect = 'none';
 
     // Bloquear botón atrás
     window.history.pushState({ modoExamen: true }, '');
     window.addEventListener('popstate', this._handlePopState);
 
-    // Detectar salida/regreso a la app
+    // Detectar salida/regreso
     document.addEventListener('visibilitychange', this._handleVisibility);
 
-    // Advertir al cerrar la app
+    // Advertir al cerrar
     window.addEventListener('beforeunload', this._handleBeforeUnload);
 
     // Pantalla completa
     document.documentElement.requestFullscreen?.().catch(() => {});
 
-    // Mostrar banner
     const banner = document.getElementById('examenBanner');
     if (banner) banner.style.display = 'flex';
 
     this._tickExamen();
     this._examenTimer = setInterval(() => this._tickExamen(), 1000);
+  },
+
+  _handleCopy(e) {
+    e.preventDefault();
+    return false;
   },
 
   _handlePopState() {
@@ -82,28 +117,45 @@ const App = {
   },
 
   _handleVisibility() {
-    if (!App.state.modoExamen || document.hidden) return;
-    // El estudiante regresó a la app
-    App._examenSalidas++;
-    document.getElementById('examenWarning')?.remove();
-    const w = document.createElement('div');
-    w.id = 'examenWarning';
-    w.style.cssText = 'position:fixed;inset:0;background:rgba(127,29,29,0.97);z-index:9990;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:28px;text-align:center';
-    w.innerHTML = `
-      <div style="font-size:3rem">⚠️</div>
-      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.15rem;color:#fff">Salida detectada</div>
-      <div style="font-family:'DM Mono',monospace;font-size:0.72rem;color:rgba(255,255,255,0.7);line-height:1.8;max-width:280px">
-        Saliste de la aplicación durante el examen.<br>
-        <strong style="color:#f87171;font-size:0.85rem">Salida #${App._examenSalidas} registrada</strong>
-      </div>
-      <div style="background:rgba(0,0,0,0.35);border-radius:10px;padding:10px 18px;font-family:'DM Mono',monospace;font-size:0.6rem;color:rgba(255,255,255,0.45);line-height:1.7">
-        El número de salidas queda registrado.<br>El profesor puede verlo al desactivar el examen.
-      </div>
-      <button onclick="document.getElementById('examenWarning').remove();document.documentElement.requestFullscreen?.().catch(()=>{})"
-        style="margin-top:6px;padding:13px 32px;background:#ef4444;border:none;border-radius:11px;color:#fff;font-family:'Syne',sans-serif;font-weight:800;font-size:0.9rem;cursor:pointer">
-        🔒 Volver al examen
-      </button>`;
-    document.body.appendChild(w);
+    if (!App.state.modoExamen) return;
+    const hora = new Date().toLocaleTimeString('es-GT');
+    if (document.hidden) {
+      // Salió
+      App._examenLog.push({ tipo: 'salida', hora });
+    } else {
+      // Regresó
+      App._examenSalidas++;
+      App._examenLog.push({ tipo: 'regreso', hora });
+
+      // Borrar resultados
+      Utils.clearResults?.();
+      const tutArea = document.getElementById('tutorialArea');
+      const formArea = document.getElementById('formArea');
+      if (tutArea) tutArea.innerHTML = '';
+      if (formArea) formArea.innerHTML = '';
+
+      // Overlay de advertencia
+      document.getElementById('examenWarning')?.remove();
+      const w = document.createElement('div');
+      w.id = 'examenWarning';
+      w.style.cssText = 'position:fixed;inset:0;background:rgba(127,29,29,0.97);z-index:9990;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:28px;text-align:center';
+      w.innerHTML = `
+        <div style="font-size:3rem">⚠️</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.15rem;color:#fff">Salida detectada</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.72rem;color:rgba(255,255,255,0.7);line-height:1.8;max-width:280px">
+          Saliste de la aplicación durante el examen.<br>
+          <strong style="color:#f87171;font-size:0.85rem">Salida #${App._examenSalidas} — ${hora}</strong><br>
+          <span style="color:rgba(255,255,255,0.45);font-size:0.65rem">Los resultados han sido borrados.</span>
+        </div>
+        <div style="background:rgba(0,0,0,0.35);border-radius:10px;padding:10px 18px;font-family:'DM Mono',monospace;font-size:0.6rem;color:rgba(255,255,255,0.45);line-height:1.7">
+          El registro queda guardado para el profesor.
+        </div>
+        <button onclick="document.getElementById('examenWarning').remove();document.documentElement.requestFullscreen?.().catch(()=>{})"
+          style="margin-top:6px;padding:13px 32px;background:#ef4444;border:none;border-radius:11px;color:#fff;font-family:'Syne',sans-serif;font-weight:800;font-size:0.9rem;cursor:pointer">
+          🔒 Volver al examen
+        </button>`;
+      document.body.appendChild(w);
+    }
   },
 
   _tickExamen() {
@@ -124,7 +176,13 @@ const App = {
     clearInterval(this._examenTimer);
     this._examenTimer = null;
     this.state.modoExamen = false;
-    window.removeEventListener('popstate', this._handlePopState);
+    document.removeEventListener('copy',        this._handleCopy);
+    document.removeEventListener('cut',         this._handleCopy);
+    document.removeEventListener('contextmenu', this._handleCopy);
+    document.removeEventListener('selectstart', this._handleCopy);
+    document.body.style.userSelect = '';
+    document.body.style.webkitUserSelect = '';
+    window.removeEventListener('popstate',    this._handlePopState);
     document.removeEventListener('visibilitychange', this._handleVisibility);
     window.removeEventListener('beforeunload', this._handleBeforeUnload);
     document.exitFullscreen?.().catch(() => {});
@@ -142,8 +200,14 @@ const App = {
     if (input === null) return;
     if (input.trim() === pass) {
       const salidas = this._examenSalidas;
+      const log = [...this._examenLog];
       this._finalizarExamen();
-      alert(`✅ Modo Examen desactivado.\n\n📊 Resumen del examen:\n• Salidas de la app: ${salidas}\n\nLa IA está nuevamente disponible.`);
+      let logTxt = '';
+      if (log.length) {
+        logTxt = '\n\n📋 Registro de movimientos:\n' +
+          log.map((e, i) => `  ${i+1}. ${e.tipo === 'salida' ? '🔴 Salió' : '🟢 Regresó'} a las ${e.hora}`).join('\n');
+      }
+      alert(`✅ Modo Examen desactivado.\n\n📊 Resumen:\n• Total de salidas: ${salidas}${logTxt}\n\nLa IA está nuevamente disponible.`);
     } else {
       alert('❌ Contraseña incorrecta. El Modo Examen continúa activo.');
     }
