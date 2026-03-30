@@ -89,31 +89,41 @@ const App = {
 
     const visited = new Set(this.state.history.map(h => h.type));
     const total   = path.steps.length;
-    const done    = path.steps.filter(s => visited.has(s.type)).length;
+    const done    = path.steps.filter(s => Quiz.isCompleted(s.type)).length;
     const pct     = total ? Math.round((done / total) * 100) : 0;
 
     const stepsHtml = path.steps.map((step, i) => {
-      const visto = visited.has(step.type);
+      const visto     = visited.has(step.type);
+      const completed = Quiz.isCompleted(step.type);
+      const hasQuiz   = !!(Quiz.banks && Quiz.banks[step.type]);
       return `
-        <div onclick="App.selectType('${step.type}')"
-             style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:12px 14px;
-                    background:${visto ? path.bg : 'transparent'};
-                    border:1px solid ${visto ? path.border : 'var(--border)'};
+        <div style="display:flex;align-items:center;gap:10px;padding:11px 12px;
+                    background:${completed ? path.bg : 'transparent'};
+                    border:1px solid ${completed ? path.border : 'var(--border)'};
                     border-radius:10px;margin-bottom:8px">
-          <div style="font-size:1.3rem;min-width:30px;text-align:center">${step.icon}</div>
-          <div style="flex:1">
-            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.76rem;color:${path.color}">
+          <div style="font-size:1.2rem;min-width:28px;text-align:center">${step.icon}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.74rem;color:${path.color}">
               ${i + 1}. ${step.name}
+              ${completed ? '<span style="color:var(--accent);font-size:0.58rem;margin-left:5px">✓ Quiz OK</span>'
+                          : visto ? '<span style="color:var(--muted);font-size:0.58rem;margin-left:5px">Visto</span>' : ''}
             </div>
-            <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted)">${step.desc}</div>
+            <div style="font-family:\'DM Mono\',monospace;font-size:0.58rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${step.desc}</div>
           </div>
-          <div style="font-size:0.62rem;font-family:'DM Mono',monospace;color:${visto ? path.color : 'var(--muted)'}">
-            ${visto ? '✓ Visto' : '→ Abrir'}
+          <div style="display:flex;gap:5px;flex-shrink:0">
+            <button onclick="App.selectType('${step.type}')"
+                    style="font-size:0.58rem;padding:5px 8px;background:transparent;border:1px solid var(--border);border-radius:7px;color:var(--muted);cursor:pointer;font-family:\'DM Mono\',monospace">
+              📖 Ver
+            </button>
+            ${hasQuiz ? `<button onclick="App._showQuiz('${step.type}','${pathId}')"
+                    style="font-size:0.58rem;padding:5px 8px;background:var(--accent2);border:none;border-radius:7px;color:var(--bg);cursor:pointer;font-family:\'DM Mono\',monospace;font-weight:700">
+              🎯 Quiz
+            </button>` : ''}
           </div>
         </div>`;
     }).join('');
 
-    const area    = document.getElementById('tutorialArea');
+    const area     = document.getElementById('tutorialArea');
     const formArea = document.getElementById('formArea');
     if (formArea) formArea.innerHTML = '';
     Utils.clearResults();
@@ -122,19 +132,35 @@ const App = {
         <div class="tb" style="background:${path.bg};border:1px solid ${path.border};color:${path.color};font-family:'Syne',sans-serif;font-weight:800;font-size:0.78rem;padding:8px 12px;border-radius:8px;margin-bottom:12px">
           ${path.label}
         </div>
-        <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);margin-bottom:14px">${path.desc}</div>
-
+        <div style="font-family:'DM Mono',monospace;font-size:0.63rem;color:var(--muted);margin-bottom:14px">${path.desc}</div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
           <div style="flex:1;height:6px;background:var(--surface2);border-radius:4px;overflow:hidden">
             <div style="height:100%;width:${pct}%;background:${path.color};border-radius:4px;transition:width 0.4s"></div>
           </div>
           <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:${path.color};white-space:nowrap">
-            ${done}/${total} completados
+            ${done}/${total} quiz completados
           </div>
         </div>
-
         ${stepsHtml}
       </div>`;
+  },
+
+  _showQuiz(type, pathId) {
+    const formArea = document.getElementById('formArea');
+    if (!formArea) return;
+    formArea.innerHTML = `
+      <div class="card" style="margin-top:8px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:0.8rem;color:var(--text)">🎯 Quiz</div>
+          <button onclick="App.showPath('${pathId}')"
+                  style="font-size:0.6rem;padding:5px 10px;background:transparent;border:1px solid var(--border);border-radius:7px;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace">
+            ← Volver a la ruta
+          </button>
+        </div>
+        <div id="quiz-container"></div>
+      </div>`;
+    Quiz.render(type, document.getElementById('quiz-container'));
+    formArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
   },
 
   // ===== MODO EXAMEN =====
@@ -313,6 +339,7 @@ const App = {
   // ===== INIT =====
   init() {
     this._loadHistory();
+    if (typeof Quiz !== 'undefined') Quiz.init();
     this.renderDrawer();
     this.renderHomeGrid();
     if (typeof AI !== 'undefined') AI.updateHeaderIndicator();
@@ -477,7 +504,10 @@ const App = {
 
   // ===== HOME GRID =====
   renderHomeGrid() {
+    const xpBadge = (typeof Quiz !== 'undefined') ? Quiz.badgeHtml() : '';
     document.getElementById('homeGrid').innerHTML = `
+
+      ${xpBadge}
 
       <!-- RUTAS DE APRENDIZAJE -->
       <div style="grid-column:1/-1;background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:4px">
