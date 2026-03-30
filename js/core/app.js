@@ -41,6 +41,102 @@ const App = {
   _examenSalidas: 0,
   _examenLog: [],
 
+  // ===== RUTAS DE APRENDIZAJE =====
+  _paths: {
+    principiante: {
+      label: '🟢 Ruta Principiante', color: 'var(--accent)',
+      bg: 'rgba(79,255,176,0.07)', border: 'rgba(79,255,176,0.2)',
+      desc: 'Estadística descriptiva — aprende a describir y resumir datos antes de inferir.',
+      steps: [
+        { type: 'nominal',  icon: '🏷️', name: 'Nominal',  desc: 'Variables cualitativas sin orden — categorías' },
+        { type: 'ordinal',  icon: '📶', name: 'Ordinal',  desc: 'Variables con orden pero sin distancia fija' },
+        { type: 'discreta', icon: '🔢', name: 'Discreta', desc: 'Conteos enteros — hijos, errores, goles' },
+        { type: 'continua', icon: '📏', name: 'Continua', desc: 'Mediciones con decimales — peso, temperatura' },
+      ]
+    },
+    inferencial: {
+      label: '🔵 Estadística Inferencial', color: 'var(--accent2)',
+      bg: 'rgba(123,140,255,0.07)', border: 'rgba(123,140,255,0.2)',
+      desc: 'Toma decisiones estadísticas a partir de muestras — el núcleo de la estadística aplicada.',
+      steps: [
+        { type: 'conteo',     icon: '🎲', name: 'Conteo',        desc: 'Factorial, permutaciones y combinaciones' },
+        { type: 'dist_tablas',icon: '📋', name: 'Tablas',         desc: 'Tablas Z, t, Chi², F, Binomial, Poisson' },
+        { type: 'dist_calc',  icon: '📐', name: 'Probabilidades', desc: 'Calcular P(X<a), P(a<X<b) con IA' },
+        { type: 'hipotesis',  icon: '🧪', name: 'Hipótesis',      desc: 'Pruebas Z, t, ANOVA — una y dos muestras' },
+        { type: 'intervalos', icon: '📊', name: 'Intervalos IC',  desc: 'IC para μ, proporción y diferencia de medias' },
+        { type: 'chi',        icon: 'χ²', name: 'Chi-cuadrado',   desc: 'Independencia y bondad de ajuste' },
+      ]
+    },
+    ciencia: {
+      label: '🟡 Ciencia de Datos', color: 'var(--gold)',
+      bg: 'rgba(255,209,102,0.07)', border: 'rgba(255,209,102,0.2)',
+      desc: 'Modelado predictivo y análisis de relaciones entre variables.',
+      steps: [
+        { type: 'regresion', icon: '📈', name: 'Regresión y Correlación', desc: 'Lineal simple, Pearson, Spearman, ANOVA del modelo' },
+      ]
+    }
+  },
+
+  showPath(pathId) {
+    const path = this._paths[pathId];
+    if (!path) return;
+
+    this.closeDrawer();
+    this.showScreen('analysisScreen');
+    this.setNav('calc');
+    document.getElementById('mpill').classList.remove('show');
+    document.getElementById('hdrSub').textContent = path.label;
+
+    const visited = new Set(this.state.history.map(h => h.type));
+    const total   = path.steps.length;
+    const done    = path.steps.filter(s => visited.has(s.type)).length;
+    const pct     = total ? Math.round((done / total) * 100) : 0;
+
+    const stepsHtml = path.steps.map((step, i) => {
+      const visto = visited.has(step.type);
+      return `
+        <div onclick="App.selectType('${step.type}')"
+             style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:12px 14px;
+                    background:${visto ? path.bg : 'transparent'};
+                    border:1px solid ${visto ? path.border : 'var(--border)'};
+                    border-radius:10px;margin-bottom:8px">
+          <div style="font-size:1.3rem;min-width:30px;text-align:center">${step.icon}</div>
+          <div style="flex:1">
+            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.76rem;color:${path.color}">
+              ${i + 1}. ${step.name}
+            </div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted)">${step.desc}</div>
+          </div>
+          <div style="font-size:0.62rem;font-family:'DM Mono',monospace;color:${visto ? path.color : 'var(--muted)'}">
+            ${visto ? '✓ Visto' : '→ Abrir'}
+          </div>
+        </div>`;
+    }).join('');
+
+    const area    = document.getElementById('tutorialArea');
+    const formArea = document.getElementById('formArea');
+    if (formArea) formArea.innerHTML = '';
+    Utils.clearResults();
+    if (area) area.innerHTML = `
+      <div class="card" style="margin-top:0">
+        <div class="tb" style="background:${path.bg};border:1px solid ${path.border};color:${path.color};font-family:'Syne',sans-serif;font-weight:800;font-size:0.78rem;padding:8px 12px;border-radius:8px;margin-bottom:12px">
+          ${path.label}
+        </div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);margin-bottom:14px">${path.desc}</div>
+
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <div style="flex:1;height:6px;background:var(--surface2);border-radius:4px;overflow:hidden">
+            <div style="height:100%;width:${pct}%;background:${path.color};border-radius:4px;transition:width 0.4s"></div>
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:${path.color};white-space:nowrap">
+            ${done}/${total} completados
+          </div>
+        </div>
+
+        ${stepsHtml}
+      </div>`;
+  },
+
   // ===== MODO EXAMEN =====
   activarModoExamen() {
     if (this.state.modoExamen) { this.closeDrawer(); return; }
@@ -387,15 +483,15 @@ const App = {
       <div style="grid-column:1/-1;background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:4px">
         <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:0.8rem;color:var(--text);margin-bottom:10px">🗺️ Rutas de aprendizaje</div>
         <div style="display:flex;flex-direction:column;gap:8px">
-          <div onclick="App.selectType('nominal')" style="cursor:pointer;background:rgba(79,255,176,0.07);border:1px solid rgba(79,255,176,0.15);border-radius:10px;padding:10px 12px">
+          <div onclick="App.showPath('principiante')" style="cursor:pointer;background:rgba(79,255,176,0.07);border:1px solid rgba(79,255,176,0.15);border-radius:10px;padding:10px 12px">
             <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.72rem;color:var(--accent);margin-bottom:3px">🟢 Principiante</div>
             <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted)">Nominal → Ordinal → Discreta → Continua</div>
           </div>
-          <div onclick="App.selectType('conteo')" style="cursor:pointer;background:rgba(123,140,255,0.07);border:1px solid rgba(123,140,255,0.15);border-radius:10px;padding:10px 12px">
+          <div onclick="App.showPath('inferencial')" style="cursor:pointer;background:rgba(123,140,255,0.07);border:1px solid rgba(123,140,255,0.15);border-radius:10px;padding:10px 12px">
             <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.72rem;color:var(--accent2);margin-bottom:3px">🔵 Estadística Inferencial</div>
             <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted)">Conteo → Distribuciones → Hipótesis → IC → Chi²</div>
           </div>
-          <div onclick="App.selectType('regresion')" style="cursor:pointer;background:rgba(255,209,102,0.07);border:1px solid rgba(255,209,102,0.15);border-radius:10px;padding:10px 12px">
+          <div onclick="App.showPath('ciencia')" style="cursor:pointer;background:rgba(255,209,102,0.07);border:1px solid rgba(255,209,102,0.15);border-radius:10px;padding:10px 12px">
             <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.72rem;color:var(--gold);margin-bottom:3px">🟡 Ciencia de Datos</div>
             <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted)">Regresión → Correlación → Análisis predictivo</div>
           </div>
