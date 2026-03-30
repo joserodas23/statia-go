@@ -85,6 +85,12 @@ const Quiz = {
       { q: 'La frecuencia relativa en nominal se calcula como:',
         opts: ['nᵢ / n', 'nᵢ × n', 'nᵢ − n', '√nᵢ'],
         ans: 0, exp: 'Frecuencia relativa = conteo de la categoría / total de observaciones.' },
+      { q: 'Un gráfico de pastel es apropiado cuando:',
+        opts: ['Hay pocas categorías nominales y se quiere mostrar proporción del total', 'Los datos son continuos', 'Se comparan tendencias en el tiempo', 'Los valores son negativos'],
+        ans: 0, exp: 'El pastel muestra partes de un todo — ideal para ≤5 categorías nominales sin orden.' },
+      { q: '¿Puede calcularse la media aritmética en una variable nominal?',
+        opts: ['No, las categorías no tienen valor numérico real', 'Sí, siempre', 'Sí, si hay más de 2 categorías', 'Solo si hay orden implícito'],
+        ans: 0, exp: 'En nominal no existe distancia entre categorías, por lo que la media no tiene sentido.' },
     ],
 
     ordinal: [
@@ -112,6 +118,12 @@ const Quiz = {
       { q: 'Para comparar dos grupos en variable ordinal, la prueba más adecuada es:',
         opts: ['Mann-Whitney U', 'Prueba t de Student', 'ANOVA', 'Chi² de bondad de ajuste'],
         ans: 0, exp: 'Mann-Whitney es no paramétrico y funciona con rangos, adecuado para ordinales.' },
+      { q: '¿Puede haber más de una moda en una distribución ordinal?',
+        opts: ['Sí, se llama bimodal o multimodal', 'No, siempre hay solo una moda', 'Solo si los datos son pares', 'No existe moda en ordinal'],
+        ans: 0, exp: 'Si dos o más categorías tienen la misma frecuencia máxima, la distribución es bimodal o multimodal.' },
+      { q: 'Temperatura en escala de valoración (frío, tibio, caliente) es:',
+        opts: ['Ordinal', 'Continua', 'Discreta', 'Nominal'],
+        ans: 0, exp: 'Hay orden (frío < tibio < caliente) pero no distancia numérica exacta → ordinal.' },
     ],
 
     discreta: [
@@ -139,6 +151,9 @@ const Quiz = {
       { q: 'El coeficiente de variación CV sirve para:',
         opts: ['Comparar dispersión relativa entre variables con distinta escala', 'Calcular la mediana', 'Encontrar la moda', 'Determinar percentiles'],
         ans: 0, exp: 'CV = (S/x̄)×100%. Permite comparar dispersión aunque las unidades sean distintas.' },
+      { q: 'Si lanzas un dado 60 veces, ¿el número de veces que sale "3" es?',
+        opts: ['Variable discreta', 'Variable continua', 'Variable nominal', 'Variable ordinal'],
+        ans: 0, exp: 'El conteo de resultados (0, 1, 2, …, 60) es un entero → variable discreta.' },
     ],
 
     continua: [
@@ -166,6 +181,9 @@ const Quiz = {
       { q: 'La desviación estándar muestral usa (n−1) en el denominador para:',
         opts: ['Corregir el sesgo del estimador (corrección de Bessel)', 'Simplificar el cálculo', 'Aumentar la varianza', 'Reducir el error'],
         ans: 0, exp: 'Dividir por n−1 hace que S² sea un estimador insesgado de σ² poblacional.' },
+      { q: '¿Qué indica el box plot (diagrama de caja) sobre la distribución?',
+        opts: ['Mediana, cuartiles, rango intercuartílico y valores atípicos', 'Solo la media y la moda', 'La frecuencia de cada valor', 'La correlación entre variables'],
+        ans: 0, exp: 'El box plot resume: mínimo, Q1, mediana, Q3, máximo y detecta outliers.' },
     ],
 
     conteo: [
@@ -193,6 +211,9 @@ const Quiz = {
       { q: '¿Cuántas formas de ordenar las letras de "DATO" (sin repetir)?',
         opts: ['24', '12', '4', '16'],
         ans: 0, exp: '4 letras distintas → 4! = 4×3×2×1 = 24 ordenaciones.' },
+      { q: 'En un grupo de 5 personas se forman parejas para un proyecto. ¿Cuántas parejas posibles hay?',
+        opts: ['10', '20', '5', '25'],
+        ans: 0, exp: 'C(5,2) = 10. El orden no importa (la pareja AB es la misma que BA).' },
     ],
 
     dist_tablas: [
@@ -220,6 +241,9 @@ const Quiz = {
       { q: 'El valor crítico t con gl=10 y α=0.05 (bilateral) es aproximadamente:',
         opts: ['2.228', '1.812', '1.960', '2.576'],
         ans: 0, exp: 't(10, 0.025) ≈ 2.228. Con menos gl, el valor crítico es mayor que 1.96.' },
+      { q: 'A medida que los grados de libertad de t aumentan, la distribución t:',
+        opts: ['Se aproxima a la distribución normal estándar', 'Se vuelve más sesgada', 'Sus colas se hacen más pesadas', 'Su media aumenta'],
+        ans: 0, exp: 'Con gl→∞ la t converge a Z ~ N(0,1). Con pocos gl, las colas son más anchas.' },
     ],
 
     dist_calc: [
@@ -247,6 +271,9 @@ const Quiz = {
       { q: 'Para X ~ Binomial(n=5, p=0.5), P(X ≥ 4) es:',
         opts: ['0.1875', '0.3125', '0.0625', '0.5000'],
         ans: 0, exp: 'P(X=4) = C(5,4)·0.5⁵ = 5/32; P(X=5) = 1/32. Suma = 6/32 = 0.1875.' },
+      { q: 'Si X ~ N(μ=50, σ=5), ¿entre qué valores está el 95% de los datos?',
+        opts: ['40 y 60', '45 y 55', '35 y 65', '48 y 52'],
+        ans: 0, exp: 'Regla empírica: μ ± 2σ = 50 ± 10 → (40, 60) contiene el 95.45% ≈ 95%.' },
     ],
 
     hipotesis: [
@@ -274,6 +301,9 @@ const Quiz = {
       { q: 'El nivel de significancia α representa:',
         opts: ['La probabilidad máxima de cometer error tipo I', 'El p-valor mínimo aceptable', 'La potencia de la prueba', 'La confianza en H₀'],
         ans: 0, exp: 'α = P(rechazar H₀ | H₀ verdadera). Típicamente α = 0.05 ó 0.01.' },
+      { q: 'La "potencia" de una prueba estadística es:',
+        opts: ['P(rechazar H₀ | H₀ falsa) — detectar diferencias reales', 'P(error tipo I)', 'El valor de α', 'El p-valor observado'],
+        ans: 0, exp: 'Potencia = 1 − β = probabilidad de rechazar H₀ cuando de verdad es falsa.' },
     ],
 
     intervalos: [
@@ -301,6 +331,9 @@ const Quiz = {
       { q: 'Con x̄ = 80, σ = 10, n = 25, el IC 95% es:',
         opts: ['(76.08, 83.92)', '(78, 82)', '(70, 90)', '(79.02, 80.98)'],
         ans: 0, exp: 'E = 1.96·(10/√25) = 1.96·2 = 3.92. IC: (80−3.92, 80+3.92) = (76.08, 83.92).' },
+      { q: 'Para reducir el margen de error E a la mitad, manteniendo el mismo nivel de confianza, se debe:',
+        opts: ['Multiplicar n por 4', 'Duplicar n', 'Reducir σ a la mitad', 'Cambiar α'],
+        ans: 0, exp: 'E ∝ 1/√n. Para E/2 se necesita √n·2, es decir n·4.' },
     ],
 
     chi: [
@@ -328,6 +361,9 @@ const Quiz = {
       { q: 'H₀ en la prueba de independencia Chi² establece que:',
         opts: ['Las dos variables categóricas son independientes', 'Las variables están correlacionadas', 'Las medias son iguales', 'Las varianzas son iguales'],
         ans: 0, exp: 'H₀: las variables son independientes. Rechazar H₀ implica asociación.' },
+      { q: 'Si en una tabla de contingencia todos los residuos (O−E) son cercanos a 0, ¿qué sugiere?',
+        opts: ['Las variables son independientes (χ² pequeño)', 'Las variables están fuertemente asociadas', 'El p-valor es pequeño', 'Se debe rechazar H₀'],
+        ans: 0, exp: 'Si O ≈ E en todas las celdas, el estadístico χ² ≈ 0 → no hay evidencia de asociación.' },
     ],
 
     regresion: [
@@ -355,12 +391,15 @@ const Quiz = {
       { q: 'El intercepto b₀ en ŷ = b₀ + b₁x representa:',
         opts: ['El valor estimado de y cuando x = 0', 'La pendiente de la recta', 'El coeficiente de correlación', 'El error estándar'],
         ans: 0, exp: 'b₀ es el punto donde la recta corta el eje y (cuando x = 0).' },
+      { q: 'Si b₁ = 0 en la recta de regresión, ¿qué indica?',
+        opts: ['No hay relación lineal entre x e y', 'La correlación es perfecta', 'y crece con x', 'R² = 1'],
+        ans: 0, exp: 'b₁ = 0 significa pendiente cero → x no aporta información para predecir y.' },
     ],
 
   },
 
   // ===== SELECCIÓN ALEATORIA =====
-  getQuestions(mod, n = 4) {
+  getQuestions(mod, n = 2) {
     const bank = this.banks[mod] || [];
     const shuffled = [...bank].sort(() => Math.random() - 0.5);
     return shuffled.slice(0, Math.min(n, shuffled.length));
@@ -368,7 +407,7 @@ const Quiz = {
 
   // ===== RENDER QUIZ =====
   render(mod, container) {
-    const questions = this.getQuestions(mod, 4);
+    const questions = this.getQuestions(mod, 2);
     if (!questions.length) { container.innerHTML = '<p style="color:var(--muted)">Sin preguntas disponibles.</p>'; return; }
 
     const qsHtml = questions.map((q, i) => `
@@ -389,7 +428,7 @@ const Quiz = {
           🎯 Quiz — ${questions.length} preguntas
         </div>
         ${qsHtml}
-        <button class="btn-calc" id="quiz-verify-btn" onclick="Quiz._verify(${JSON.stringify(questions).replace(/"/g, '&quot;')}, '${mod}', this.closest('[data-quiz]') || this.parentElement.parentElement)">
+        <button class="btn-calc" id="quiz-verify-btn" onclick="Quiz._verify(${JSON.stringify(questions).replace(/"/g, '&quot;')}, '${mod}', this.parentElement.parentElement)">
           Verificar respuestas →
         </button>
       </div>`;

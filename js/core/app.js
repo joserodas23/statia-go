@@ -146,21 +146,61 @@ const App = {
   },
 
   _showQuiz(type, pathId) {
+    // 1. Mostrar la pantalla de análisis con la teoría del módulo arriba
+    this.showScreen('analysisScreen');
+    this.setNav('calc');
+    document.getElementById('mpill').classList.remove('show');
+    const mod = this.modules[type];
+    document.getElementById('hdrSub').textContent = (mod ? mod.label : type) + ' — Teoría + Quiz';
+    Utils.clearResults();
+
+    const area     = document.getElementById('tutorialArea');
     const formArea = document.getElementById('formArea');
-    if (!formArea) return;
-    formArea.innerHTML = `
-      <div class="card" style="margin-top:8px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:0.8rem;color:var(--text)">🎯 Quiz</div>
-          <button onclick="App.showPath('${pathId}')"
-                  style="font-size:0.6rem;padding:5px 10px;background:transparent;border:1px solid var(--border);border-radius:7px;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace">
-            ← Volver a la ruta
-          </button>
-        </div>
-        <div id="quiz-container"></div>
-      </div>`;
-    Quiz.render(type, document.getElementById('quiz-container'));
-    formArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (area)     area.innerHTML     = '';
+    if (formArea) formArea.innerHTML = '';
+
+    // 2. Renderizar la teoría del módulo en tutorialArea
+    const fullRenderMap = {
+      conteo: ModConteo, hipotesis: ModHipotesis,
+      chi: ModChi, intervalos: ModIntervalos, regresion: ModRegresion,
+    };
+    const moduleMap = {
+      nominal: ModNominal, ordinal: ModOrdinal,
+      discreta: ModDiscreta, continua: ModContinua,
+      dist_tablas: ModDistribuciones, dist_calc: ModDistribuciones,
+    };
+
+    if (fullRenderMap[type]) {
+      const container = area || formArea;
+      fullRenderMap[type].render(container);
+      if (fullRenderMap[type].init) fullRenderMap[type].init();
+    } else if (moduleMap[type]) {
+      const m = moduleMap[type];
+      if      (type === 'dist_tablas') m.renderTablasOnly();
+      else if (type === 'dist_calc')   m.renderCalcOnly();
+      else { m.renderTutorial(); }
+    }
+
+    // 3. Quiz debajo de la teoría (en formArea)
+    if (formArea) {
+      formArea.innerHTML = `
+        <div class="card" style="margin-top:8px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:0.8rem;color:var(--text)">🎯 Quiz — 2 preguntas</div>
+            <button onclick="App.showPath('${pathId}')"
+                    style="font-size:0.6rem;padding:5px 10px;background:transparent;border:1px solid var(--border);border-radius:7px;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace">
+              ← Ruta
+            </button>
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--muted);margin-bottom:12px">
+            Lee la teoría de arriba y luego responde:
+          </div>
+          <div id="quiz-container"></div>
+        </div>`;
+      Quiz.render(type, document.getElementById('quiz-container'));
+      // Scroll al quiz tras un pequeño delay para que el DOM esté listo
+      setTimeout(() => formArea.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
+    }
   },
 
   // ===== MODO EXAMEN =====
