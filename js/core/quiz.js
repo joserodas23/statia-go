@@ -399,7 +399,7 @@ const Quiz = {
   },
 
   // ===== SELECCIÓN ALEATORIA =====
-  getQuestions(mod, n = 2) {
+  getQuestions(mod, n = 20) {
     const bank = this.banks[mod] || [];
     const shuffled = [...bank].sort(() => Math.random() - 0.5);
     return shuffled.slice(0, Math.min(n, shuffled.length));
@@ -407,7 +407,7 @@ const Quiz = {
 
   // ===== RENDER QUIZ =====
   render(mod, container) {
-    const questions = this.getQuestions(mod, 2);
+    const questions = this.getQuestions(mod, 20);
     if (!questions.length) { container.innerHTML = '<p style="color:var(--muted)">Sin preguntas disponibles.</p>'; return; }
 
     const qsHtml = questions.map((q, i) => `
@@ -477,7 +477,7 @@ const Quiz = {
     });
 
     // Calcular XP
-    const passed   = correct >= Math.ceil(questions.length * 0.75);
+    const passed   = correct >= Math.ceil(questions.length * 0.60);
     const xpBase   = correct * 15;
     const xpBonus  = passed ? 30 : 0;
     const xpTotal  = xpBase + xpBonus;

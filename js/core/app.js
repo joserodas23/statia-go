@@ -186,7 +186,7 @@ const App = {
       formArea.innerHTML = `
         <div class="card" style="margin-top:8px">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:0.8rem;color:var(--text)">🎯 Quiz — 2 preguntas</div>
+            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:0.8rem;color:var(--text)">🎯 Quiz</div>
             <button onclick="App.showPath('${pathId}')"
                     style="font-size:0.6rem;padding:5px 10px;background:transparent;border:1px solid var(--border);border-radius:7px;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace">
               ← Ruta
