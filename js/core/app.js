@@ -36,6 +36,7 @@ const App = {
     chi:         { label: 'Chi-cuadrado',        icon: 'χ²', col: 'var(--accent2)',tb: 'tb-chi',  miCls: 'sel-b', section: 'hipotesis' },
     intervalos:  { label: 'Intervalos de Confianza', icon: '📊', col: 'var(--accent2)', tb: 'tb-ic', miCls: 'sel-b', section: 'inferencia' },
     regresion:   { label: 'Regresión',           icon: '📈', col: 'var(--gold)',    tb: 'tb-reg',  miCls: 'sel-y', section: 'regresion' },
+    supuestos:   { label: 'Supuestos Estadísticos', icon: '🔬', col: 'var(--accent2)', tb: 'tb-sup',  miCls: 'sel-b', section: 'regresion' },
   },
 
   _examenSalidas: 0,
@@ -72,7 +73,8 @@ const App = {
       bg: 'rgba(255,209,102,0.07)', border: 'rgba(255,209,102,0.2)',
       desc: 'Modelado predictivo y análisis de relaciones entre variables.',
       steps: [
-        { type: 'regresion', icon: '📈', name: 'Regresión y Correlación', desc: 'Lineal simple, Pearson, Spearman, ANOVA del modelo' },
+        { type: 'regresion',  icon: '📈', name: 'Regresión y Correlación', desc: 'Lineal simple, Pearson, Spearman, ANOVA del modelo' },
+        { type: 'supuestos',  icon: '🔬', name: 'Supuestos Estadísticos',  desc: 'Linealidad, normalidad, homocedasticidad, independencia, multicolinealidad' },
       ]
     }
   },
@@ -179,6 +181,7 @@ const App = {
     const fullRenderMap = {
       conteo: ModConteo, hipotesis: ModHipotesis,
       chi: ModChi, intervalos: ModIntervalos, regresion: ModRegresion,
+      supuestos: ModSupuestos,
     };
     const moduleMap = {
       nominal: ModNominal, ordinal: ModOrdinal,
@@ -571,6 +574,10 @@ const App = {
           <div class="mi-icon">📈</div>
           <div><div class="mi-name" style="color:var(--gold)">Regresión y Correlación</div><div class="mi-sub">Lineal simple, Pearson, Spearman</div></div>
         </div>
+        <div class="mi" id="mi-supuestos" onclick="App.selectType('supuestos')">
+          <div class="mi-icon">🔬</div>
+          <div><div class="mi-name" style="color:var(--accent2)">Supuestos Estadísticos</div><div class="mi-sub">Jarque-Bera, normalidad, Durbin-Watson, VIF</div></div>
+        </div>
       </div>
 
       <div class="mdiv"></div>
@@ -719,6 +726,12 @@ const App = {
         <div class="hc-name" style="color:var(--gold)">Regresión</div>
         <div class="hc-sub">Lineal simple, Pearson, Spearman</div>
         <div class="hc-tag" style="background:rgba(255,209,102,0.1);color:var(--gold);border:1px solid rgba(255,209,102,0.2)">Regresión</div>
+      </div>
+      <div class="home-card" onclick="App.selectType('supuestos')">
+        <div class="hc-icon">🔬</div>
+        <div class="hc-name" style="color:var(--accent2)">Supuestos</div>
+        <div class="hc-sub">Jarque-Bera, normalidad residuos</div>
+        <div class="hc-tag" style="background:rgba(123,140,255,0.1);color:var(--accent2);border:1px solid rgba(123,140,255,0.2)">Regresión</div>
       </div>`;
   },
 
@@ -796,6 +809,7 @@ const App = {
       chi:        ModChi,
       intervalos: ModIntervalos,
       regresion:  ModRegresion,
+      supuestos:  ModSupuestos,
     };
 
     if (fullRenderMap[type]) {

@@ -1,12 +1,10 @@
 /* ============================================
-   STATIA GO — config.js
-   Configuración de API key de IA
-   Pega tu API key aquí una sola vez.
+   STATIA GO — js/core/config.js
+   Configuración local — SOLO para desarrollo en tu PC
+   Este archivo NO se sube a GitHub (.gitignore)
    by Jose Rodas
    ============================================ */
 
 const CONFIG = {
-  // Obtén tu API key GRATIS en: https://aistudio.google.com/apikey
-  // Formato: 'AIzaSy...'
-  GEMINI_KEY: 'AIzaSyC3ap7e75zSEz2Rv2RX25O3mY7hj8xx1ow',
+  GEMINI_KEY: 'AIzaSyA8dJYFGJwk2JgA_I7ErubE0Mac4Q90_i4'
 };

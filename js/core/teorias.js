@@ -715,6 +715,214 @@ regresion: `
     </div>
   </div>
 
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;">
+    <h3 style="font-family:'Syne',sans-serif;font-weight:800;color:var(--accent2);margin:0 0 .8rem;">🔬 Supuestos del modelo lineal</h3>
+    <p>La regresión lineal no funciona bien si se violan sus supuestos. Antes de confiar en cualquier resultado, verifica estos cinco:</p>
+    <div style="overflow-x:auto;margin:.8rem 0;">
+      <table style="width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-size:.84rem;">
+        <thead>
+          <tr style="background:rgba(123,140,255,0.12);">
+            <th style="border:1px solid var(--border);padding:.45rem .8rem;text-align:left;">Supuesto</th>
+            <th style="border:1px solid var(--border);padding:.45rem .8rem;text-align:left;">¿Qué exige?</th>
+            <th style="border:1px solid var(--border);padding:.45rem .8rem;text-align:left;">Cómo detectarlo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--accent);font-weight:700;">Linealidad</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">Relación X–Y lineal</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">Gráfico de dispersión X vs Y</td>
+          </tr>
+          <tr style="background:rgba(255,255,255,0.03);">
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--accent2);font-weight:700;">Normalidad de residuos</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">Errores ~ N(0,σ²)</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">Histograma, Q-Q plot, Jarque-Bera</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--gold);font-weight:700;">Homocedasticidad</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">Varianza constante de errores</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">Residuos vs valores ajustados</td>
+          </tr>
+          <tr style="background:rgba(255,255,255,0.03);">
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--accent3);font-weight:700;">Independencia</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">Errores sin autocorrelación</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">Durbin-Watson (DW ≈ 2 = OK)</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--muted);font-weight:700;">No multicolinealidad</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">Predictores no correlacionados (múltiple)</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">VIF &lt; 5 = aceptable; &gt; 10 = grave</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:.88rem;color:var(--muted);margin-top:.6rem;">Para aprenderlos en profundidad y calcular la prueba Jarque-Bera con tus propios datos, visita el módulo <strong style="color:var(--accent2);">Supuestos Estadísticos</strong> en el menú principal.</p>
+  </div>
+
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;">
+    <h3 style="font-family:'Syne',sans-serif;font-weight:800;color:var(--gold);margin:0 0 .8rem;">🚀 ¿Qué estudiar después?</h3>
+    <p>Dominar la regresión lineal simple te abre la puerta a una familia completa de modelos. Esta es la ruta natural de progresión:</p>
+    <div style="overflow-x:auto;margin:.8rem 0;">
+      <table style="width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-size:.83rem;">
+        <thead>
+          <tr style="background:rgba(255,209,102,0.1);">
+            <th style="border:1px solid var(--border);padding:.5rem .8rem;text-align:left;">Tema</th>
+            <th style="border:1px solid var(--border);padding:.5rem .8rem;text-align:left;">Para qué sirve</th>
+            <th style="border:1px solid var(--border);padding:.5rem .8rem;text-align:left;">Cuándo aprenderlo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--accent);font-weight:700;">Regresión múltiple</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">Varios predictores simultáneos: Ŷ = a + b₁X₁ + b₂X₂ + …</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--accent);">Paso inmediato siguiente</td>
+          </tr>
+          <tr style="background:rgba(255,255,255,0.03);">
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--accent2);font-weight:700;">Regresión logística</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">Clasificación binaria (0/1): aprobado/no aprobado, sano/enfermo</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--accent2);">Cuando Y es categórica</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--gold);font-weight:700;">Validación cruzada (K-Fold)</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">Evaluar el modelo en datos no vistos, detectar overfitting</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--gold);">Al evaluar cualquier modelo</td>
+          </tr>
+          <tr style="background:rgba(255,255,255,0.03);">
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--accent3);font-weight:700;">Regularización Lasso y Ridge</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">Penalizar complejidad, prevenir overfitting, selección de variables</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--accent3);">Con muchos predictores</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--muted);font-weight:700;">Métricas de evaluación</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">MAE, RMSE, R², AUC-ROC — cuantificar qué tan bueno es el modelo</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--muted);">Siempre, junto al modelo</td>
+          </tr>
+          <tr style="background:rgba(255,255,255,0.03);">
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--accent2);font-weight:700;">Árboles y Random Forest</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">Relaciones no lineales, interacciones automáticas entre variables</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--accent2);">Machine learning introductorio</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--gold);font-weight:700;">Redes neuronales</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">Patrones complejos en grandes datasets, Deep Learning básico</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--gold);">Tras dominar los anteriores</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:.9rem;font-style:italic;color:var(--accent);font-family:'Lora',serif;">Dominar regresión lineal es el primer paso sólido. Todos los modelos complejos se construyen sobre estas bases.</p>
+  </div>
+
+</div>
+`,
+
+/* ─────────────────────────────────────────────
+   SUPUESTOS
+───────────────────────────────────────────── */
+supuestos: `
+<div style="font-family:'Lora',serif;color:var(--text);line-height:1.75;">
+
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;">
+    <h3 style="font-family:'Syne',sans-serif;font-weight:800;color:var(--accent);margin:0 0 .8rem;">📌 ¿Cuándo verificar supuestos estadísticos?</h3>
+    <p>Verifica los supuestos <strong>siempre</strong> que vayas a usar un modelo estadístico para inferir, predecir o tomar decisiones. No es un paso opcional: es la diferencia entre resultados válidos y conclusiones engañosas.</p>
+    <p><strong>Situaciones donde son críticos:</strong></p>
+    <ul style="margin:.4rem 0 0 1rem;">
+      <li>Antes de confiar en los valores p de una regresión lineal</li>
+      <li>Al usar pruebas t o ANOVA (asumen normalidad y homocedasticidad)</li>
+      <li>Con datos de series de tiempo (riesgo de autocorrelación)</li>
+      <li>Al construir modelos predictivos con múltiples variables</li>
+      <li>Cuando los residuos de un modelo muestran patrones sospechosos</li>
+    </ul>
+    <p style="margin-top:.8rem;"><strong>La regla:</strong> si el supuesto se viola, los resultados pueden ser técnicamente correctos pero estadísticamente inválidos. Números bonitos sobre bases rotas no valen nada.</p>
+  </div>
+
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;">
+    <h3 style="font-family:'Syne',sans-serif;font-weight:800;color:var(--gold);margin:0 0 .8rem;">🧮 Los 5 supuestos — resumen con ejemplo</h3>
+    <p>Imagina que ajustas un modelo de regresión para predecir el <strong>salario mensual</strong> (Y) en función de los <strong>años de experiencia</strong> (X) de 50 empleados.</p>
+
+    <div style="margin:.8rem 0;">
+      <p style="font-family:'DM Mono',monospace;background:rgba(79,255,176,0.07);padding:.6rem 1rem;border-radius:8px;margin-bottom:.5rem;">
+        <strong style="color:var(--accent);">1. Linealidad</strong><br>
+        El gráfico de X vs Y muestra que a mayor experiencia, el salario sube de forma aproximadamente recta. Si en lugar de eso vieras una curva (crece rápido al inicio y se aplana), la relación es no lineal → transformar X con log(X) o añadir X².
+      </p>
+      <p style="font-family:'DM Mono',monospace;background:rgba(123,140,255,0.07);padding:.6rem 1rem;border-radius:8px;margin-bottom:.5rem;">
+        <strong style="color:var(--accent2);">2. Normalidad de residuos</strong><br>
+        Tras ajustar el modelo, calculas los residuos (salario real − salario predicho). El histograma de esos residuos debe parecerse a una campana. La prueba Jarque-Bera mide asimetría y curtosis: si p &gt; 0.05, no hay evidencia contra normalidad.
+      </p>
+      <p style="font-family:'DM Mono',monospace;background:rgba(255,209,102,0.07);padding:.6rem 1rem;border-radius:8px;margin-bottom:.5rem;">
+        <strong style="color:var(--gold);">3. Homocedasticidad</strong><br>
+        Graficas los residuos vs los salarios predichos. Si la dispersión es similar en todo el rango → OK. Si los residuos se ensanchan (más variación para salarios altos) → heterocedasticidad. Solución: transformar Y con log(Y).
+      </p>
+      <p style="font-family:'DM Mono',monospace;background:rgba(255,107,107,0.07);padding:.6rem 1rem;border-radius:8px;margin-bottom:.5rem;">
+        <strong style="color:var(--accent3);">4. Independencia</strong><br>
+        Los residuos del empleado #1 no deben predecir los del #2. Si los datos son de una misma empresa y los empleados fueron encuestados en orden por departamento, podría haber correlación. Durbin-Watson: DW ≈ 2 es ideal.
+      </p>
+      <p style="font-family:'DM Mono',monospace;background:rgba(139,155,180,0.07);padding:.6rem 1rem;border-radius:8px;">
+        <strong style="color:var(--muted);">5. No multicolinealidad</strong><br>
+        Si al modelo le añades "años de experiencia" Y "edad", estas dos variables están muy correlacionadas (a más experiencia, más edad). El VIF de ambas subirá por encima de 10. Solución: eliminar una de las dos o crear un índice combinado.
+      </p>
+    </div>
+  </div>
+
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;">
+    <h3 style="font-family:'Syne',sans-serif;font-weight:800;color:var(--accent3);margin:0 0 .8rem;">⚠️ Errores comunes</h3>
+    <ol style="margin:0 0 0 1rem;">
+      <li style="margin-bottom:.7rem;"><strong>Verificar normalidad de los datos en lugar de los residuos:</strong> El supuesto de normalidad en regresión es sobre los residuos del modelo, no sobre los datos originales X o Y. Puedes tener datos sesgados y residuos perfectamente normales.</li>
+      <li style="margin-bottom:.7rem;"><strong>Ignorar los supuestos con muestras grandes:</strong> Es cierto que el Teorema Central del Límite ayuda con la normalidad cuando n es grande. Pero heterocedasticidad y autocorrelación siguen siendo problemas graves sin importar el tamaño de muestra.</li>
+      <li style="margin-bottom:.7rem;"><strong>Corregir el supuesto sin re-verificar:</strong> Si transformas Y para corregir heterocedasticidad, los demás supuestos pueden cambiar. Siempre re-verifica todos los supuestos tras aplicar una corrección.</li>
+      <li><strong>Confundir VIF alto con correlación alta:</strong> VIF mide la inflación de varianza considerando todos los predictores juntos, no solo pares. Dos variables pueden tener r = 0.5 (moderado) pero VIF alto si hay colinealidad combinada con otras variables del modelo.</li>
+    </ol>
+  </div>
+
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;">
+    <h3 style="font-family:'Syne',sans-serif;font-weight:800;color:var(--accent2);margin:0 0 .8rem;">📊 Resumen visual — Tests y umbrales</h3>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-size:.84rem;">
+        <thead>
+          <tr style="background:rgba(123,140,255,0.12);">
+            <th style="border:1px solid var(--border);padding:.5rem .8rem;">Supuesto</th>
+            <th style="border:1px solid var(--border);padding:.5rem .8rem;">Test principal</th>
+            <th style="border:1px solid var(--border);padding:.5rem .8rem;">Umbral de alarma</th>
+            <th style="border:1px solid var(--border);padding:.5rem .8rem;">Corrección habitual</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--accent);">Linealidad</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">Gráfico X vs Y</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">Patrón curvo visible</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">log(X), X², regresión polinómica</td>
+          </tr>
+          <tr style="background:rgba(255,255,255,0.03);">
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--accent2);">Normalidad residuos</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">Jarque-Bera</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">p &lt; 0.05</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">Transformar Y, aumentar n</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--gold);">Homocedasticidad</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">Breusch-Pagan</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">Patrón embudo en residuos</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">log(Y), WLS, errores robustos</td>
+          </tr>
+          <tr style="background:rgba(255,255,255,0.03);">
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--accent3);">Independencia</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">Durbin-Watson</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">DW &lt; 1 o DW &gt; 3</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">Lags, modelos ARIMA</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--muted);">No multicolinealidad</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">VIF</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">VIF &gt; 5 (grave: &gt; 10)</td>
+            <td style="border:1px solid var(--border);padding:.4rem .8rem;">Eliminar variable, Ridge (L2)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:.8rem;font-size:.88rem;">Los supuestos no son obstáculos — son herramientas para que confíes en tus resultados. Usa el módulo <strong style="color:var(--accent);">Supuestos Estadísticos</strong> para calcular Jarque-Bera y obtener interpretación con IA.</p>
+  </div>
+
 </div>
 `,
 

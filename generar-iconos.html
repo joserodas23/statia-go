@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head><title>Generar íconos Statia Go</title></head>
+<body style="background:#111;color:#fff;font-family:sans-serif;padding:30px;text-align:center">
+<h2>Generando íconos de Statia Go...</h2>
+<canvas id="c512" width="512" height="512" style="border-radius:16px;margin:10px"></canvas>
+<canvas id="c192" width="192" height="192" style="border-radius:8px;margin:10px"></canvas>
+<p id="msg" style="color:#4fffb0;margin-top:20px">Haz clic en "Generar y Descargar"</p>
+<button onclick="gen()" style="background:#4fffb0;color:#0d0f14;border:none;padding:14px 32px;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:10px">Generar y Descargar íconos</button>
+
+<script>
+function drawIcon(canvas, size) {
+  const ctx = canvas.getContext('2d');
+  const r = size * 0.18; // radio de esquinas
+
+  // Fondo redondeado
+  ctx.beginPath();
+  ctx.moveTo(r, 0);
+  ctx.lineTo(size - r, 0);
+  ctx.quadraticCurveTo(size, 0, size, r);
+  ctx.lineTo(size, size - r);
+  ctx.quadraticCurveTo(size, size, size - r, size);
+  ctx.lineTo(r, size);
+  ctx.quadraticCurveTo(0, size, 0, size - r);
+  ctx.lineTo(0, r);
+  ctx.quadraticCurveTo(0, 0, r, 0);
+  ctx.closePath();
+
+  // Gradiente de fondo
+  const bg = ctx.createLinearGradient(0, 0, size, size);
+  bg.addColorStop(0, '#0d0f14');
+  bg.addColorStop(1, '#131720');
+  ctx.fillStyle = bg;
+  ctx.fill();
+
+  // Decoración: curva de campana de Gauss de fondo
+  ctx.save();
+  ctx.globalAlpha = 0.07;
+  ctx.strokeStyle = '#4fffb0';
+  ctx.lineWidth = size * 0.025;
+  ctx.beginPath();
+  const cx = size / 2;
+  const cy = size * 0.58;
+  const amplitude = size * 0.28;
+  const sigma = size * 0.18;
+  for (let x = 0; x <= size; x += 2) {
+    const t = x - cx;
+    const y = cy - amplitude * Math.exp(-(t * t) / (2 * sigma * sigma));
+    x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  ctx.restore();
+
+  // Puntos decorativos (datos estadísticos)
+  const dots = [
+    [0.2, 0.72], [0.32, 0.58], [0.44, 0.45], [0.56, 0.42],
+    [0.68, 0.5], [0.78, 0.65], [0.88, 0.75]
+  ];
+  dots.forEach(([px, py]) => {
+    ctx.beginPath();
+    ctx.arc(px * size, py * size, size * 0.018, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(79,255,176,0.25)';
+    ctx.fill();
+  });
+
+  // Círculo de fondo para la "S"
+  const grad = ctx.createRadialGradient(size/2, size*0.42, 0, size/2, size*0.42, size*0.32);
+  grad.addColorStop(0, 'rgba(79,255,176,0.15)');
+  grad.addColorStop(1, 'rgba(79,255,176,0)');
+  ctx.beginPath();
+  ctx.arc(size/2, size*0.42, size*0.32, 0, Math.PI*2);
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Letra "S" con gradiente
+  const textGrad = ctx.createLinearGradient(size*0.25, size*0.15, size*0.75, size*0.7);
+  textGrad.addColorStop(0, '#4fffb0');
+  textGrad.addColorStop(1, '#6699ff');
+
+  ctx.font = `900 ${size * 0.52}px Arial, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  // Sombra sutil
+  ctx.shadowColor = 'rgba(79,255,176,0.4)';
+  ctx.shadowBlur = size * 0.08;
+
+  ctx.fillStyle = textGrad;
+  ctx.fillText('S', size / 2, size * 0.42);
+  ctx.shadowBlur = 0;
+
+  // Texto "GO" abajo
+  ctx.font = `700 ${size * 0.13}px Arial, sans-serif`;
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.fillText('GO', size / 2, size * 0.72);
+
+  // Línea decorativa bajo el texto
+  const lw = size * 0.22;
+  const lx = size / 2 - lw / 2;
+  const ly = size * 0.79;
+  const lineGrad = ctx.createLinearGradient(lx, ly, lx + lw, ly);
+  lineGrad.addColorStop(0, 'rgba(79,255,176,0)');
+  lineGrad.addColorStop(0.5, 'rgba(79,255,176,0.7)');
+  lineGrad.addColorStop(1, 'rgba(79,255,176,0)');
+  ctx.beginPath();
+  ctx.moveTo(lx, ly);
+  ctx.lineTo(lx + lw, ly);
+  ctx.strokeStyle = lineGrad;
+  ctx.lineWidth = size * 0.008;
+  ctx.stroke();
+}
+
+function gen() {
+  const c512 = document.getElementById('c512');
+  const c192 = document.getElementById('c192');
+
+  drawIcon(c512, 512);
+  drawIcon(c192, 192);
+
+  // Descargar 512
+  const a512 = document.createElement('a');
+  a512.download = 'icon-512.png';
+  a512.href = c512.toDataURL('image/png');
+  a512.click();
+
+  setTimeout(() => {
+    // Descargar 192
+    const a192 = document.createElement('a');
+    a192.download = 'icon-192.png';
+    a192.href = c192.toDataURL('image/png');
+    a192.click();
+  }, 500);
+
+  document.getElementById('msg').textContent = '✓ Descargando icon-512.png e icon-192.png — ponlos en la carpeta icons/';
+}
+</script>
+</body>
+</html>

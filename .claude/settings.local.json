@@ -10,7 +10,12 @@
       "Bash(node --check \"e:/Statia Go/statia-go/js/core/stats.js\")",
       "Bash(node --check \"e:/Statia Go/statia-go/js/core/utils.js\")",
       "Bash(node --check \"e:/Statia Go/statia-go/js/modulos/02_distribuciones/distribuciones.js\")",
-      "Bash(node --check \"e:/Statia Go/statia-go/js/core/app.js\")"
+      "Bash(node --check \"e:/Statia Go/statia-go/js/core/app.js\")",
+      "Bash(start \"\" \"e:/Statia Go/statia-go/index.html\")",
+      "Bash(start \"\" \"http://localhost:3000\")",
+      "Bash(wc -l js/core/*.js js/modulos/*/*.js)",
+      "Bash(vercel --version)",
+      "Bash(gh run:*)"
     ]
   }
 }
