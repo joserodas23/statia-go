@@ -133,8 +133,14 @@ const App = {
     Utils.clearResults();
     if (area) area.innerHTML = `
       <div class="card" style="margin-top:0">
-        <div class="tb" style="background:${path.bg};border:1px solid ${path.border};color:${path.color};font-family:'Syne',sans-serif;font-weight:800;font-size:0.78rem;padding:8px 12px;border-radius:8px;margin-bottom:12px">
-          ${path.label}
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <button onclick="App.goHome()"
+                  style="font-size:0.62rem;padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace;flex-shrink:0">
+            ← Rutas
+          </button>
+          <div class="tb" style="background:${path.bg};border:1px solid ${path.border};color:${path.color};font-family:'Syne',sans-serif;font-weight:800;font-size:0.78rem;padding:6px 12px;border-radius:8px;margin:0;flex:1">
+            ${path.label}
+          </div>
         </div>
         <div style="font-family:'DM Mono',monospace;font-size:0.63rem;color:var(--muted);margin-bottom:14px">${path.desc}</div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
