@@ -227,25 +227,13 @@ const App = {
       </div>
       <div id="teoria-content"></div>`;
 
-    const fullRenderMap = {
-      conteo: ModConteo, hipotesis: ModHipotesis,
-      chi: ModChi, intervalos: ModIntervalos, regresion: ModRegresion,
-    };
-    const moduleMap = {
-      nominal: ModNominal, ordinal: ModOrdinal,
-      discreta: ModDiscreta, continua: ModContinua,
-      dist_tablas: ModDistribuciones, dist_calc: ModDistribuciones,
-    };
-
     const container = document.getElementById('teoria-content');
-    if (fullRenderMap[type] && container) {
-      fullRenderMap[type].render(container);
-      if (fullRenderMap[type].init) fullRenderMap[type].init();
-    } else if (moduleMap[type] && container) {
-      const m = moduleMap[type];
-      if      (type === 'dist_tablas') m.renderTablasOnly();
-      else if (type === 'dist_calc')   m.renderCalcOnly();
-      else m.renderTutorial();
+    if (container) {
+      if (typeof Teorias !== 'undefined' && Teorias.has(type)) {
+        Teorias.render(type, container);
+      } else {
+        container.innerHTML = '<p style="font-family:\'DM Mono\',monospace;font-size:0.7rem;color:var(--muted);padding:16px">Teoría no disponible para este módulo.</p>';
+      }
     }
   },
 

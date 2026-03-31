@@ -4,7 +4,7 @@
    by Jose Rodas
    ============================================ */
 
-const CACHE = 'statia-go-v7';
+const CACHE = 'statia-go-v8';
 
 const ASSETS = [
   '/',
@@ -16,6 +16,7 @@ const ASSETS = [
   '/js/core/charts.js',
   '/js/core/ai.js',
   '/js/core/quiz.js',
+  '/js/core/teorias.js',
   '/js/core/app.js',
   '/js/modulos/01_descriptiva/nominal.js',
   '/js/modulos/01_descriptiva/ordinal.js',
