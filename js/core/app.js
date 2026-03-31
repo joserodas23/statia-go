@@ -119,7 +119,7 @@ const App = {
                     style="font-size:0.58rem;padding:5px 8px;background:var(--accent2);border:none;border-radius:7px;color:var(--bg);cursor:pointer;font-family:\'DM Mono\',monospace;font-weight:700">
               🎯 Quiz
             </button>` : ''}
-            <button onclick="App.selectType('${step.type}')"
+            <button onclick="App._showCalc('${step.type}','${pathId}')"
                     style="font-size:0.58rem;padding:5px 8px;background:rgba(255,209,102,0.15);border:1px solid rgba(255,209,102,0.3);border-radius:7px;color:var(--gold);cursor:pointer;font-family:\'DM Mono\',monospace;font-weight:700">
               🔢 Calcular
             </button>
@@ -147,6 +147,53 @@ const App = {
         </div>
         ${stepsHtml}
       </div>`;
+  },
+
+  _showCalc(type, pathId) {
+    this.showScreen('analysisScreen');
+    this.setNav('calc');
+    document.getElementById('mpill').classList.remove('show');
+    const mod = this.modules[type];
+    document.getElementById('hdrSub').textContent = mod ? mod.label : type;
+    Utils.clearResults();
+
+    const area     = document.getElementById('tutorialArea');
+    const formArea = document.getElementById('formArea');
+    if (area) area.innerHTML = `
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;padding:0 2px">
+        <button onclick="App.showPath('${pathId}')"
+                style="font-size:0.62rem;padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace">
+          ← Ruta
+        </button>
+        <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.72rem;color:var(--gold)">
+          🔢 Calculadora — ${mod ? mod.label : type}
+        </span>
+      </div>`;
+
+    const fullRenderMap = {
+      conteo: ModConteo, hipotesis: ModHipotesis,
+      chi: ModChi, intervalos: ModIntervalos, regresion: ModRegresion,
+    };
+    const moduleMap = {
+      nominal: ModNominal, ordinal: ModOrdinal,
+      discreta: ModDiscreta, continua: ModContinua,
+      dist_tablas: ModDistribuciones, dist_calc: ModDistribuciones,
+    };
+
+    if (fullRenderMap[type]) {
+      const container = formArea || area;
+      if (container) {
+        if (formArea) formArea.innerHTML = '';
+        fullRenderMap[type].render(container);
+        if (fullRenderMap[type].init) fullRenderMap[type].init();
+      }
+    } else if (moduleMap[type]) {
+      const m = moduleMap[type];
+      if (formArea) formArea.innerHTML = '';
+      if      (type === 'dist_tablas') m.renderTablasOnly();
+      else if (type === 'dist_calc')   m.renderCalcOnly();
+      else                             m.renderForm();
+    }
   },
 
   _showTeoria(type, pathId) {
