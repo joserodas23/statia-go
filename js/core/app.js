@@ -71,10 +71,18 @@ const App = {
     ciencia: {
       label: '🟡 Ciencia de Datos', color: 'var(--gold)',
       bg: 'rgba(255,209,102,0.07)', border: 'rgba(255,209,102,0.2)',
-      desc: 'Modelado predictivo y análisis de relaciones entre variables.',
+      desc: 'De la estadística clásica al modelado predictivo — la ruta completa para trabajar con datos reales.',
       steps: [
-        { type: 'regresion',  icon: '📈', name: 'Regresión y Correlación', desc: 'Lineal simple, Pearson, Spearman, ANOVA del modelo' },
-        { type: 'supuestos',  icon: '🔬', name: 'Supuestos Estadísticos',  desc: 'Linealidad, normalidad, homocedasticidad, independencia, multicolinealidad' },
+        { type: 'dist_calc',    icon: '📐', name: 'Probabilidades',           desc: 'Distribuciones como base del modelado estadístico' },
+        { type: 'hipotesis',    icon: '🧪', name: 'Pruebas de Hipótesis',      desc: 'Tomar decisiones con evidencia estadística' },
+        { type: 'intervalos',   icon: '📊', name: 'Intervalos de Confianza',   desc: 'Estimar parámetros poblacionales con incertidumbre' },
+        { type: 'regresion',    icon: '📈', name: 'Regresión Lineal',          desc: 'El modelo predictivo más fundamental — base de todo' },
+        { type: 'supuestos',    icon: '🔬', name: 'Supuestos Estadísticos',    desc: 'Validar modelos: normalidad, homocedasticidad, independencia' },
+        { type: 'validacion',   icon: '🔁', name: 'Validación Cruzada',        desc: 'K-Fold CV — detectar overfitting y evaluar generalización', coming: true },
+        { type: 'logistica',    icon: '🎯', name: 'Regresión Logística',       desc: 'Clasificación binaria — predecir 0 o 1 con probabilidades', coming: true },
+        { type: 'regulariz',    icon: '⚖️', name: 'Regularización Lasso/Ridge', desc: 'Penalizar complejidad del modelo — L1 y L2', coming: true },
+        { type: 'arboles',      icon: '🌳', name: 'Árboles y Random Forest',   desc: 'Modelos no lineales, robustos y explicables', coming: true },
+        { type: 'redes',        icon: '🧠', name: 'Introducción a Redes Neuronales', desc: 'Perceptrón, capas ocultas y backpropagation', coming: true },
       ]
     }
   },
@@ -89,12 +97,28 @@ const App = {
     document.getElementById('mpill').classList.remove('show');
     document.getElementById('hdrSub').textContent = path.label;
 
-    const visited = new Set(this.state.history.map(h => h.type));
-    const total   = path.steps.length;
-    const done    = path.steps.filter(s => Quiz.isCompleted(s.type)).length;
-    const pct     = total ? Math.round((done / total) * 100) : 0;
+    const visited   = new Set(this.state.history.map(h => h.type));
+    const active    = path.steps.filter(s => !s.coming);
+    const total     = active.length;
+    const done      = active.filter(s => Quiz.isCompleted(s.type)).length;
+    const pct       = total ? Math.round((done / total) * 100) : 0;
 
     const stepsHtml = path.steps.map((step, i) => {
+      if (step.coming) return `
+        <div style="display:flex;align-items:center;gap:10px;padding:11px 12px;
+                    opacity:0.45;border:1px dashed var(--border);border-radius:10px;margin-bottom:8px">
+          <div style="font-size:1.2rem;min-width:28px;text-align:center">${step.icon}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.74rem;color:var(--muted)">
+              ${i + 1}. ${step.name}
+            </div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${step.desc}</div>
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.58rem;padding:3px 8px;border:1px solid var(--border);border-radius:6px;color:var(--muted);white-space:nowrap">
+            🔒 Próximamente
+          </div>
+        </div>`;
+
       const visto     = visited.has(step.type);
       const completed = Quiz.isCompleted(step.type);
       const hasQuiz   = !!(Quiz.banks && Quiz.banks[step.type]);
