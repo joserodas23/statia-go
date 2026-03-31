@@ -279,7 +279,8 @@ const ModRegresion = {
       ${AI.loadingBlock('reg-ai')}`;
 
     await AI.render(AI.promptRegresion(nx, ny, n, r, rho, r2, b0, b1, Se, pP, pS, alpha, SSR, SSE, SST, F, pF), 'reg-ai');
-  }
+  },
+
   ejemplo() {
     document.getElementById('reg-nx').value = 'Horas de estudio';
     document.getElementById('reg-ny').value = 'Calificación (puntos)';

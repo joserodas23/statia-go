@@ -142,7 +142,7 @@ const ModChi = {
     return str.split(/[\s,;]+/).map(Number).filter(v => !isNaN(v));
   },
 
-  calcular() {
+  async calcular() {
     const tipo = document.getElementById('chi-tipo').value;
     const alpha = parseFloat(document.getElementById('chi-alpha').value);
     const res = document.getElementById('chi-resultado');

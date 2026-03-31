@@ -250,7 +250,7 @@ const ModHipotesis = {
     return str.split(/[\s,;]+/).map(Number).filter(v => !isNaN(v));
   },
 
-  calcular() {
+  async calcular() {
     const tipo = document.getElementById('hip-tipo').value;
     const alpha = parseFloat(document.getElementById('hip-alpha').value);
     const cola = document.getElementById('hip-cola')?.value || 'bilateral';

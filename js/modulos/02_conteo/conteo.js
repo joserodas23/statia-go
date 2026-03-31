@@ -207,7 +207,7 @@ const ModConteo = {
     }
   },
 
-  calcular() {
+  async calcular() {
     const tipo = document.getElementById('cnt-tipo')?.value;
     const n = parseInt(document.getElementById('cnt-n')?.value);
     const rEl = document.getElementById('cnt-r');

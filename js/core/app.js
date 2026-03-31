@@ -110,15 +110,19 @@ const App = {
             </div>
             <div style="font-family:\'DM Mono\',monospace;font-size:0.58rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${step.desc}</div>
           </div>
-          <div style="display:flex;gap:5px;flex-shrink:0">
-            <button onclick="App.selectType('${step.type}')"
+          <div style="display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap">
+            <button onclick="App._showTeoria('${step.type}','${pathId}')"
                     style="font-size:0.58rem;padding:5px 8px;background:transparent;border:1px solid var(--border);border-radius:7px;color:var(--muted);cursor:pointer;font-family:\'DM Mono\',monospace">
-              📖 Ver
+              📖 Teoría
             </button>
             ${hasQuiz ? `<button onclick="App._showQuiz('${step.type}','${pathId}')"
                     style="font-size:0.58rem;padding:5px 8px;background:var(--accent2);border:none;border-radius:7px;color:var(--bg);cursor:pointer;font-family:\'DM Mono\',monospace;font-weight:700">
               🎯 Quiz
             </button>` : ''}
+            <button onclick="App.selectType('${step.type}')"
+                    style="font-size:0.58rem;padding:5px 8px;background:rgba(255,209,102,0.15);border:1px solid rgba(255,209,102,0.3);border-radius:7px;color:var(--gold);cursor:pointer;font-family:\'DM Mono\',monospace;font-weight:700">
+              🔢 Calcular
+            </button>
           </div>
         </div>`;
     }).join('');
@@ -145,21 +149,31 @@ const App = {
       </div>`;
   },
 
-  _showQuiz(type, pathId) {
-    // 1. Mostrar la pantalla de análisis con la teoría del módulo arriba
+  _showTeoria(type, pathId) {
     this.showScreen('analysisScreen');
     this.setNav('calc');
     document.getElementById('mpill').classList.remove('show');
     const mod = this.modules[type];
-    document.getElementById('hdrSub').textContent = (mod ? mod.label : type) + ' — Teoría + Quiz';
+    document.getElementById('hdrSub').textContent = (mod ? mod.label : type) + ' — Teoría';
     Utils.clearResults();
 
     const area     = document.getElementById('tutorialArea');
     const formArea = document.getElementById('formArea');
-    if (area)     area.innerHTML     = '';
     if (formArea) formArea.innerHTML = '';
 
-    // 2. Renderizar la teoría del módulo en tutorialArea
+    // Botón volver a la ruta
+    if (area) area.innerHTML = `
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:0 2px">
+        <button onclick="App.showPath('${pathId}')"
+                style="font-size:0.62rem;padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace">
+          ← Ruta
+        </button>
+        <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.72rem;color:var(--text)">
+          📖 Teoría — ${mod ? mod.label : type}
+        </span>
+      </div>
+      <div id="teoria-content"></div>`;
+
     const fullRenderMap = {
       conteo: ModConteo, hipotesis: ModHipotesis,
       chi: ModChi, intervalos: ModIntervalos, regresion: ModRegresion,
@@ -170,36 +184,50 @@ const App = {
       dist_tablas: ModDistribuciones, dist_calc: ModDistribuciones,
     };
 
-    if (fullRenderMap[type]) {
-      const container = area || formArea;
+    const container = document.getElementById('teoria-content');
+    if (fullRenderMap[type] && container) {
       fullRenderMap[type].render(container);
       if (fullRenderMap[type].init) fullRenderMap[type].init();
-    } else if (moduleMap[type]) {
+    } else if (moduleMap[type] && container) {
       const m = moduleMap[type];
       if      (type === 'dist_tablas') m.renderTablasOnly();
       else if (type === 'dist_calc')   m.renderCalcOnly();
-      else { m.renderTutorial(); }
+      else m.renderTutorial();
     }
+  },
 
-    // 3. Quiz debajo de la teoría (en formArea)
+  _showQuiz(type, pathId) {
+    this.showScreen('analysisScreen');
+    this.setNav('calc');
+    document.getElementById('mpill').classList.remove('show');
+    const mod = this.modules[type];
+    document.getElementById('hdrSub').textContent = (mod ? mod.label : type) + ' — Quiz';
+    Utils.clearResults();
+
+    const area     = document.getElementById('tutorialArea');
+    const formArea = document.getElementById('formArea');
+    if (area)     area.innerHTML = '';
+    if (formArea) formArea.innerHTML = '';
+
     if (formArea) {
       formArea.innerHTML = `
         <div class="card" style="margin-top:8px">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:0.8rem;color:var(--text)">🎯 Quiz</div>
-            <button onclick="App.showPath('${pathId}')"
-                    style="font-size:0.6rem;padding:5px 10px;background:transparent;border:1px solid var(--border);border-radius:7px;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace">
-              ← Ruta
-            </button>
-          </div>
-          <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--muted);margin-bottom:12px">
-            Lee la teoría de arriba y luego responde:
+            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:0.8rem;color:var(--text)">🎯 Quiz — ${mod ? mod.label : type}</div>
+            <div style="display:flex;gap:6px">
+              <button onclick="App._showTeoria('${type}','${pathId}')"
+                      style="font-size:0.58rem;padding:5px 8px;background:transparent;border:1px solid var(--border);border-radius:7px;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace">
+                📖 Ver teoría
+              </button>
+              <button onclick="App.showPath('${pathId}')"
+                      style="font-size:0.58rem;padding:5px 8px;background:transparent;border:1px solid var(--border);border-radius:7px;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace">
+                ← Ruta
+              </button>
+            </div>
           </div>
           <div id="quiz-container"></div>
         </div>`;
       Quiz.render(type, document.getElementById('quiz-container'));
-      // Scroll al quiz tras un pequeño delay para que el DOM esté listo
-      setTimeout(() => formArea.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
     }
   },
 
@@ -415,7 +443,25 @@ const App = {
   renderDrawer() {
     document.getElementById('drawerBody').innerHTML = `
       <div class="ms">
-        <div class="ms-title">Estadística Descriptiva</div>
+        <div class="ms-title">📚 Rutas de Aprendizaje</div>
+        <div class="mi" onclick="App.closeDrawer();App.showPath('principiante')">
+          <div class="mi-icon">🟢</div>
+          <div><div class="mi-name" style="color:var(--accent)">Principiante</div><div class="mi-sub">Nominal → Ordinal → Discreta → Continua</div></div>
+        </div>
+        <div class="mi" onclick="App.closeDrawer();App.showPath('inferencial')">
+          <div class="mi-icon">🔵</div>
+          <div><div class="mi-name" style="color:var(--accent2)">Estadística Inferencial</div><div class="mi-sub">Conteo → Distribuciones → Hipótesis → IC</div></div>
+        </div>
+        <div class="mi" onclick="App.closeDrawer();App.showPath('ciencia')">
+          <div class="mi-icon">🟡</div>
+          <div><div class="mi-name" style="color:var(--gold)">Ciencia de Datos</div><div class="mi-sub">Regresión y Correlación</div></div>
+        </div>
+      </div>
+
+      <div class="mdiv"></div>
+
+      <div class="ms">
+        <div class="ms-title">🔢 Calculadoras — Estadística Descriptiva</div>
         <div class="mi" id="mi-nominal" onclick="App.selectType('nominal')">
           <div class="mi-icon">🏷️</div>
           <div><div class="mi-name" style="color:var(--accent)">Nominal</div><div class="mi-sub">Categorías sin orden</div></div>
@@ -437,7 +483,7 @@ const App = {
       <div class="mdiv"></div>
 
       <div class="ms">
-        <div class="ms-title">Técnicas de Conteo</div>
+        <div class="ms-title">🔢 Calculadoras — Técnicas de Conteo</div>
         <div class="mi" id="mi-conteo" onclick="App.selectType('conteo')">
           <div class="mi-icon">🎲</div>
           <div><div class="mi-name" style="color:var(--accent3)">Técnicas de Conteo</div><div class="mi-sub">Factorial, Permutaciones, Combinaciones</div></div>
@@ -447,7 +493,7 @@ const App = {
       <div class="mdiv"></div>
 
       <div class="ms">
-        <div class="ms-title">Distribuciones de Probabilidad</div>
+        <div class="ms-title">🔢 Calculadoras — Distribuciones</div>
         <div class="mi" id="mi-dist_tablas" onclick="App.selectType('dist_tablas')">
           <div class="mi-icon">📋</div>
           <div><div class="mi-name" style="color:var(--accent2)">Tablas estadísticas</div><div class="mi-sub">Z, t, Chi², F, Binomial, Poisson</div></div>
@@ -461,7 +507,7 @@ const App = {
       <div class="mdiv"></div>
 
       <div class="ms">
-        <div class="ms-title">Pruebas de Hipótesis</div>
+        <div class="ms-title">🔢 Calculadoras — Inferencia</div>
         <div class="mi" id="mi-hipotesis" onclick="App.selectType('hipotesis')">
           <div class="mi-icon">🧪</div>
           <div><div class="mi-name" style="color:var(--accent)">Pruebas de Hipótesis</div><div class="mi-sub">Z, t, ANOVA — una y dos muestras</div></div>
@@ -479,7 +525,7 @@ const App = {
       <div class="mdiv"></div>
 
       <div class="ms">
-        <div class="ms-title">Regresión y Correlación</div>
+        <div class="ms-title">🔢 Calculadoras — Regresión</div>
         <div class="mi" id="mi-regresion" onclick="App.selectType('regresion')">
           <div class="mi-icon">📈</div>
           <div><div class="mi-name" style="color:var(--gold)">Regresión y Correlación</div><div class="mi-sub">Lineal simple, Pearson, Spearman</div></div>
