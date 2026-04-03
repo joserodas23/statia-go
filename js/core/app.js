@@ -60,12 +60,13 @@ const App = {
       bg: 'rgba(123,140,255,0.07)', border: 'rgba(123,140,255,0.2)',
       desc: 'Toma decisiones estadísticas a partir de muestras — el núcleo de la estadística aplicada.',
       steps: [
-        { type: 'conteo',     icon: '🎲', name: 'Conteo',        desc: 'Factorial, permutaciones y combinaciones' },
-        { type: 'dist_tablas',icon: '📋', name: 'Tablas',         desc: 'Tablas Z, t, Chi², F, Binomial, Poisson' },
-        { type: 'dist_calc',  icon: '📐', name: 'Probabilidades', desc: 'Calcular P(X<a), P(a<X<b) con IA' },
-        { type: 'hipotesis',  icon: '🧪', name: 'Hipótesis',      desc: 'Pruebas Z, t, ANOVA — una y dos muestras' },
-        { type: 'intervalos', icon: '📊', name: 'Intervalos IC',  desc: 'IC para μ, proporción y diferencia de medias' },
-        { type: 'chi',        icon: 'χ²', name: 'Chi-cuadrado',   desc: 'Independencia y bondad de ajuste' },
+        { type: 'conteo',     icon: '🎲', name: 'Conteo',               desc: 'Factorial, permutaciones y combinaciones' },
+        { type: 'dist_tablas',icon: '📋', name: 'Tablas',                desc: 'Tablas Z, t, Chi², F, Binomial, Poisson' },
+        { type: 'dist_calc',  icon: '📐', name: 'Probabilidades',        desc: 'Calcular P(X<a), P(a<X<b) con IA' },
+        { type: 'supuestos',  icon: '🔬', name: 'Supuestos Estadísticos', desc: 'Verificar normalidad e independencia antes de aplicar pruebas' },
+        { type: 'hipotesis',  icon: '🧪', name: 'Hipótesis',             desc: 'Pruebas Z, t, ANOVA — una y dos muestras' },
+        { type: 'intervalos', icon: '📊', name: 'Intervalos IC',         desc: 'IC para μ, proporción y diferencia de medias' },
+        { type: 'chi',        icon: 'χ²', name: 'Chi-cuadrado',          desc: 'Independencia y bondad de ajuste' },
       ]
     },
     ciencia: {
