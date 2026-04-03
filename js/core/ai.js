@@ -243,7 +243,7 @@ const AI = {
   // ----- NOMINAL -----
   promptNominal(varName, varDesc, n, moda, keys, freq) {
     const pcts = keys.map(k => `${k}: fi=${freq[k]}, ${((freq[k] / n) * 100).toFixed(1)}%`).join(' | ');
-    return `Eres StatIA, asistente estadístico educativo para universidades de Perú y Ecuador.
+    return `Eres StatIA, asistente estadístico educativo para estudiantes y docentes universitarios.
 Realiza una interpretación completa y académica de esta variable cualitativa NOMINAL.
 
 Variable: "${varName}"${varDesc ? ` — ${varDesc}` : ''}
