@@ -439,7 +439,13 @@ hipotesis: `
       <li><strong>Nivel de significancia α:</strong> Probabilidad de rechazar H₀ cuando es verdadera. Comúnmente α = 0.05.</li>
       <li><strong>p-valor:</strong> Probabilidad de obtener resultados tan extremos como los observados si H₀ fuera cierta. Si p < α → rechazar H₀.</li>
     </ul>
-    <p><strong>Z-test:</strong> Cuando n ≥ 30 o se conoce σ. <strong>t-test:</strong> Cuando n < 30 y no se conoce σ.</p>
+    <p style="margin-top:.9rem;"><strong>¿Bilateral o unilateral?</strong> Depende de lo que quieres demostrar:</p>
+    <ul style="margin:.3rem 0 .7rem 1rem;">
+      <li><strong>Bilateral (H₁: μ ≠ μ₀):</strong> No sabes si el cambio es hacia arriba o hacia abajo. Ejemplo: ¿cambió el promedio? → zona crítica en ambas colas.</li>
+      <li><strong>Unilateral derecha (H₁: μ > μ₀):</strong> Sospechas que aumentó. Ejemplo: ¿mejoró la nota tras el curso?</li>
+      <li><strong>Unilateral izquierda (H₁: μ &lt; μ₀):</strong> Sospechas que disminuyó. Ejemplo: ¿redujo el tiempo de espera?</li>
+    </ul>
+    <p><strong>¿Cómo sé si uso Z o t?</strong> La clave es si conoces la desviación estándar de toda la población (σ). En la práctica esto casi nunca ocurre — casi siempre usas <strong>t</strong>. La excepción es cuando trabajas con datos históricos muy grandes donde σ está establecida.</p>
   </div>
 
   <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;">
@@ -635,6 +641,13 @@ intervalos: `
       <li>Determinar la estatura promedio de estudiantes peruanos</li>
     </ul>
     <p style="margin-top:.8rem;"><strong>Interpretación correcta:</strong> Un IC del 95% significa que si repitieras el muestreo 100 veces, aproximadamente 95 de los intervalos calculados contendrían el verdadero parámetro. No significa que hay 95% de probabilidad de que el valor esté en ese intervalo específico.</p>
+    <p style="margin-top:.8rem;"><strong>¿Qué factores afectan el ancho del IC?</strong></p>
+    <ul style="margin:.3rem 0 .7rem 1rem;">
+      <li><strong>Mayor n →</strong> intervalo más estrecho (más preciso). El error estándar baja porque divide por √n.</li>
+      <li><strong>Mayor confianza (99% vs 95%) →</strong> intervalo más ancho. Ser más conservador tiene un costo en precisión.</li>
+      <li><strong>Mayor variabilidad (s grande) →</strong> intervalo más ancho. Datos dispersos generan más incertidumbre.</li>
+    </ul>
+    <p><strong>Diferencia con prueba de hipótesis:</strong> El IC <em>estima</em> dónde está el parámetro. La prueba de hipótesis <em>decide</em> si el parámetro es igual a un valor específico. Ambos están relacionados: si μ₀ no cae dentro del IC al 95%, entonces se rechaza H₀ con α = 0.05.</p>
   </div>
 
   <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;">

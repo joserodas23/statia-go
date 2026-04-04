@@ -880,10 +880,10 @@ const App = {
 
     const mod2 = moduleMap[type];
     if (mod2) {
-      if (type === 'dist_tablas') {
-        mod2.renderTablasOnly();
-      } else if (type === 'dist_calc') {
+      if (type === 'dist_tablas' || type === 'dist_calc') {
+        mod2.renderTutorial();
         mod2.renderCalcOnly();
+        if (type === 'dist_calc') mod2.showMainTab('calc');
       } else {
         mod2.renderTutorial();
         mod2.renderForm();
