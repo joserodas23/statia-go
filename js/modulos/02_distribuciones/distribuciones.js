@@ -563,7 +563,6 @@ const ModDistribuciones = {
   },
 
   renderCalcOnly() {
-    document.getElementById('tutorialArea').innerHTML = '';
     this.renderForm();
   },
 

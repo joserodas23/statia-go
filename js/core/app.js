@@ -211,11 +211,10 @@ const App = {
     };
 
     if (type === 'dist_tablas' || type === 'dist_calc') {
-      if (area) area.innerHTML = '';
       if (formArea) formArea.innerHTML = '';
       ModDistribuciones.renderTutorial();
-      ModDistribuciones.renderCalcOnly();
-      if (type === 'dist_calc') ModDistribuciones.showMainTab('calc');
+      ModDistribuciones.renderForm();
+      if (type === 'dist_tablas') ModDistribuciones.showMainTab('tablas');
       if (area) area.insertAdjacentHTML('afterbegin', backBtn);
     } else if (fullRenderMap[type]) {
       if (area)     area.innerHTML = backBtn;
@@ -884,8 +883,8 @@ const App = {
     if (mod2) {
       if (type === 'dist_tablas' || type === 'dist_calc') {
         mod2.renderTutorial();
-        mod2.renderCalcOnly();
-        if (type === 'dist_calc') mod2.showMainTab('calc');
+        mod2.renderForm();
+        if (type === 'dist_tablas') mod2.showMainTab('tablas');
       } else {
         if (area && typeof Teorias !== 'undefined' && Teorias.has(type)) {
           area.innerHTML = '<div id="_modTeoria" style="padding:10px 14px 0"></div>';
