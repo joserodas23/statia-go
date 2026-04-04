@@ -443,6 +443,63 @@ hipotesis: `
   </div>
 
   <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;">
+    <h3 style="font-family:'Syne',sans-serif;font-weight:800;color:var(--accent);margin:0 0 .8rem;">🔍 ¿Qué prueba usar? — Tabla de decisión</h3>
+    <p style="margin-bottom:.8rem;">Esta es la pregunta clave antes de cualquier prueba. Respóndelas en orden:</p>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-size:.8rem;">
+        <thead><tr style="background:rgba(79,255,176,0.12);">
+          <th style="border:1px solid var(--border);padding:.5rem .7rem;text-align:left;">Situación</th>
+          <th style="border:1px solid var(--border);padding:.5rem .7rem;">Prueba</th>
+          <th style="border:1px solid var(--border);padding:.5rem .7rem;">Estadístico</th>
+          <th style="border:1px solid var(--border);padding:.5rem .7rem;">GL</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">1 muestra, σ conocida <em>o</em> n ≥ 30</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--accent);font-weight:700;">Z-test</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">Z = (x̄ − μ₀) / (σ/√n)</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">—</td>
+          </tr>
+          <tr style="background:rgba(255,255,255,0.03);">
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">1 muestra, σ desconocida, cualquier n</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--gold);font-weight:700;">t-test</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">t = (x̄ − μ₀) / (s/√n)</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">n − 1</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">2 grupos independientes (ej: hombres vs mujeres)</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--gold);font-weight:700;">t independiente</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">t = (x̄₁−x̄₂) / Sp√(1/n₁+1/n₂)</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">n₁+n₂−2</td>
+          </tr>
+          <tr style="background:rgba(255,255,255,0.03);">
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">2 medidas del mismo sujeto (antes/después)</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--gold);font-weight:700;">t pareada</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">t = d̄ / (sd/√n)</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">n − 1</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">3 o más grupos, comparar medias</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--accent2);font-weight:700;">ANOVA (F)</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">F = CM_entre / CM_error</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">k−1, N−k</td>
+          </tr>
+          <tr style="background:rgba(255,255,255,0.03);">
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">Comparar variabilidad de 2 grupos</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--accent2);font-weight:700;">F de Snedecor</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">F = S₁² / S₂²</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">n₁−1, n₂−1</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:1rem;background:rgba(79,255,176,0.06);border-left:3px solid var(--accent);padding:.7rem 1rem;border-radius:0 8px 8px 0;">
+      <p style="font-family:'DM Mono',monospace;font-size:.8rem;"><strong>Bilateral (≠):</strong> Z crítico α=0.05 → ±1.96 &nbsp;|&nbsp; <strong>Unilateral (> o <):</strong> Z crítico α=0.05 → 1.645<br>
+      Con t, usa la tabla t con los GL correspondientes para obtener el valor crítico exacto.</p>
+    </div>
+  </div>
+
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;">
     <h3 style="font-family:'Syne',sans-serif;font-weight:800;color:var(--gold);margin:0 0 .8rem;">🧮 Ejemplo resuelto — ¿Cambió el promedio de notas?</h3>
     <p>Una universidad afirma que el promedio histórico de notas es <span style="font-family:'DM Mono',monospace;">μ₀ = 13.5</span>. Una muestra de <span style="font-family:'DM Mono',monospace;">36 estudiantes</span> del año actual tiene <span style="font-family:'DM Mono',monospace;">x̄ = 14.2</span> con desviación estándar muestral <span style="font-family:'DM Mono',monospace;">s = 2.1</span>. ¿El promedio cambió? (α = 0.05)</p>
 
@@ -578,8 +635,62 @@ intervalos: `
       <li>Determinar la estatura promedio de estudiantes peruanos</li>
     </ul>
     <p style="margin-top:.8rem;"><strong>Interpretación correcta:</strong> Un IC del 95% significa que si repitieras el muestreo 100 veces, aproximadamente 95 de los intervalos calculados contendrían el verdadero parámetro. No significa que hay 95% de probabilidad de que el valor esté en ese intervalo específico.</p>
-    <p><strong>Fórmulas principales:</strong></p>
-    <p style="font-family:'DM Mono',monospace;background:rgba(0,0,0,0.3);padding:.7rem 1rem;border-radius:8px;font-size:.88rem;">IC para μ (σ conocida): x̄ ± Z·(σ/√n)<br>IC para μ (σ desconocida): x̄ ± t·(s/√n)<br>IC para p: p̂ ± Z·√[p̂(1−p̂)/n]</p>
+  </div>
+
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;">
+    <h3 style="font-family:'Syne',sans-serif;font-weight:800;color:var(--accent);margin:0 0 .8rem;">🔍 ¿Qué IC construir? — Tabla de decisión</h3>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-size:.79rem;">
+        <thead><tr style="background:rgba(79,255,176,0.12);">
+          <th style="border:1px solid var(--border);padding:.5rem .7rem;text-align:left;">Parámetro a estimar</th>
+          <th style="border:1px solid var(--border);padding:.5rem .7rem;">Condición</th>
+          <th style="border:1px solid var(--border);padding:.5rem .7rem;">Fórmula del IC</th>
+          <th style="border:1px solid var(--border);padding:.5rem .7rem;">Dist.</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--accent);font-weight:700;">Media μ</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">σ conocida <em>o</em> n ≥ 30</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">x̄ ± Z·(σ/√n)</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--accent);">Z</td>
+          </tr>
+          <tr style="background:rgba(255,255,255,0.03);">
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--gold);font-weight:700;">Media μ</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">σ desconocida, cualquier n</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">x̄ ± t·(s/√n)</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--gold);">t (gl=n−1)</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--accent);font-weight:700;">Proporción p</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">np̂ ≥ 5 y n(1−p̂) ≥ 5</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">p̂ ± Z·√(p̂·q̂/n)</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--accent);">Z</td>
+          </tr>
+          <tr style="background:rgba(255,255,255,0.03);">
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--gold);font-weight:700;">Dif. de medias μ₁−μ₂</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">2 muestras independientes</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">(x̄₁−x̄₂) ± t·Sp√(1/n₁+1/n₂)</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--gold);">t (gl=n₁+n₂−2)</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--gold);font-weight:700;">Diferencia pareada μd</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">Mismo sujeto, 2 momentos</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">d̄ ± t·(sd/√n)</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--gold);">t (gl=n−1)</td>
+          </tr>
+          <tr style="background:rgba(255,255,255,0.03);">
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--accent2);font-weight:700;">Varianza σ²</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">Datos normales</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">[(n−1)s²/χ²α/2 , (n−1)s²/χ²₁₋α/2]</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--accent2);">χ² (gl=n−1)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:1rem;background:rgba(79,255,176,0.06);border-left:3px solid var(--accent);padding:.7rem 1rem;border-radius:0 8px 8px 0;">
+      <p style="font-family:'DM Mono',monospace;font-size:.8rem;"><strong>Regla práctica:</strong> Si no conoces σ (lo más común en la realidad), siempre usa t. Con n grande (≥30), t ≈ Z — el resultado es casi idéntico.<br>
+      <strong>Nivel de confianza → Z:</strong> 90% → 1.645 &nbsp;|&nbsp; 95% → 1.960 &nbsp;|&nbsp; 99% → 2.576</p>
+    </div>
   </div>
 
   <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;">
