@@ -66,13 +66,19 @@ const Utils = {
   // Agregar resultado al área de resultados
   addResult(html) {
     const block = document.getElementById('resultsArea');
-    if (block) block.insertAdjacentHTML('beforeend', html);
+    if (block) {
+      block.insertAdjacentHTML('beforeend', html);
+      const btn = document.getElementById('copyBtn');
+      if (btn) btn.style.display = 'block';
+    }
   },
 
   // Limpiar resultados
   clearResults() {
     const block = document.getElementById('resultsArea');
     if (block) block.innerHTML = '';
+    const btn = document.getElementById('copyBtn');
+    if (btn) btn.style.display = 'none';
   },
 
   // Guardar datos del formulario

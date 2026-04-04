@@ -491,6 +491,26 @@ const App = {
       const splash = document.getElementById('splash');
       if (splash) { splash.style.opacity = '0'; setTimeout(() => splash.remove(), 500); }
     }, 3500);
+
+    // Estado inicial para poder capturar el botón atrás
+    window.history.pushState({ screen: 'homeScreen' }, '');
+
+    window.addEventListener('popstate', () => {
+      if (this.state.modoExamen) {
+        // En modo examen el popstate ya está manejado
+        window.history.pushState({ screen: 'examen' }, '');
+        return;
+      }
+      if (this._currentScreen === 'homeScreen') {
+        // Ya estamos en el inicio — preguntar si quiere salir
+        window.history.pushState({ screen: 'homeScreen' }, '');
+        const salir = confirm('¿Salir de Statia Go?');
+        if (salir) window.close();
+      } else {
+        // En cualquier otra pantalla → volver al inicio
+        this.goHome();
+      }
+    });
   },
 
   // ===== ACERCA DE =====
@@ -775,12 +795,16 @@ const App = {
     document.getElementById('nb-' + id).classList.add('on');
   },
 
+  _currentScreen: 'homeScreen',
+
   showScreen(id) {
     ['homeScreen', 'analysisScreen', 'histScreen'].forEach(s =>
       document.getElementById(s).style.display = 'none'
     );
     document.getElementById(id).style.display = 'block';
     document.getElementById('scroll').scrollTop = 0;
+    this._currentScreen = id;
+    window.history.pushState({ screen: id }, '');
   },
 
   goHome() {
