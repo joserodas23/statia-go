@@ -124,30 +124,32 @@ const App = {
       const completed = Quiz.isCompleted(step.type);
       const hasQuiz   = !!(Quiz.banks && Quiz.banks[step.type]);
       return `
-        <div style="display:flex;align-items:center;gap:10px;padding:11px 12px;
+        <div style="padding:11px 12px;
                     background:${completed ? path.bg : 'transparent'};
                     border:1px solid ${completed ? path.border : 'var(--border)'};
                     border-radius:10px;margin-bottom:8px">
-          <div style="font-size:1.2rem;min-width:28px;text-align:center">${step.icon}</div>
-          <div style="flex:1;min-width:0">
-            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.74rem;color:${path.color}">
-              ${i + 1}. ${step.name}
-              ${completed ? '<span style="color:var(--accent);font-size:0.58rem;margin-left:5px">✓ Quiz OK</span>'
-                          : visto ? '<span style="color:var(--muted);font-size:0.58rem;margin-left:5px">Visto</span>' : ''}
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+            <div style="font-size:1.1rem;min-width:26px;text-align:center">${step.icon}</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.74rem;color:${path.color}">
+                ${i + 1}. ${step.name}
+                ${completed ? '<span style="color:var(--accent);font-size:0.58rem;margin-left:5px">✓ Quiz OK</span>'
+                            : visto ? '<span style="color:var(--muted);font-size:0.58rem;margin-left:5px">Visto</span>' : ''}
+              </div>
+              <div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${step.desc}</div>
             </div>
-            <div style="font-family:\'DM Mono\',monospace;font-size:0.58rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${step.desc}</div>
           </div>
-          <div class="path-step-btns" style="display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0">
+          <div class="path-step-btns" style="display:flex;gap:6px;flex-wrap:wrap">
             <button onclick="App._showTeoria('${step.type}','${pathId}')"
-                    style="font-size:0.58rem;padding:5px 8px;background:transparent;border:1px solid var(--border);border-radius:7px;color:var(--muted);cursor:pointer;font-family:\'DM Mono\',monospace">
+                    style="font-size:0.6rem;padding:5px 11px;background:transparent;border:1px solid var(--border);border-radius:7px;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace">
               📖 Teoría
             </button>
             ${hasQuiz ? `<button onclick="App._showQuiz('${step.type}','${pathId}')"
-                    style="font-size:0.58rem;padding:5px 8px;background:var(--accent2);border:none;border-radius:7px;color:var(--bg);cursor:pointer;font-family:\'DM Mono\',monospace;font-weight:700">
+                    style="font-size:0.6rem;padding:5px 11px;background:var(--accent2);border:none;border-radius:7px;color:var(--bg);cursor:pointer;font-family:'DM Mono',monospace;font-weight:700">
               🎯 Quiz
             </button>` : ''}
             <button onclick="App._showCalc('${step.type}','${pathId}')"
-                    style="font-size:0.58rem;padding:5px 8px;background:rgba(255,209,102,0.15);border:1px solid rgba(255,209,102,0.3);border-radius:7px;color:var(--gold);cursor:pointer;font-family:\'DM Mono\',monospace;font-weight:700">
+                    style="font-size:0.6rem;padding:5px 11px;background:rgba(255,209,102,0.15);border:1px solid rgba(255,209,102,0.3);border-radius:7px;color:var(--gold);cursor:pointer;font-family:'DM Mono',monospace;font-weight:700">
               🔢 Calcular
             </button>
           </div>
@@ -885,7 +887,12 @@ const App = {
         mod2.renderCalcOnly();
         if (type === 'dist_calc') mod2.showMainTab('calc');
       } else {
-        mod2.renderTutorial();
+        if (area && typeof Teorias !== 'undefined' && Teorias.has(type)) {
+          area.innerHTML = '<div id="_modTeoria" style="padding:10px 14px 0"></div>';
+          Teorias.render(type, document.getElementById('_modTeoria'));
+        } else {
+          mod2.renderTutorial();
+        }
         mod2.renderForm();
       }
     }

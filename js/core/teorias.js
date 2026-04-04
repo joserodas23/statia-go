@@ -463,37 +463,37 @@ hipotesis: `
           <tr>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;">1 muestra, σ conocida <em>o</em> n ≥ 30</td>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--accent);font-weight:700;">Z-test</td>
-            <td style="border:1px solid var(--border);padding:.4rem .7rem;">Z = (x̄ − μ₀) / (σ/√n)</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">$Z = \dfrac{\bar{x} - \mu_0}{\sigma/\sqrt{n}}$</td>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;">—</td>
           </tr>
           <tr style="background:rgba(255,255,255,0.03);">
             <td style="border:1px solid var(--border);padding:.4rem .7rem;">1 muestra, σ desconocida, cualquier n</td>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--gold);font-weight:700;">t-test</td>
-            <td style="border:1px solid var(--border);padding:.4rem .7rem;">t = (x̄ − μ₀) / (s/√n)</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">$t = \dfrac{\bar{x} - \mu_0}{s/\sqrt{n}}$</td>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;">n − 1</td>
           </tr>
           <tr>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;">2 grupos independientes (ej: hombres vs mujeres)</td>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--gold);font-weight:700;">t independiente</td>
-            <td style="border:1px solid var(--border);padding:.4rem .7rem;">t = (x̄₁−x̄₂) / Sp√(1/n₁+1/n₂)</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">$t = \dfrac{\bar{x}_1-\bar{x}_2}{S_p\sqrt{1/n_1+1/n_2}}$</td>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;">n₁+n₂−2</td>
           </tr>
           <tr style="background:rgba(255,255,255,0.03);">
             <td style="border:1px solid var(--border);padding:.4rem .7rem;">2 medidas del mismo sujeto (antes/después)</td>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--gold);font-weight:700;">t pareada</td>
-            <td style="border:1px solid var(--border);padding:.4rem .7rem;">t = d̄ / (sd/√n)</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">$t = \dfrac{\bar{d}}{s_d/\sqrt{n}}$</td>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;">n − 1</td>
           </tr>
           <tr>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;">3 o más grupos, comparar medias</td>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--accent2);font-weight:700;">ANOVA (F)</td>
-            <td style="border:1px solid var(--border);padding:.4rem .7rem;">F = CM_entre / CM_error</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">$F = \dfrac{CM_{entre}}{CM_{error}}$</td>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;">k−1, N−k</td>
           </tr>
           <tr style="background:rgba(255,255,255,0.03);">
             <td style="border:1px solid var(--border);padding:.4rem .7rem;">Comparar variabilidad de 2 grupos</td>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--accent2);font-weight:700;">F de Snedecor</td>
-            <td style="border:1px solid var(--border);padding:.4rem .7rem;">F = S₁² / S₂²</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">$F = \dfrac{S_1^2}{S_2^2}$</td>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;">n₁−1, n₂−1</td>
           </tr>
         </tbody>
@@ -664,37 +664,37 @@ intervalos: `
           <tr>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--accent);font-weight:700;">Media μ</td>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;">σ conocida <em>o</em> n ≥ 30</td>
-            <td style="border:1px solid var(--border);padding:.4rem .7rem;">x̄ ± Z·(σ/√n)</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">$\bar{x} \pm Z \cdot \dfrac{\sigma}{\sqrt{n}}$</td>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--accent);">Z</td>
           </tr>
           <tr style="background:rgba(255,255,255,0.03);">
             <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--gold);font-weight:700;">Media μ</td>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;">σ desconocida, cualquier n</td>
-            <td style="border:1px solid var(--border);padding:.4rem .7rem;">x̄ ± t·(s/√n)</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">$\bar{x} \pm t \cdot \dfrac{s}{\sqrt{n}}$</td>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--gold);">t (gl=n−1)</td>
           </tr>
           <tr>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--accent);font-weight:700;">Proporción p</td>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;">np̂ ≥ 5 y n(1−p̂) ≥ 5</td>
-            <td style="border:1px solid var(--border);padding:.4rem .7rem;">p̂ ± Z·√(p̂·q̂/n)</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">$\hat{p} \pm Z\sqrt{\dfrac{\hat{p}\hat{q}}{n}}$</td>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--accent);">Z</td>
           </tr>
           <tr style="background:rgba(255,255,255,0.03);">
             <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--gold);font-weight:700;">Dif. de medias μ₁−μ₂</td>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;">2 muestras independientes</td>
-            <td style="border:1px solid var(--border);padding:.4rem .7rem;">(x̄₁−x̄₂) ± t·Sp√(1/n₁+1/n₂)</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">$(\bar{x}_1-\bar{x}_2) \pm t \cdot S_p\sqrt{\tfrac{1}{n_1}+\tfrac{1}{n_2}}$</td>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--gold);">t (gl=n₁+n₂−2)</td>
           </tr>
           <tr>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--gold);font-weight:700;">Diferencia pareada μd</td>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;">Mismo sujeto, 2 momentos</td>
-            <td style="border:1px solid var(--border);padding:.4rem .7rem;">d̄ ± t·(sd/√n)</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">$\bar{d} \pm t \cdot \dfrac{s_d}{\sqrt{n}}$</td>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--gold);">t (gl=n−1)</td>
           </tr>
           <tr style="background:rgba(255,255,255,0.03);">
             <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--accent2);font-weight:700;">Varianza σ²</td>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;">Datos normales</td>
-            <td style="border:1px solid var(--border);padding:.4rem .7rem;">[(n−1)s²/χ²α/2 , (n−1)s²/χ²₁₋α/2]</td>
+            <td style="border:1px solid var(--border);padding:.4rem .7rem;">$\left[\dfrac{(n-1)s^2}{\chi^2_{\alpha/2}},\ \dfrac{(n-1)s^2}{\chi^2_{1-\alpha/2}}\right]$</td>
             <td style="border:1px solid var(--border);padding:.4rem .7rem;color:var(--accent2);">χ² (gl=n−1)</td>
           </tr>
         </tbody>
@@ -1233,6 +1233,15 @@ dist_calc: `
     const html = this._html[type];
     if (!html || !container) return;
     container.innerHTML = html;
+    if (typeof renderMathInElement !== 'undefined') {
+      renderMathInElement(container, {
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false }
+        ],
+        throwOnError: false
+      });
+    }
   },
 
   has(type) {
