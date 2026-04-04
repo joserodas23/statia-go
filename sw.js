@@ -4,7 +4,7 @@
    by Jose Rodas
    ============================================ */
 
-const CACHE = 'statia-go-v9';
+const CACHE = 'statia-go-v10';
 
 const ASSETS = [
   '/',

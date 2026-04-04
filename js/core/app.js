@@ -192,16 +192,6 @@ const App = {
 
     const area     = document.getElementById('tutorialArea');
     const formArea = document.getElementById('formArea');
-    if (area) area.innerHTML = `
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;padding:0 2px">
-        <button onclick="App.showPath('${pathId}')"
-                style="font-size:0.62rem;padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace">
-          ← Ruta
-        </button>
-        <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.72rem;color:var(--gold)">
-          🔢 Calculadora — ${mod ? mod.label : type}
-        </span>
-      </div>`;
 
     const backBtn = `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:0 2px">
         <button onclick="App.showPath('${pathId}')" style="font-size:0.62rem;padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace;flex-shrink:0">← Ruta</button>
