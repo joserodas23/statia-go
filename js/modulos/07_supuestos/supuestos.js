@@ -27,6 +27,7 @@ const ModSupuestos = {
     );
     btn.closest('.mod-tabs').querySelectorAll('.mod-tab').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
+    if (id !== 'calc') Utils.clearResults();
   },
 
   _teoria() {
@@ -146,7 +147,12 @@ const ModSupuestos = {
     const mu = df;
     const sigma = Math.sqrt(2 * df);
     const z = (Math.pow(x / df, 1/3) - (1 - 2/(9*df))) / Math.sqrt(2/(9*df));
-    return ModDistribuciones._normalCDF(z);
+    // Fallback: aproximación normal estándar via erf
+    if (typeof ModDistribuciones !== 'undefined' && ModDistribuciones._normalCDF) {
+      return ModDistribuciones._normalCDF(z);
+    }
+    // Aproximación propia si ModDistribuciones no está disponible
+    return 0.5 * (1 + Math.sign(z) * Math.sqrt(1 - Math.exp(-2 * z * z / Math.PI)));
   },
 
   async calcular() {

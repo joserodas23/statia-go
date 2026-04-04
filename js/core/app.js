@@ -209,10 +209,10 @@ const App = {
     };
 
     if (type === 'dist_tablas' || type === 'dist_calc') {
-      // Distribuciones renderiza directamente a tutorialArea — evitar sobreescribir
-      if (formArea) formArea.innerHTML = '';
       if (area) area.innerHTML = '';
+      if (formArea) formArea.innerHTML = '';
       ModDistribuciones.renderTutorial();
+      ModDistribuciones.renderCalcOnly();
       if (type === 'dist_calc') ModDistribuciones.showMainTab('calc');
       if (area) area.insertAdjacentHTML('afterbegin', backBtn);
     } else if (fullRenderMap[type]) {

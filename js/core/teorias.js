@@ -1050,6 +1050,183 @@ supuestos: `
 </div>
 `,
 
+/* ─────────────────────────────────────────────
+   DIST_TABLAS — Lectura de tablas estadísticas
+───────────────────────────────────────────── */
+dist_tablas: `
+<div style="font-family:'Lora',serif;color:var(--text);line-height:1.75;">
+
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;">
+    <h3 style="font-family:'Syne',sans-serif;font-weight:800;color:var(--accent);margin:0 0 .8rem;">📌 ¿Cuándo usar las tablas estadísticas?</h3>
+    <p>Las tablas estadísticas son necesarias cuando debes <strong>encontrar valores críticos</strong> para contrastar hipótesis o cuando necesitas <strong>probabilidades acumuladas</strong> de una distribución específica. Cada distribución tiene su propia tabla con su propia lógica de lectura.</p>
+    <p><strong>Situaciones reales:</strong></p>
+    <ul style="margin:.4rem 0 0 1rem;">
+      <li>Determinar si una diferencia de medias es estadísticamente significativa (tabla t)</li>
+      <li>Calcular P(Z &lt; 1.96) en una prueba de proporciones (tabla Z)</li>
+      <li>Encontrar el valor crítico χ² para una prueba de independencia (tabla Chi²)</li>
+      <li>Comparar varianzas en ANOVA (tabla F)</li>
+      <li>Calcular P(X = k) en experimentos de ensayos repetidos (tabla Binomial)</li>
+      <li>Modelar llegadas o eventos por unidad de tiempo (tabla Poisson)</li>
+    </ul>
+    <p style="margin-top:.8rem;"><strong>Distribuciones continuas</strong> (Z, t, F, Chi²): sus tablas dan probabilidades acumuladas o valores críticos para un área bajo la curva. <strong>Distribuciones discretas</strong> (Binomial, Poisson): sus tablas dan probabilidades exactas P(X = k) o acumuladas P(X ≤ k) para parámetros específicos.</p>
+  </div>
+
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;">
+    <h3 style="font-family:'Syne',sans-serif;font-weight:800;color:var(--gold);margin:0 0 .8rem;">📖 Cómo leer cada tabla</h3>
+
+    <p style="margin-bottom:.6rem;"><strong style="color:var(--accent);">Tabla Z (Normal estándar)</strong></p>
+    <p>Las <strong>filas</strong> representan la parte entera y el primer decimal de z; las <strong>columnas</strong> representan el segundo decimal. La celda contiene P(Z &lt; z).</p>
+    <p style="font-family:'DM Mono',monospace;font-size:.88rem;background:rgba(79,255,176,0.07);border-radius:8px;padding:.5rem .8rem;margin:.4rem 0;">
+      Ejemplo: Z = 1.96 → fila <strong>1.9</strong>, columna <strong>0.06</strong> → P(Z &lt; 1.96) = <strong style="color:var(--accent);">0.9750</strong>
+    </p>
+
+    <p style="margin:.8rem 0 .6rem;"><strong style="color:var(--accent);">Tabla t de Student</strong></p>
+    <p>Las <strong>filas</strong> son los grados de libertad (GL = n − 1); las <strong>columnas</strong> son el nivel de significancia α o el tipo de prueba (unilateral/bilateral). La celda contiene el valor crítico t*.</p>
+    <p style="font-family:'DM Mono',monospace;font-size:.88rem;background:rgba(79,255,176,0.07);border-radius:8px;padding:.5rem .8rem;margin:.4rem 0;">
+      Ejemplo: GL = 15, α = 0.05 bilateral → t* = <strong style="color:var(--accent);">2.131</strong>
+    </p>
+
+    <p style="margin:.8rem 0 .6rem;"><strong style="color:var(--accent);">Tabla Chi² (χ²)</strong></p>
+    <p>Las <strong>filas</strong> son los grados de libertad; las <strong>columnas</strong> representan la probabilidad en la cola derecha. La celda contiene el valor crítico χ².</p>
+    <p style="font-family:'DM Mono',monospace;font-size:.88rem;background:rgba(79,255,176,0.07);border-radius:8px;padding:.5rem .8rem;margin:.4rem 0;">
+      Ejemplo: GL = 3, α = 0.05 → χ²* = <strong style="color:var(--accent);">7.815</strong>
+    </p>
+
+    <p style="margin:.8rem 0 .6rem;"><strong style="color:var(--accent);">Tabla F de Fisher-Snedecor</strong></p>
+    <p>Existen tablas <em>separadas por cada valor de α</em>. Dentro de cada tabla: las <strong>filas</strong> son los GL del numerador (entre grupos) y las <strong>columnas</strong> los GL del denominador (dentro de grupos).</p>
+    <p style="font-family:'DM Mono',monospace;font-size:.88rem;background:rgba(79,255,176,0.07);border-radius:8px;padding:.5rem .8rem;margin:.4rem 0;">
+      Ejemplo: α = 0.05, GL₁ = 3, GL₂ = 20 → F* = <strong style="color:var(--accent);">3.10</strong>
+    </p>
+
+    <p style="margin:.8rem 0 .6rem;"><strong style="color:var(--accent);">Tabla Binomial</strong></p>
+    <p>Se busca la combinación de <strong>n</strong> (número de ensayos) y <strong>p</strong> (probabilidad de éxito). La celda para el valor k da P(X = k) o P(X ≤ k) según la tabla.</p>
+    <p style="font-family:'DM Mono',monospace;font-size:.88rem;background:rgba(79,255,176,0.07);border-radius:8px;padding:.5rem .8rem;margin:.4rem 0;">
+      Ejemplo: n = 10, p = 0.30, k = 3 → P(X = 3) = <strong style="color:var(--accent);">0.2668</strong>
+    </p>
+
+    <p style="margin:.8rem 0 .6rem;"><strong style="color:var(--accent);">Tabla Poisson</strong></p>
+    <p>Se busca el parámetro <strong>λ</strong> (tasa media de ocurrencia). La celda para k da P(X = k) dada esa λ.</p>
+    <p style="font-family:'DM Mono',monospace;font-size:.88rem;background:rgba(79,255,176,0.07);border-radius:8px;padding:.5rem .8rem;margin:.4rem 0;">
+      Ejemplo: λ = 2.5, k = 3 → P(X = 3) = <strong style="color:var(--accent);">0.2138</strong>
+    </p>
+  </div>
+
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;">
+    <h3 style="font-family:'Syne',sans-serif;font-weight:800;color:var(--accent3);margin:0 0 .8rem;">⚠️ Errores comunes</h3>
+    <ol style="margin:0 0 0 1rem;">
+      <li style="margin-bottom:.7rem;"><strong>Usar la cola equivocada:</strong> En la tabla t, si la prueba es unilateral (cola derecha) pero buscas el valor de prueba bilateral, obtienes un valor crítico incorrecto. Siempre identifica primero si la hipótesis alternativa es &lt;, &gt; o ≠.</li>
+      <li style="margin-bottom:.7rem;"><strong>Confundir bilateral con unilateral:</strong> Para α = 0.05 bilateral en la tabla t, cada cola tiene 0.025. Si buscas directamente la columna "0.05", encontrarás el valor unilateral, que es menor. El error es frecuente en pruebas de dos colas.</li>
+      <li style="margin-bottom:.7rem;"><strong>Grados de libertad incorrectos:</strong> Para t en una muestra GL = n − 1; para Chi² en tabla de contingencia GL = (filas − 1)(columnas − 1); para ANOVA GL son distintos según numerador y denominador. Un GL equivocado produce un valor crítico erróneo.</li>
+      <li><strong>Leer la tabla en dirección incorrecta:</strong> En la tabla Z se lee fila (parte entera + 1er decimal) y luego columna (2do decimal). Invertir la lectura da un valor de probabilidad diferente. Verifica siempre que el encabezado de filas y columnas corresponda a la lógica de la tabla que usas.</li>
+    </ol>
+  </div>
+
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;">
+    <h3 style="font-family:'Syne',sans-serif;font-weight:800;color:var(--accent2);margin:0 0 .8rem;">📊 Resumen visual</h3>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-size:.84rem;">
+        <thead>
+          <tr style="background:rgba(123,140,255,0.12);">
+            <th style="border:1px solid var(--border);padding:.5rem .8rem;text-align:left;">Distribución</th>
+            <th style="border:1px solid var(--border);padding:.5rem .8rem;text-align:left;">Parámetros de entrada</th>
+            <th style="border:1px solid var(--border);padding:.5rem .8rem;text-align:left;">Qué da la tabla</th>
+            <th style="border:1px solid var(--border);padding:.5rem .8rem;text-align:left;">Cuándo usarla</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--accent);">Z Normal</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">Valor z</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">P(Z &lt; z)</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">Proporciones, n grande</td></tr>
+          <tr style="background:rgba(255,255,255,0.03);"><td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--accent);">t Student</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">GL, α</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">Valor crítico t*</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">Medias, muestras pequeñas</td></tr>
+          <tr><td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--accent);">Chi² χ²</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">GL, α</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">Valor crítico χ²*</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">Independencia, bondad de ajuste</td></tr>
+          <tr style="background:rgba(255,255,255,0.03);"><td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--accent);">F Fisher</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">GL₁, GL₂, α</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">Valor crítico F*</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">ANOVA, comparar varianzas</td></tr>
+          <tr><td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--accent);">Binomial</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">n, p, k</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">P(X = k)</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">Ensayos dicotómicos independientes</td></tr>
+          <tr style="background:rgba(255,255,255,0.03);"><td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--accent);">Poisson</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">λ, k</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">P(X = k)</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">Conteo de eventos por intervalo</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+`,
+
+/* ─────────────────────────────────────────────
+   DIST_CALC — Cálculo de probabilidades
+───────────────────────────────────────────── */
+dist_calc: `
+<div style="font-family:'Lora',serif;color:var(--text);line-height:1.75;">
+
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;">
+    <h3 style="font-family:'Syne',sans-serif;font-weight:800;color:var(--accent);margin:0 0 .8rem;">📌 ¿Cuándo calcular probabilidades con distribuciones?</h3>
+    <p>Usa el cálculo de probabilidades cuando quieras responder preguntas del tipo <em>"¿qué tan probable es que X sea menor que a?"</em>, <em>"¿mayor que b?"</em> o <em>"¿esté entre a y b?"</em>. Cada distribución se aplica bajo condiciones específicas:</p>
+    <ul style="margin:.4rem 0 0 1rem;">
+      <li><strong>Normal:</strong> variable continua, datos simétricos, la mayoría se agrupa al centro — p. ej. estatura, notas, presión arterial.</li>
+      <li><strong>Binomial:</strong> n ensayos independientes, cada uno con éxito (p) o fracaso (1−p) — p. ej. número de clientes que compran, número de respuestas correctas.</li>
+      <li><strong>Poisson:</strong> conteo de eventos en un intervalo fijo de tiempo o espacio — p. ej. llamadas por hora, fallas por kilómetro.</li>
+      <li><strong>t de Student:</strong> media de una muestra pequeña cuando σ es desconocido.</li>
+      <li><strong>Chi²:</strong> varianza muestral o estadístico de prueba en tablas de contingencia.</li>
+    </ul>
+    <p style="margin-top:.8rem;">La clave es <em>identificar qué distribución corresponde a la situación</em> antes de calcular. Un error de distribución produce probabilidades completamente incorrectas.</p>
+  </div>
+
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;">
+    <h3 style="font-family:'Syne',sans-serif;font-weight:800;color:var(--gold);margin:0 0 .8rem;">🧮 Ejemplos resueltos</h3>
+
+    <p style="font-size:.95rem;"><strong style="color:var(--accent);">Ejemplo 1 — Distribución Normal</strong></p>
+    <p>Las estaturas de hombres adultos siguen X ~ N(170, 8²). ¿Cuál es la probabilidad de que un hombre mida menos de 180 cm?</p>
+    <div style="font-family:'DM Mono',monospace;font-size:.88rem;background:rgba(79,255,176,0.07);border:1px solid rgba(79,255,176,0.15);border-radius:10px;padding:.8rem 1rem;margin:.6rem 0;">
+      <p style="margin:0 0 .3rem;"><strong>Paso 1 — Estandarizar:</strong></p>
+      <p style="margin:0 0 .3rem;">Z = (X − μ) / σ = (180 − 170) / 8 = <strong>1.25</strong></p>
+      <p style="margin:.5rem 0 .3rem;"><strong>Paso 2 — Buscar en tabla Z:</strong></p>
+      <p style="margin:0 0 .3rem;">P(Z &lt; 1.25) → fila 1.2, columna 0.05 → <strong style="color:var(--accent);">0.8944</strong></p>
+      <p style="margin:.5rem 0 0;"><strong>Conclusión:</strong> Hay un 89.44% de probabilidad de que un hombre mida menos de 180 cm.</p>
+    </div>
+
+    <p style="font-size:.95rem;margin-top:1rem;"><strong style="color:var(--accent);">Ejemplo 2 — Distribución Binomial</strong></p>
+    <p>En una tienda, el 30% de los clientes realiza una compra. Si entran 10 clientes, ¿cuál es la probabilidad de que exactamente 3 compren?</p>
+    <div style="font-family:'DM Mono',monospace;font-size:.88rem;background:rgba(255,209,102,0.07);border:1px solid rgba(255,209,102,0.15);border-radius:10px;padding:.8rem 1rem;margin:.6rem 0;">
+      <p style="margin:0 0 .3rem;"><strong>Datos:</strong> n = 10, p = 0.30, k = 3</p>
+      <p style="margin:.4rem 0 .3rem;"><strong>Fórmula:</strong> P(X = k) = C(n,k) · pᵏ · (1−p)ⁿ⁻ᵏ</p>
+      <p style="margin:.4rem 0 .3rem;">P(X = 3) = C(10,3) · 0.3³ · 0.7⁷</p>
+      <p style="margin:.4rem 0 .3rem;">= 120 · 0.027 · 0.0824</p>
+      <p style="margin:.4rem 0 0;">= <strong style="color:var(--gold);">0.2668</strong> → hay un 26.68% de probabilidad de que exactamente 3 clientes compren.</p>
+    </div>
+  </div>
+
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;">
+    <h3 style="font-family:'Syne',sans-serif;font-weight:800;color:var(--accent3);margin:0 0 .8rem;">⚠️ Errores comunes</h3>
+    <ol style="margin:0 0 0 1rem;">
+      <li style="margin-bottom:.7rem;"><strong>No estandarizar antes de usar la tabla Z:</strong> La tabla Z solo sirve para la distribución Normal <em>estándar</em> (μ=0, σ=1). Si X ~ N(μ, σ²), primero debes convertir a Z = (X − μ)/σ. Entrar directamente con el valor original produce probabilidades erróneas.</li>
+      <li style="margin-bottom:.7rem;"><strong>Usar la distribución incorrecta:</strong> Aplicar la Normal a datos claramente discretos (número de hijos) o la Binomial a eventos continuos es un error conceptual grave. Verifica siempre: ¿la variable es continua o discreta? ¿Los ensayos son independientes? ¿La tasa es constante?</li>
+      <li style="margin-bottom:.7rem;"><strong>Confundir P(X &lt; a) con P(X &gt; a):</strong> La tabla Z da P(Z &lt; z). Para P(Z &gt; z), debes calcular 1 − P(Z &lt; z). Para P(a &lt; Z &lt; b), calcula P(Z &lt; b) − P(Z &lt; a). Olvidar esta diferencia es uno de los errores más frecuentes en exámenes.</li>
+      <li><strong>No verificar las condiciones de la distribución:</strong> La aproximación Normal a la Binomial solo es válida cuando np ≥ 5 y n(1−p) ≥ 5. La Poisson requiere que los eventos sean independientes y la tasa sea constante. Aplicar distribuciones fuera de sus condiciones de validez produce resultados poco confiables.</li>
+    </ol>
+  </div>
+
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;">
+    <h3 style="font-family:'Syne',sans-serif;font-weight:800;color:var(--accent2);margin:0 0 .8rem;">📊 Resumen visual</h3>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-size:.84rem;">
+        <thead>
+          <tr style="background:rgba(123,140,255,0.12);">
+            <th style="border:1px solid var(--border);padding:.5rem .8rem;text-align:left;">Distribución</th>
+            <th style="border:1px solid var(--border);padding:.5rem .8rem;text-align:left;">Condición de uso</th>
+            <th style="border:1px solid var(--border);padding:.5rem .8rem;text-align:left;">Parámetros</th>
+            <th style="border:1px solid var(--border);padding:.5rem .8rem;text-align:left;">Tipo de variable</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--accent);">Normal</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">Continua, simétrica, campana</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">μ, σ²</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">Continua</td></tr>
+          <tr style="background:rgba(255,255,255,0.03);"><td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--accent);">Binomial</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">n ensayos, éxito/fracaso, independientes</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">n, p</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">Discreta</td></tr>
+          <tr><td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--accent);">Poisson</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">Conteo en intervalo fijo, tasa constante</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">λ</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">Discreta</td></tr>
+          <tr style="background:rgba(255,255,255,0.03);"><td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--accent);">t Student</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">Media muestral, σ desconocido, n pequeño</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">GL = n−1</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">Continua</td></tr>
+          <tr><td style="border:1px solid var(--border);padding:.4rem .8rem;color:var(--accent);">Chi²</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">Varianza o frecuencias observadas vs. esperadas</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">GL</td><td style="border:1px solid var(--border);padding:.4rem .8rem;">Continua (estadístico)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+`,
+
   },  // end _html
 
   render(type, container) {

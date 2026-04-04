@@ -196,6 +196,7 @@ textarea::placeholder, input::placeholder { color: var(--muted); }
 .tb-chi  { background: rgba(123,140,255,0.08); border: 1px solid rgba(123,140,255,0.2); color: var(--accent2); }
 .tb-reg  { background: rgba(255,209,102,0.08); border: 1px solid rgba(255,209,102,0.2); color: var(--gold); }
 .tb-ic   { background: rgba(123,140,255,0.08); border: 1px solid rgba(123,140,255,0.2); color: var(--accent2); }
+.tb-sup  { background: rgba(255,100,130,0.08); border: 1px solid rgba(255,100,130,0.2);  color: #ff6482; }
 .tb-comb { background: rgba(255,107,107,0.08); border: 1px solid rgba(255,107,107,0.2); color: var(--accent3); }
 .mi.sel-r { background: rgba(255,107,107,0.07); border-color: rgba(255,107,107,0.2); }
 
