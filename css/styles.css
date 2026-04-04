@@ -344,3 +344,28 @@ textarea.inp { resize: none; }
 .nb { flex: 1; padding: 9px 4px 11px; background: transparent; border: none; color: var(--muted); font-family: 'DM Mono', monospace; font-size: 0.55rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; transition: color 0.2s; }
 .nb .ico { font-size: 1rem; }
 .nb.on { color: var(--accent); }
+
+/* ===== RESPONSIVE — MÓVIL ===== */
+@media (max-width: 480px) {
+  /* Botones de la ruta — apilar verticalmente en pantallas pequeñas */
+  .path-step-btns {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .path-step-btns button {
+    text-align: center !important;
+    width: 100% !important;
+  }
+
+  /* Cards del home — 1 columna en móvil muy pequeño */
+  .home-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Texto del header más compacto */
+  .hdr-c h1 { font-size: 0.9rem !important; }
+  .hdr-by { display: none; }
+
+  /* Paso de ruta — ajustar layout */
+  .home-title { font-size: 1.4rem !important; }
+}

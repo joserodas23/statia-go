@@ -137,7 +137,7 @@ const App = {
             </div>
             <div style="font-family:\'DM Mono\',monospace;font-size:0.58rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${step.desc}</div>
           </div>
-          <div style="display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap">
+          <div class="path-step-btns" style="display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0">
             <button onclick="App._showTeoria('${step.type}','${pathId}')"
                     style="font-size:0.58rem;padding:5px 8px;background:transparent;border:1px solid var(--border);border-radius:7px;color:var(--muted);cursor:pointer;font-family:\'DM Mono\',monospace">
               📖 Teoría
@@ -203,6 +203,11 @@ const App = {
         </span>
       </div>`;
 
+    const backBtn = `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:0 2px">
+        <button onclick="App.showPath('${pathId}')" style="font-size:0.62rem;padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace;flex-shrink:0">← Ruta</button>
+        <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.72rem;color:var(--gold);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">🔢 ${mod ? mod.label : type}</span>
+      </div>`;
+
     const fullRenderMap = {
       conteo: ModConteo, hipotesis: ModHipotesis,
       chi: ModChi, intervalos: ModIntervalos, regresion: ModRegresion,
@@ -211,22 +216,24 @@ const App = {
     const moduleMap = {
       nominal: ModNominal, ordinal: ModOrdinal,
       discreta: ModDiscreta, continua: ModContinua,
-      dist_tablas: ModDistribuciones, dist_calc: ModDistribuciones,
     };
 
-    if (fullRenderMap[type]) {
-      const container = formArea || area;
-      if (container) {
-        if (formArea) formArea.innerHTML = '';
-        fullRenderMap[type].render(container);
-        if (fullRenderMap[type].init) fullRenderMap[type].init();
-      }
-    } else if (moduleMap[type]) {
-      const m = moduleMap[type];
+    if (type === 'dist_tablas' || type === 'dist_calc') {
+      // Distribuciones renderiza directamente a tutorialArea — evitar sobreescribir
       if (formArea) formArea.innerHTML = '';
-      if      (type === 'dist_tablas') m.renderTablasOnly();
-      else if (type === 'dist_calc')   m.renderCalcOnly();
-      else                             m.renderForm();
+      if (area) area.innerHTML = '';
+      ModDistribuciones.renderTutorial();
+      if (type === 'dist_calc') ModDistribuciones.showMainTab('calc');
+      if (area) area.insertAdjacentHTML('afterbegin', backBtn);
+    } else if (fullRenderMap[type]) {
+      if (area)     area.innerHTML = backBtn;
+      if (formArea) formArea.innerHTML = '';
+      fullRenderMap[type].render(formArea || area);
+      if (fullRenderMap[type].init) fullRenderMap[type].init();
+    } else if (moduleMap[type]) {
+      if (area)     area.innerHTML = backBtn;
+      if (formArea) formArea.innerHTML = '';
+      moduleMap[type].renderForm();
     }
   },
 
