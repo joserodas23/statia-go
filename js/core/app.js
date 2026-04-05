@@ -144,14 +144,14 @@ const App = {
                     style="font-size:0.6rem;padding:5px 11px;background:transparent;border:1px solid var(--border);border-radius:7px;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace">
               📖 Teoría
             </button>
-            ${hasQuiz ? `<button onclick="App._showQuiz('${step.type}','${pathId}')"
-                    style="font-size:0.6rem;padding:5px 11px;background:var(--accent2);border:none;border-radius:7px;color:var(--bg);cursor:pointer;font-family:'DM Mono',monospace;font-weight:700">
-              🎯 Quiz
-            </button>` : ''}
             <button onclick="App._showCalc('${step.type}','${pathId}')"
                     style="font-size:0.6rem;padding:5px 11px;background:rgba(255,209,102,0.15);border:1px solid rgba(255,209,102,0.3);border-radius:7px;color:var(--gold);cursor:pointer;font-family:'DM Mono',monospace;font-weight:700">
               🔢 Calcular
             </button>
+            ${hasQuiz ? `<button onclick="App._showQuiz('${step.type}','${pathId}')"
+                    style="font-size:0.6rem;padding:5px 11px;background:var(--accent2);border:none;border-radius:7px;color:var(--bg);cursor:pointer;font-family:'DM Mono',monospace;font-weight:700">
+              🎯 Quiz
+            </button>` : ''}
           </div>
         </div>`;
     }).join('');
@@ -537,11 +537,11 @@ const App = {
         </div>
         <div class="mi" onclick="App.closeDrawer();App.showPath('inferencial')">
           <div class="mi-icon">🔵</div>
-          <div><div class="mi-name" style="color:var(--accent2)">Estadística Inferencial</div><div class="mi-sub">Conteo → Distribuciones → Hipótesis → IC</div></div>
+          <div><div class="mi-name" style="color:var(--accent2)">Estadística Inferencial</div><div class="mi-sub">Tablas → Probabilidades → Supuestos → Hipótesis → IC → Chi²</div></div>
         </div>
         <div class="mi" onclick="App.closeDrawer();App.showPath('ciencia')">
           <div class="mi-icon">🟡</div>
-          <div><div class="mi-name" style="color:var(--gold)">Ciencia de Datos</div><div class="mi-sub">Regresión y Correlación</div></div>
+          <div><div class="mi-name" style="color:var(--gold)">Ciencia de Datos</div><div class="mi-sub">Probabilidades → Hipótesis → Supuestos → Regresión → ML</div></div>
         </div>
       </div>
 
@@ -696,11 +696,11 @@ const App = {
           </div>
           <div onclick="App.showPath('inferencial')" style="cursor:pointer;background:rgba(123,140,255,0.07);border:1px solid rgba(123,140,255,0.15);border-radius:10px;padding:10px 12px">
             <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.72rem;color:var(--accent2);margin-bottom:3px">🔵 Estadística Inferencial</div>
-            <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted)">Conteo → Distribuciones → Hipótesis → IC → Chi²</div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted)">Conteo → Tablas → Probabilidades → Supuestos → Hipótesis → IC → Chi²</div>
           </div>
           <div onclick="App.showPath('ciencia')" style="cursor:pointer;background:rgba(255,209,102,0.07);border:1px solid rgba(255,209,102,0.15);border-radius:10px;padding:10px 12px">
             <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.72rem;color:var(--gold);margin-bottom:3px">🟡 Ciencia de Datos</div>
-            <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted)">Regresión → Correlación → Análisis predictivo</div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted)">Probabilidades → Hipótesis → IC → Supuestos → Regresión → ML</div>
           </div>
         </div>
       </div>

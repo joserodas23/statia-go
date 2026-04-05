@@ -24,6 +24,17 @@ const ModRegresion = {
     Utils.renderKaTeX(area);
   },
 
+  init() {
+    const teoria = document.getElementById('reg-teoria');
+    const calc   = document.getElementById('reg-calc');
+    if (teoria) teoria.style.display = '';
+    if (calc)   calc.style.display   = 'none';
+    const tabs = document.querySelectorAll('#reg-teoria, #reg-calc');
+    document.querySelectorAll('.mod-tab').forEach((b, i) => {
+      b.classList.toggle('active', i === 0);
+    });
+  },
+
   _tab(id, btn) {
     ['teoria','calc'].forEach(t =>
       document.getElementById('reg-'+t).style.display = t===id ? '' : 'none'
