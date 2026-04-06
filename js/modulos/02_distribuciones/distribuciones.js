@@ -354,19 +354,63 @@ const ModDistribuciones = {
   // TABLAS DE VALORES CRÍTICOS
   // ============================================
 
-  renderTableZ() {
-    let html = '<div class="tbl-scroll"><table class="freq-table"><thead><tr><th>z</th>';
+  renderTableZ(modo = 'positivo') {
+    const toggleHtml = `
+      <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
+        <button onclick="ModDistribuciones._setZModo('positivo',this)" id="zbtn-pos"
+          style="font-family:'DM Mono',monospace;font-size:0.62rem;padding:4px 12px;border-radius:6px;cursor:pointer;
+                 background:${modo==='positivo'?'var(--accent)':'var(--surface2)'};
+                 color:${modo==='positivo'?'#0d0f14':'var(--muted)'};
+                 border:1px solid ${modo==='positivo'?'var(--accent)':'var(--border)'};
+                 font-weight:${modo==='positivo'?'700':'400'}">
+          Z positiva (0 → 3.9)
+        </button>
+        <button onclick="ModDistribuciones._setZModo('negativo',this)" id="zbtn-neg"
+          style="font-family:'DM Mono',monospace;font-size:0.62rem;padding:4px 12px;border-radius:6px;cursor:pointer;
+                 background:${modo==='negativo'?'var(--accent2)':'var(--surface2)'};
+                 color:${modo==='negativo'?'#0d0f14':'var(--muted)'};
+                 border:1px solid ${modo==='negativo'?'var(--accent2)':'var(--border)'};
+                 font-weight:${modo==='negativo'?'700':'400'}">
+          Z negativa (−3.9 → 0)
+        </button>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:0.59rem;color:var(--muted);margin-bottom:8px">
+        ${modo==='positivo'
+          ? 'P(Z < z) para z ≥ 0 — área acumulada desde −∞'
+          : 'P(Z < z) para z < 0 — área acumulada desde −∞ (valores < 0.5)'}
+      </div>`;
+    let html = toggleHtml + '<div class="tbl-scroll"><table class="freq-table"><thead><tr><th>z</th>';
     for (let d = 0; d <= 9; d++) html += `<th>.0${d}</th>`;
     html += '</tr></thead><tbody>';
-    for (let z0 = 0; z0 <= 3.9; z0 = Math.round((z0 + 0.1) * 10) / 10) {
-      html += `<tr><td><strong>${z0.toFixed(1)}</strong></td>`;
-      for (let d = 0; d <= 9; d++) {
-        const z = z0 + d * 0.01;
-        html += `<td>${this._normalCDF(z).toFixed(4)}</td>`;
+    if (modo === 'positivo') {
+      for (let z0 = 0; z0 <= 3.9; z0 = Math.round((z0 + 0.1) * 10) / 10) {
+        html += `<tr><td><strong>${z0.toFixed(1)}</strong></td>`;
+        for (let d = 0; d <= 9; d++) {
+          const z = z0 + d * 0.01;
+          html += `<td>${this._normalCDF(z).toFixed(4)}</td>`;
+        }
+        html += '</tr>';
       }
-      html += '</tr>';
+    } else {
+      for (let z0 = -3.9; z0 <= 0; z0 = Math.round((z0 + 0.1) * 10) / 10) {
+        html += `<tr><td><strong>${z0.toFixed(1)}</strong></td>`;
+        for (let d = 0; d <= 9; d++) {
+          const z = z0 + d * 0.01;
+          html += `<td class="${z < 0 ? 'z-neg' : ''}">${this._normalCDF(z).toFixed(4)}</td>`;
+        }
+        html += '</tr>';
+      }
     }
     return html + '</tbody></table></div>';
+  },
+
+  _setZModo(modo, _btn) {
+    // Buscar el contenedor de la tabla estática o de resultados
+    const sc = document.getElementById('staticTableContent');
+    if (sc) { sc.innerHTML = this.renderTableZ(modo); return; }
+    // Buscar contenedores de tabla en resultados (pueden tener id dinámico)
+    const container = _btn?.closest('[id]');
+    if (container) container.innerHTML = this.renderTableZ(modo);
   },
 
   renderTableT() {
@@ -459,6 +503,7 @@ const ModDistribuciones = {
         <div class="mode-tabs" style="margin-bottom:16px">
           <button class="mode-tab on" id="main-tab-teoria" onclick="ModDistribuciones.showMainTab('teoria')">📖 Teoría</button>
           <button class="mode-tab" id="main-tab-tablas" onclick="ModDistribuciones.showMainTab('tablas')">📋 Tablas</button>
+          <button class="mode-tab" id="main-tab-calculos" onclick="ModDistribuciones.showMainTab('calculos')">📐 Cálculos</button>
         </div>
 
         <!-- Pestaña: Teoría -->
@@ -534,7 +579,7 @@ const ModDistribuciones = {
             </table>
           </div>
 
-          <button class="btn" onclick="Utils.scrollTo('formArea')">✓ Entendido — ir al calculador ↓</button>
+          <button class="btn" onclick="ModDistribuciones.showMainTab('calculos')">✓ Entendido — ir al calculador ↓</button>
         </div>
 
         <!-- Pestaña: Tablas -->
@@ -551,7 +596,12 @@ const ModDistribuciones = {
           </div>
           <div id="staticTableContent"><div class="ld"><span></span><span></span><span></span></div></div>
           <div style="height:8px"></div>
-          <button class="btn btn-s" style="margin-top:6px" onclick="Utils.scrollTo('formArea')">✓ Ir al calculador ↓</button>
+          <button class="btn btn-s" style="margin-top:6px" onclick="ModDistribuciones.showMainTab('calculos')">✓ Ir al calculador ↓</button>
+        </div>
+
+        <!-- Pestaña: Cálculos -->
+        <div id="panel-calculos" style="display:none">
+          <div id="panel-calculos-content"></div>
         </div>
 
       </div>`;
@@ -567,7 +617,7 @@ const ModDistribuciones = {
   },
 
   showMainTab(tab) {
-    ['teoria', 'tablas'].forEach(t => {
+    ['teoria', 'tablas', 'calculos'].forEach(t => {
       const btn = document.getElementById('main-tab-' + t);
       const panel = document.getElementById('panel-' + t);
       if (btn) btn.className = 'mode-tab' + (t === tab ? ' on' : '');
@@ -579,6 +629,20 @@ const ModDistribuciones = {
         this.showStaticTable('z');
         content.dataset.loaded = '1';
       }
+    }
+    if (tab === 'calculos') {
+      const calcContent = document.getElementById('panel-calculos-content');
+      if (calcContent && !calcContent.dataset.loaded) {
+        calcContent.dataset.loaded = '1';
+        this._renderFormInline(calcContent);
+      }
+      // Ocultar el formArea externo si existe
+      const fa = document.getElementById('formArea');
+      if (fa) fa.style.display = 'none';
+    } else {
+      // Restaurar formArea si se cambia de pestaña
+      const fa = document.getElementById('formArea');
+      if (fa) fa.style.display = '';
     }
   },
 
@@ -609,6 +673,257 @@ const ModDistribuciones = {
   // ============================================
   // FORMULARIO
   // ============================================
+
+  _renderFormInline(container) {
+    // Renderiza el formulario dentro del panel-calculos (inline en la tarjeta)
+    const old = document.getElementById('_inline-form');
+    if (old) old.remove();
+    const wrap = document.createElement('div');
+    wrap.id = '_inline-form';
+    wrap.innerHTML = this._formHTML('_ic');
+    container.appendChild(wrap);
+    this._updateParams('_ic');
+    // Resultados inline
+    const resWrap = document.createElement('div');
+    resWrap.id = '_inline-results';
+    container.appendChild(resWrap);
+  },
+
+  _formHTML(prefix) {
+    const lbl = (cls, txt) => `<span class="lbl ${cls}">${txt}</span>`;
+    return `
+      <div class="calc-section">
+        <div class="calc-section-title">Variable</div>
+        <div class="field">
+          <span class="lbl a">Nombre de la variable</span>
+          <input type="text" id="${prefix}_varName" placeholder="Ej: Peso de estudiantes">
+        </div>
+        <div class="row3">
+          <div>
+            ${lbl('b','Unidad')}
+            <input type="text" id="${prefix}_varUnit" placeholder="kg, cm, pts...">
+          </div>
+          <div>
+            ${lbl('g','Descripción (opcional)')}
+            <input type="text" id="${prefix}_varDesc" placeholder="Ej: n=40, 2025">
+          </div>
+        </div>
+      </div>
+
+      <div class="calc-section">
+        <div class="calc-section-title">Distribución</div>
+        <input type="hidden" id="${prefix}_distSelect" value="normal">
+        <div class="dist-grid">
+          <button class="dist-btn on" onclick="ModDistribuciones._selectDist(this,'normal','${prefix}')">
+            <div class="dist-btn-name">Normal</div><div class="dist-btn-params">N(μ, σ²)</div>
+          </button>
+          <button class="dist-btn" onclick="ModDistribuciones._selectDist(this,'t','${prefix}')">
+            <div class="dist-btn-name">t Student</div><div class="dist-btn-params">t(gl)</div>
+          </button>
+          <button class="dist-btn" onclick="ModDistribuciones._selectDist(this,'chi2','${prefix}')">
+            <div class="dist-btn-name">Chi²</div><div class="dist-btn-params">χ²(gl)</div>
+          </button>
+          <button class="dist-btn" onclick="ModDistribuciones._selectDist(this,'F','${prefix}')">
+            <div class="dist-btn-name">F</div><div class="dist-btn-params">F(gl₁,gl₂)</div>
+          </button>
+          <button class="dist-btn" onclick="ModDistribuciones._selectDist(this,'binomial','${prefix}')">
+            <div class="dist-btn-name">Binomial</div><div class="dist-btn-params">B(n, p)</div>
+          </button>
+          <button class="dist-btn" onclick="ModDistribuciones._selectDist(this,'poisson','${prefix}')">
+            <div class="dist-btn-name">Poisson</div><div class="dist-btn-params">P(λ)</div>
+          </button>
+          <button class="dist-btn" onclick="ModDistribuciones._selectDist(this,'uniforme','${prefix}')">
+            <div class="dist-btn-name">Uniforme</div><div class="dist-btn-params">U(a, b)</div>
+          </button>
+        </div>
+      </div>
+
+      <div class="calc-section">
+        <div class="calc-section-title">Parámetros</div>
+        <div id="${prefix}_paramsPanel"></div>
+      </div>
+
+      <div class="calc-section">
+        <div class="calc-section-title">Tipo de probabilidad</div>
+        <input type="hidden" id="${prefix}_tipoProb" value="menor">
+        <div class="prob-grid">
+          <button class="prob-btn on" onclick="ModDistribuciones._selectTipo(this,'menor','${prefix}')">P(X &lt; a)</button>
+          <button class="prob-btn" onclick="ModDistribuciones._selectTipo(this,'mayor','${prefix}')">P(X &gt; a)</button>
+          <button class="prob-btn" onclick="ModDistribuciones._selectTipo(this,'entre','${prefix}')">P(a &lt; X &lt; b)</button>
+          <button class="prob-btn" id="${prefix}_probBtnExacto" style="display:none" onclick="ModDistribuciones._selectTipo(this,'exacto','${prefix}')">P(X = k)</button>
+        </div>
+      </div>
+
+      <div class="calc-section">
+        <div class="calc-section-title">Valores</div>
+        <div class="row3">
+          <div>
+            <span class="lbl a">Valor a</span>
+            <input type="number" id="${prefix}_valorA" step="any" placeholder="Ej: 70">
+          </div>
+          <div id="${prefix}_vbField" style="display:none">
+            <span class="lbl b">Valor b</span>
+            <input type="number" id="${prefix}_valorB" step="any" placeholder="Ej: 80">
+          </div>
+        </div>
+      </div>
+
+      <div id="${prefix}_formErr" class="err" style="display:none"></div>
+      <button class="btn" id="${prefix}_calcBtn" onclick="ModDistribuciones._calcularPrefixed('${prefix}')">📐 Calcular probabilidad con IA</button>`;
+  },
+
+  _selectDist(btn, dist, prefix) {
+    btn.closest('.dist-grid')?.querySelectorAll('.dist-btn').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    const el = document.getElementById(prefix + '_distSelect');
+    if (el) el.value = dist;
+    this._updateParams(prefix);
+  },
+
+  _selectTipo(btn, tipo, prefix) {
+    btn.closest('.prob-grid')?.querySelectorAll('.prob-btn').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    const el = document.getElementById(prefix + '_tipoProb');
+    if (el) el.value = tipo;
+    this._updateTipo(prefix);
+  },
+
+  _updateParams(prefix) {
+    const dist = document.getElementById(prefix + '_distSelect')?.value || 'normal';
+    const lbl = (cls, txt) => `<span class="lbl ${cls}">${txt}</span>`;
+    let html = '';
+    if (dist === 'normal') {
+      html = `<div class="row3" style="margin-bottom:8px">
+        <div>${lbl('a','Media μ')}<input type="number" id="${prefix}_p_mu" step="any" value="0" placeholder="Ej: 68.3"></div>
+        <div>${lbl('g','Desv. Est. σ')}<input type="number" id="${prefix}_p_sigma" step="any" value="1" min="0.0001" placeholder="Ej: 8.2"></div>
+      </div>`;
+    } else if (dist === 't') {
+      html = `<div class="field">${lbl('b','Grados de libertad (gl)')}<input type="number" id="${prefix}_p_gl" value="10" min="1" step="1" placeholder="Ej: 9"></div>`;
+    } else if (dist === 'chi2') {
+      html = `<div class="field">${lbl('g','Grados de libertad (gl)')}<input type="number" id="${prefix}_p_gl" value="5" min="1" step="1" placeholder="Ej: 4"></div>`;
+    } else if (dist === 'F') {
+      html = `<div class="row3" style="margin-bottom:8px">
+        <div>${lbl('a','gl₁ (numerador)')}<input type="number" id="${prefix}_p_gl1" value="3" min="1" step="1"></div>
+        <div>${lbl('b','gl₂ (denominador)')}<input type="number" id="${prefix}_p_gl2" value="20" min="1" step="1"></div>
+      </div>`;
+    } else if (dist === 'binomial') {
+      html = `<div class="row3" style="margin-bottom:8px">
+        <div>${lbl('a','n (ensayos)')}<input type="number" id="${prefix}_p_n" value="10" min="1" step="1"></div>
+        <div>${lbl('g','p (probabilidad)')}<input type="number" id="${prefix}_p_p" value="0.5" min="0" max="1" step="0.01"></div>
+      </div>`;
+    } else if (dist === 'poisson') {
+      html = `<div class="field">${lbl('w','Tasa λ (lambda)')}<input type="number" id="${prefix}_p_lam" value="3" min="0.0001" step="any" placeholder="Ej: 2.5"></div>`;
+    } else if (dist === 'uniforme') {
+      html = `<div class="row3" style="margin-bottom:8px">
+        <div>${lbl('b','Mínimo a')}<input type="number" id="${prefix}_p_ua" value="0" step="any"></div>
+        <div>${lbl('g','Máximo b')}<input type="number" id="${prefix}_p_ub" value="10" step="any"></div>
+      </div>`;
+    }
+    const pp = document.getElementById(prefix + '_paramsPanel');
+    if (pp) pp.innerHTML = html;
+    const isDiscrete = dist === 'binomial' || dist === 'poisson';
+    const exactBtn = document.getElementById(prefix + '_probBtnExacto');
+    if (exactBtn) {
+      exactBtn.style.display = isDiscrete ? '' : 'none';
+      if (!isDiscrete && document.getElementById(prefix + '_tipoProb')?.value === 'exacto') {
+        document.getElementById(prefix + '_tipoProb').value = 'menor';
+        document.querySelectorAll(`#${prefix}_probBtnExacto`).forEach((b, i) => b.classList.toggle('on', i === 0));
+      }
+    }
+    this._updateTipo(prefix);
+  },
+
+  _updateTipo(prefix) {
+    const tipo = document.getElementById(prefix + '_tipoProb')?.value || 'menor';
+    const vbField = document.getElementById(prefix + '_vbField');
+    if (vbField) vbField.style.display = tipo === 'entre' ? 'block' : 'none';
+  },
+
+  _getParamsPrefixed(prefix) {
+    const dist = document.getElementById(prefix + '_distSelect')?.value || 'normal';
+    const g = id => parseFloat(document.getElementById(prefix + '_' + id)?.value) || 0;
+    switch (dist) {
+      case 'normal':   return { mu: g('p_mu'), sigma: Math.max(0.0001, g('p_sigma')) };
+      case 't':        return { gl: Math.max(1, Math.round(g('p_gl'))) };
+      case 'chi2':     return { gl: Math.max(1, Math.round(g('p_gl'))) };
+      case 'F':        return { gl1: Math.max(1, Math.round(g('p_gl1'))), gl2: Math.max(1, Math.round(g('p_gl2'))) };
+      case 'binomial': return { n: Math.max(1, Math.round(g('p_n'))), p: Math.min(1, Math.max(0, g('p_p'))) };
+      case 'poisson':  return { lam: Math.max(0.0001, g('p_lam')) };
+      case 'uniforme': { const ua = g('p_ua'), ub = g('p_ub'); return { a: Math.min(ua,ub), b: Math.max(ua,ub) }; }
+      default: return {};
+    }
+  },
+
+  async _calcularPrefixed(prefix) {
+    const get = id => document.getElementById(prefix + '_' + id);
+    const errEl = get('formErr');
+    if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
+    const showErr = msg => { if (errEl) { errEl.textContent = msg; errEl.style.display = 'block'; } };
+
+    const varName = get('varName')?.value.trim() || 'Variable';
+    const varUnit = get('varUnit')?.value.trim() || '';
+    const varDesc = get('varDesc')?.value.trim() || '';
+    const dist    = get('distSelect')?.value || 'normal';
+    const tipo    = get('tipoProb')?.value || 'menor';
+    const va      = parseFloat(get('valorA')?.value);
+    const vb      = parseFloat(get('valorB')?.value);
+
+    if (isNaN(va)) { showErr('⚠️ Ingresa el valor a.'); return; }
+    if (tipo === 'entre' && isNaN(vb)) { showErr('⚠️ Ingresa el valor b.'); return; }
+    if (tipo === 'entre' && vb <= va) { showErr('⚠️ El valor b debe ser mayor que a.'); return; }
+
+    const params = this._getParamsPrefixed(prefix);
+    const result = this.compute(dist, params, tipo, va, vb);
+    const f4 = v => (Math.round(v * 10000) / 10000).toFixed(4);
+
+    const btn = get('calcBtn');
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ Calculando...'; }
+
+    const distNames = {
+      normal: 'Normal', t: 't de Student', chi2: 'Chi-cuadrado',
+      F: 'F de Snedecor', binomial: 'Binomial', poisson: 'Poisson', uniforme: 'Uniforme'
+    };
+    const paramsStr = Object.entries(params).map(([k, v]) => `${k} = ${v}`).join(' | ');
+    const tipoLabels = { menor: 'P(X < a)', mayor: 'P(X > a)', entre: 'P(a < X < b)', exacto: 'P(X = k)' };
+
+    const cId  = Utils.uid();
+    const aiId = 'ai-' + Utils.uid();
+
+    const resEl = document.getElementById('_inline-results');
+    if (resEl) {
+      resEl.innerHTML = `
+        <div class="card" style="margin-top:12px">
+          <div class="tb" style="background:var(--accent2)">📐 ${distNames[dist]}</div>
+          <div class="card-title">${varName}${varUnit ? ' (' + varUnit + ')' : ''}</div>
+          ${varDesc ? `<div class="card-sub">${varDesc}</div>` : ''}
+          ${Utils.statsGrid([
+            ['Distribución', distNames[dist]],
+            ['Parámetros', paramsStr],
+            ['Tipo', tipoLabels[tipo]],
+            ['Valor a', va],
+            ...(tipo === 'entre' ? [['Valor b', vb]] : []),
+            ...(result.stat ? [['Estadístico', result.stat]] : []),
+            [result.desc, f4(result.prob)],
+            ['Complemento 1−P', f4(result.complement)],
+            ['Porcentaje %', (result.prob * 100).toFixed(2) + '%'],
+          ], 'var(--accent2)')}
+          <div class="ib">${result.desc} = <strong>${f4(result.prob)}</strong> &nbsp;|&nbsp; Complemento = <strong>${f4(result.complement)}</strong></div>
+          <div class="cw">
+            <div class="ct">Distribución ${distNames[dist]} — área sombreada = probabilidad calculada</div>
+            <div style="position:relative;height:200px"><canvas id="${cId}"></canvas></div>
+          </div>
+          ${AI.loadingBlock(aiId)}
+        </div>`;
+      setTimeout(() => this.drawChart(cId, dist, params, tipo, va, vb, result), 50);
+      await AI.render(AI.promptDistribuciones(varName, varUnit, varDesc, distNames[dist], paramsStr, tipoLabels[tipo], va, vb, result.prob, result.stat, result.desc), aiId);
+      App.addHistory({
+        type: `${distNames[dist]} — ${varName}`,
+        preview: `${result.desc} = ${f4(result.prob)}`,
+        n: 1, stat: f4(result.prob),
+      });
+    }
+    if (btn) { btn.disabled = false; btn.textContent = '📐 Calcular probabilidad con IA'; }
+  },
 
   renderForm() {
     document.getElementById('formArea').innerHTML = `
@@ -846,24 +1161,6 @@ const ModDistribuciones = {
       </div>`);
 
     this.drawChart(cId, dist, params, tipo, va, vb, result);
-
-    // Tablas
-    const tabId = Utils.uid();
-    Utils.addResult(`
-      <div class="card">
-        <div class="tb" style="background:var(--accent2)">📋 Tablas de valores críticos</div>
-        <div class="card-title">Referencias estadísticas</div>
-        <div class="mode-tabs" style="margin-bottom:12px">
-          <button class="mode-tab on" id="tab-z" onclick="ModDistribuciones.showTable('z','${tabId}')">Tabla Z</button>
-          <button class="mode-tab" id="tab-t" onclick="ModDistribuciones.showTable('t','${tabId}')">Tabla t</button>
-          <button class="mode-tab" id="tab-chi" onclick="ModDistribuciones.showTable('chi','${tabId}')">Tabla χ²</button>
-          <button class="mode-tab" id="tab-f" onclick="ModDistribuciones.showTable('f','${tabId}')">Tabla F (α=0.05)</button>
-        </div>
-        <div id="${tabId}"><div class="ld"><span></span><span></span><span></span></div></div>
-      </div>`);
-
-    // Render Z table by default (fast)
-    setTimeout(() => this.showTable('z', tabId), 50);
 
     await AI.render(AI.promptDistribuciones(varName, varUnit, varDesc, distNames[dist], paramsStr, tipoLabels[tipo], va, vb, result.prob, result.stat, result.desc), aiId);
 

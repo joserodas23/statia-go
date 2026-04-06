@@ -340,6 +340,9 @@ textarea.inp { resize: none; }
 .prob-btn:hover { border-color: var(--accent); color: var(--text); }
 .prob-btn.on { background: rgba(79,255,176,0.12); border-color: var(--accent); color: var(--accent); font-weight: 700; }
 
+/* ===== TABLA Z NEGATIVA ===== */
+.z-neg { color: var(--accent2) !important; }
+
 /* ===== BOTTOM NAV ===== */
 .bnav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); display: flex; z-index: 100; }
 .nb { flex: 1; padding: 9px 4px 11px; background: transparent; border: none; color: var(--muted); font-family: 'DM Mono', monospace; font-size: 0.55rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; transition: color 0.2s; }

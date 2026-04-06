@@ -15,7 +15,9 @@
       "Bash(start \"\" \"http://localhost:3000\")",
       "Bash(wc -l js/core/*.js js/modulos/*/*.js)",
       "Bash(vercel --version)",
-      "Bash(gh run:*)"
+      "Bash(gh run:*)",
+      "Bash(grep -c \"^[a-z_]*:\\\\s*\\\\`\" \"/e/Statia Go/statia-go/js/core/teorias.js\")",
+      "Bash(grep \"^[a-z_]*:\\\\s*\\\\`\" \"/e/Statia Go/statia-go/js/core/teorias.js\")"
     ]
   }
 }
